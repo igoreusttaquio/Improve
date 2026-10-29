@@ -31,8 +31,8 @@ public sealed class ExtensionRunnerTests : IDisposable
         string.Concat(chunks.Select(c => $"data: {{\"choices\":[{{\"delta\":{{\"content\":{JsonValue.Create(c).ToJsonString()}}}}}]}}\n\n")) + "data: [DONE]\n\n";
 
     private ExtensionRunner CreateRunner() => new(
-        new ClipboardSelectionService(_desktop, _desktop, Fast), _focus, _desktop, _secrets,
-        new ProviderFactory(_http.CreateClient()), NullLogger<ExtensionRunner>.Instance);
+        new ClipboardSelectionService(_desktop, _desktop, Fast), _focus, _desktop,
+        new ExtensionGenerator(_secrets, new ProviderFactory(_http.CreateClient()), NullLogger<ExtensionGenerator>.Instance));
 
     [Fact]
     public async Task Capture_waits_for_modifiers_before_copying()
@@ -59,7 +59,7 @@ public sealed class ExtensionRunnerTests : IDisposable
     public async Task Generate_streams_chunks_and_returns_cleaned_result()
     {
         var runner = CreateRunner();
-        var session = ExtensionRunner.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
+        var session = ExtensionGenerator.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
         var chunks = new List<string>();
 
         var result = await runner.GenerateAsync(session, chunks.Add, Ct);
@@ -76,7 +76,7 @@ public sealed class ExtensionRunnerTests : IDisposable
     public async Task Apply_pastes_into_the_original_window_and_restores_clipboard()
     {
         var runner = CreateRunner();
-        var session = ExtensionRunner.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
+        var session = ExtensionGenerator.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
         await runner.GenerateAsync(session, null, Ct);
 
         Assert.Equal(ApplyOutcome.Applied, await runner.ApplyAsync(session, Ct));
@@ -88,7 +88,7 @@ public sealed class ExtensionRunnerTests : IDisposable
     public async Task Apply_does_not_paste_when_the_window_changed()
     {
         var runner = CreateRunner();
-        var session = ExtensionRunner.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
+        var session = ExtensionGenerator.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
         await runner.GenerateAsync(session, null, Ct);
         _focus.RestoreResult = false;
 
@@ -100,7 +100,7 @@ public sealed class ExtensionRunnerTests : IDisposable
     public async Task Refine_sends_original_previous_result_and_adjustment()
     {
         var runner = CreateRunner();
-        var session = ExtensionRunner.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
+        var session = ExtensionGenerator.CreateSession(Improve, [Provider], (await runner.CaptureAsync(Ct))!);
         await runner.GenerateAsync(session, null, Ct);
         _http.Dispose();
         _http = new FakeHttpHandler(_ => FakeHttpHandler.Sse(Stream("Oi!")));
@@ -120,8 +120,8 @@ public sealed class ExtensionRunnerTests : IDisposable
     {
         var capture = new Capture("x", null, null);
 
-        var noProvider = Assert.Throws<ExtensionConfigurationException>(() => ExtensionRunner.CreateSession(Improve with { ProviderId = "sumiu" }, [Provider], capture));
-        var noModel = Assert.Throws<ExtensionConfigurationException>(() => ExtensionRunner.CreateSession(Improve with { Model = "" }, [Provider], capture));
+        var noProvider = Assert.Throws<ExtensionConfigurationException>(() => ExtensionGenerator.CreateSession(Improve with { ProviderId = "sumiu" }, [Provider], capture));
+        var noModel = Assert.Throws<ExtensionConfigurationException>(() => ExtensionGenerator.CreateSession(Improve with { Model = "" }, [Provider], capture));
 
         Assert.Contains("não tem provedor", noProvider.Message, StringComparison.Ordinal);
         Assert.Contains("Escolha um modelo", noModel.Message, StringComparison.Ordinal);
@@ -133,7 +133,7 @@ public sealed class ExtensionRunnerTests : IDisposable
         _http.Dispose();
         _http = new FakeHttpHandler(_ => FakeHttpHandler.Hanging());
         var runner = CreateRunner();
-        var session = ExtensionRunner.CreateSession(Improve, [Provider], new Capture("x", null, null));
+        var session = ExtensionGenerator.CreateSession(Improve, [Provider], new Capture("x", null, null));
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(Ct);
         cts.CancelAfter(50);
 
