@@ -1,10 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Improve.Core\Improve.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SharpHook" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
   </ItemGroup>
 
