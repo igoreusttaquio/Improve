@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Improve.App.ViewModels"
+             xmlns:res="using:Improve.App.Resources"
+             x:Class="Improve.App.Views.AboutPage"
+             x:DataType="vm:AboutPageViewModel">
+  <ScrollViewer>
+    <Grid Margin="32,24">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MaxWidth="560" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <StackPanel Spacing="24">
+        <StackPanel Orientation="Horizontal" Spacing="16">
+          <Image Source="/Assets/AppIcon/improve-128.png" Width="64" Height="64" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Classes="display" Text="improve" />
+            <TextBlock Classes="body muted" Text="{x:Static res:Strings.AppTagline}" />
+          </StackPanel>
+        </StackPanel>
+        <TextBlock Classes="caption muted" Text="{Binding Version}" />
+        <TextBlock Classes="body" Text="{x:Static res:Strings.AboutPrivacy}" TextWrapping="Wrap" />
+
+        <StackPanel Spacing="8">
+          <TextBlock Classes="label" Text="{x:Static res:Strings.AboutLicenses}" />
+          <ItemsControl ItemsSource="{Binding Licenses}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:LicenseInfo">
+                <Grid ColumnDefinitions="220,*" Margin="0,2">
+                  <TextBlock Classes="body" Text="{Binding Component}" />
+                  <TextBlock Grid.Column="1" Classes="body muted" Text="{Binding License}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</UserControl>

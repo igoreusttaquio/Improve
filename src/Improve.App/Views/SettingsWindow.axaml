@@ -1,22 +1,59 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="using:Improve.App.Controls"
+        xmlns:v="using:Improve.App.Views"
+        xmlns:vm="using:Improve.App.ViewModels"
         xmlns:res="using:Improve.App.Resources"
         x:Class="Improve.App.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
         Title="{x:Static res:Strings.SettingsTitle}"
         Icon="/Assets/AppIcon/improve-256.png"
-        Width="720" Height="480"
+        Width="920" Height="680" MinWidth="760" MinHeight="520"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource Surface100Brush}"
-        Foreground="{DynamicResource InkBrush}">
-  <!-- Esqueleto da fase 0: confirma fontes, ícones e tokens nos dois temas. A janela real vem na fase 2. -->
-  <StackPanel Margin="{StaticResource Space8Thickness}" Spacing="{StaticResource Space2}">
-    <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space3}">
-      <Border Width="36" Height="36" CornerRadius="{StaticResource RadiusMd}" Background="{DynamicResource AccentSoftBrush}">
-        <c:LucideIcon Icon="wand-sparkles" Size="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
-      </Border>
-      <TextBlock Classes="display" Text="improve" VerticalAlignment="Center" />
-    </StackPanel>
-    <TextBlock Classes="body" Foreground="{DynamicResource InkMutedBrush}" Text="{x:Static res:Strings.AppTagline}" />
-  </StackPanel>
+        Foreground="{DynamicResource InkBrush}"
+        FontFamily="{DynamicResource FontSans}"
+        FontSize="14">
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="vm:ExtensionsPageViewModel">
+      <v:ExtensionsPage />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ProvidersPageViewModel">
+      <v:ProvidersPage />
+    </DataTemplate>
+    <DataTemplate DataType="vm:GeneralPageViewModel">
+      <v:GeneralPage />
+    </DataTemplate>
+    <DataTemplate DataType="vm:AboutPageViewModel">
+      <v:AboutPage />
+    </DataTemplate>
+  </Window.DataTemplates>
+
+  <!-- Duas colunas em painéis arredondados: navegação e conteúdo. -->
+  <Grid ColumnDefinitions="220,*" ColumnSpacing="12" Margin="12">
+    <Border Grid.Column="0" Classes="panel nav" Padding="12,20">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="8,0,0,24">
+          <Image Source="/Assets/AppIcon/improve-64.png" Width="28" Height="28" />
+          <TextBlock Classes="title" Text="improve" VerticalAlignment="Center" />
+        </StackPanel>
+        <ListBox ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage}"
+                 Background="Transparent" ItemContainerTheme="{StaticResource NavItem}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:NavItem">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:LucideIcon Icon="{Binding Icon}" />
+                <TextBlock Classes="label" Text="{Binding Title}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <Border Grid.Column="1" Classes="panel" ClipToBounds="True">
+      <ContentControl Content="{Binding SelectedPage.Page}" />
+    </Border>
+  </Grid>
 </Window>

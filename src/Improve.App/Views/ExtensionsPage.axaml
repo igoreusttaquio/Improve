@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Improve.App.Controls"
+             xmlns:v="using:Improve.App.Views"
+             xmlns:vm="using:Improve.App.ViewModels"
+             xmlns:m="using:Improve.Core.Models"
+             xmlns:res="using:Improve.App.Resources"
+             x:Class="Improve.App.Views.ExtensionsPage"
+             x:DataType="vm:ExtensionsPageViewModel">
+  <Panel>
+    <DockPanel IsVisible="{Binding !IsEditing}" Margin="32,24,32,0">
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+        <TextBlock Classes="title" Text="{x:Static res:Strings.NavExtensions}" VerticalAlignment="Center" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+          <Button Classes="ghost" Click="OnImport">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="file-up" />
+              <TextBlock Text="{x:Static res:Strings.ExtensionsImport}" />
+            </StackPanel>
+          </Button>
+          <Button Classes="ghost" Click="OnExport" IsEnabled="{Binding !IsEmpty}">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="file-down" />
+              <TextBlock Text="{x:Static res:Strings.ExtensionsExport}" />
+            </StackPanel>
+          </Button>
+          <Button Classes="primary" Command="{Binding NewCommand}">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="plus" />
+              <TextBlock Text="{x:Static res:Strings.ExtensionsNew}" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <TextBlock DockPanel.Dock="Top" Classes="caption danger" Text="{Binding Error}" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,0,12" />
+
+      <Border DockPanel.Dock="Top" Classes="card" Margin="0,0,0,16" IsVisible="{Binding HasPendingImport}">
+        <Grid ColumnDefinitions="*,220,Auto" ColumnSpacing="12">
+          <TextBlock Classes="body" Text="{Binding PendingImportText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Providers}" SelectedItem="{Binding ImportProvider}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="m:ProviderConfig">
+                <TextBlock Text="{Binding Name}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+            <Button Classes="ghost" Content="{x:Static res:Strings.Cancel}" Command="{Binding CancelImportCommand}" />
+            <Button Classes="primary" Content="{x:Static res:Strings.ImportConfirm}" Command="{Binding ConfirmImportCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <TextBlock DockPanel.Dock="Bottom" Classes="caption muted" Text="{x:Static res:Strings.ExtensionsHint}" Margin="0,12,0,24"
+                 IsVisible="{Binding !IsEmpty}" TextWrapping="Wrap" />
+
+      <Panel>
+        <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <TextBlock Classes="body muted" Text="{x:Static res:Strings.ExtensionsEmpty}" HorizontalAlignment="Center" />
+          <Button Classes="primary" HorizontalAlignment="Center" Command="{Binding NewCommand}">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="plus" />
+              <TextBlock Text="{x:Static res:Strings.ExtensionsEmptyAction}" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <ScrollViewer IsVisible="{Binding !IsEmpty}">
+          <ItemsControl Name="CardList" ItemsSource="{Binding Cards}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="8" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ExtensionCardViewModel">
+                <Border Classes="card" Padding="8,12,16,12" Cursor="Hand" Tapped="OnCardTapped">
+                  <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="12">
+                    <Button Classes="ghost icon" Width="24" Cursor="SizeNorthSouth"
+                            PointerPressed="OnGripPressed" PointerMoved="OnGripMoved" PointerReleased="OnGripReleased"
+                            KeyDown="OnGripKeyDown" ToolTip.Tip="Alt+↑/↓">
+                      <c:LucideIcon Icon="grip-vertical" Foreground="{DynamicResource InkMutedBrush}" />
+                    </Button>
+                    <Border Grid.Column="1" Classes="tile">
+                      <c:LucideIcon Icon="{Binding Icon}" />
+                    </Border>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Name}" FontSize="14" LineHeight="20" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Classes="caption muted" Text="{Binding Meta}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <Border Grid.Column="3" Classes="chip" Classes.accent="{Binding Enabled}">
+                      <TextBlock Text="{Binding ModeLabel}" />
+                    </Border>
+                    <ToggleButton Grid.Column="4" Theme="{StaticResource Switch}" IsChecked="{Binding Enabled}" VerticalAlignment="Center" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Panel>
+    </DockPanel>
+
+    <ContentControl Content="{Binding Editor}" IsVisible="{Binding IsEditing}">
+      <ContentControl.ContentTemplate>
+        <DataTemplate x:DataType="vm:ExtensionEditorViewModel">
+          <v:ExtensionEditorView />
+        </DataTemplate>
+      </ContentControl.ContentTemplate>
+    </ContentControl>
+  </Panel>
+</UserControl>

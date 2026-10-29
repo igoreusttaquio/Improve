@@ -18,10 +18,250 @@
   <data name="TrayOpenSettings" xml:space="preserve">
     <value>Abrir configurações</value>
   </data>
+  <data name="TrayPause" xml:space="preserve">
+    <value>Pausar improve</value>
+  </data>
+  <data name="TrayResume" xml:space="preserve">
+    <value>Retomar improve</value>
+  </data>
   <data name="TrayQuit" xml:space="preserve">
     <value>Sair</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Configurações do improve</value>
+  </data>
+  <data name="NavExtensions" xml:space="preserve">
+    <value>Extensões</value>
+  </data>
+  <data name="NavProviders" xml:space="preserve">
+    <value>Provedores</value>
+  </data>
+  <data name="NavGeneral" xml:space="preserve">
+    <value>Geral</value>
+  </data>
+  <data name="NavAbout" xml:space="preserve">
+    <value>Sobre</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Excluir</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Voltar</value>
+  </data>
+  <data name="ModeReplace" xml:space="preserve">
+    <value>Substituir</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Sugerir</value>
+  </data>
+  <data name="ModeCopy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="ExtensionsNew" xml:space="preserve">
+    <value>Nova extensão</value>
+  </data>
+  <data name="ExtensionsImport" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ExtensionsExport" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="ExtensionsEmpty" xml:space="preserve">
+    <value>Nenhuma extensão ainda.</value>
+  </data>
+  <data name="ExtensionsEmptyAction" xml:space="preserve">
+    <value>Criar primeira extensão</value>
+  </data>
+  <data name="ExtensionsHint" xml:space="preserve">
+    <value>Arraste para reordenar. A ordem é a do popup; as 9 primeiras ativas ganham atalho de 1 a 9.</value>
+  </data>
+  <data name="CardPopupKey" xml:space="preserve">
+    <value>atalho {0}</value>
+  </data>
+  <data name="CardNoProvider" xml:space="preserve">
+    <value>Sem provedor</value>
+  </data>
+  <data name="ImportPending" xml:space="preserve">
+    <value>{0} extensões prontas para importar. Escolha o provedor:</value>
+  </data>
+  <data name="ImportConfirm" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ExportFileName" xml:space="preserve">
+    <value>extensoes-improve.json</value>
+  </data>
+  <data name="JsonFileType" xml:space="preserve">
+    <value>Extensões do improve (JSON)</value>
+  </data>
+  <data name="EditorNewTitle" xml:space="preserve">
+    <value>Nova extensão</value>
+  </data>
+  <data name="EditorEditTitle" xml:space="preserve">
+    <value>Editar extensão</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="FieldIcon" xml:space="preserve">
+    <value>Ícone</value>
+  </data>
+  <data name="FieldPrompt" xml:space="preserve">
+    <value>Prompt</value>
+  </data>
+  <data name="PromptHint" xml:space="preserve">
+    <value>Variáveis: {{selection}} (texto selecionado), {{app}} (app de origem), {{clipboard}} (área de transferência anterior). Sem {{selection}}, o texto vai à parte.</value>
+  </data>
+  <data name="FieldProvider" xml:space="preserve">
+    <value>Provedor</value>
+  </data>
+  <data name="FieldModel" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="ModelPlaceholder" xml:space="preserve">
+    <value>ID do modelo</value>
+  </data>
+  <data name="LoadModels" xml:space="preserve">
+    <value>Carregar modelos</value>
+  </data>
+  <data name="ModelsLoaded" xml:space="preserve">
+    <value>{0} modelos disponíveis.</value>
+  </data>
+  <data name="FieldMode" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="FieldHotkey" xml:space="preserve">
+    <value>Atalho próprio (opcional)</value>
+  </data>
+  <data name="HotkeyPlaceholder" xml:space="preserve">
+    <value>Clique e pressione o atalho</value>
+  </data>
+  <data name="HotkeyClear" xml:space="preserve">
+    <value>Limpar</value>
+  </data>
+  <data name="HotkeyConflict" xml:space="preserve">
+    <value>Em uso: {0}.</value>
+  </data>
+  <data name="HotkeyInvalid" xml:space="preserve">
+    <value>Use pelo menos um modificador (Ctrl, Alt, Shift) ou uma tecla F.</value>
+  </data>
+  <data name="TestTitle" xml:space="preserve">
+    <value>Testar</value>
+  </data>
+  <data name="TestSample" xml:space="preserve">
+    <value>Texto de exemplo</value>
+  </data>
+  <data name="TestRun" xml:space="preserve">
+    <value>Testar</value>
+  </data>
+  <data name="TestStop" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="TestSampleDefault" xml:space="preserve">
+    <value>oi pessoal, queria avisar q a reuniao de amanha vai atrasar uns 15 min pq to resolvendo um problema aqui</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Dê um nome à extensão.</value>
+  </data>
+  <data name="PromptRequired" xml:space="preserve">
+    <value>Escreva o prompt.</value>
+  </data>
+  <data name="IconSearch" xml:space="preserve">
+    <value>Buscar ícone</value>
+  </data>
+  <data name="IconMore" xml:space="preserve">
+    <value>Mostrando {0} de {1}. Refine a busca.</value>
+  </data>
+  <data name="ProvidersAdd" xml:space="preserve">
+    <value>Adicionar provedor</value>
+  </data>
+  <data name="ProviderNew" xml:space="preserve">
+    <value>Novo provedor</value>
+  </data>
+  <data name="FieldKind" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="KindAnthropic" xml:space="preserve">
+    <value>Anthropic</value>
+  </data>
+  <data name="KindOpenAi" xml:space="preserve">
+    <value>Compatível com OpenAI (OpenAI, DeepSeek, Ollama)</value>
+  </data>
+  <data name="FieldBaseUrl" xml:space="preserve">
+    <value>URL base</value>
+  </data>
+  <data name="FieldApiKey" xml:space="preserve">
+    <value>Chave de API</value>
+  </data>
+  <data name="ApiKeyPlaceholder" xml:space="preserve">
+    <value>Cole a chave</value>
+  </data>
+  <data name="ApiKeyStored" xml:space="preserve">
+    <value>Chave salva. Deixe em branco para manter.</value>
+  </data>
+  <data name="ApiKeyMissing" xml:space="preserve">
+    <value>Sem chave salva.</value>
+  </data>
+  <data name="TestConnection" xml:space="preserve">
+    <value>Testar conexão</value>
+  </data>
+  <data name="TestConnectionOk" xml:space="preserve">
+    <value>Conexão ok ({0} ms).</value>
+  </data>
+  <data name="ProviderNameRequired" xml:space="preserve">
+    <value>Dê um nome ao provedor.</value>
+  </data>
+  <data name="ProviderUrlInvalid" xml:space="preserve">
+    <value>Informe uma URL começando com http:// ou https://.</value>
+  </data>
+  <data name="KeyStorageInsecure" xml:space="preserve">
+    <value>Este sistema não tem serviço de segredos: as chaves ficam num arquivo sem criptografia, legível só pelo seu usuário.</value>
+  </data>
+  <data name="ProviderInUse" xml:space="preserve">
+    <value>usado por {0} extensões</value>
+  </data>
+  <data name="FieldGlobalHotkey" xml:space="preserve">
+    <value>Atalho global</value>
+  </data>
+  <data name="GlobalHotkeyHint" xml:space="preserve">
+    <value>Abre o popup de extensões sobre o texto selecionado.</value>
+  </data>
+  <data name="FieldTheme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Seguir o sistema</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Escuro</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="StartWithSystem" xml:space="preserve">
+    <value>Iniciar com o sistema</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Versão {0}</value>
+  </data>
+  <data name="AboutLicenses" xml:space="preserve">
+    <value>Licenças de terceiros</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Sem telemetria. O texto selecionado só sai da máquina para o provedor que você configurou.</value>
+  </data>
+  <data name="ProviderKeySaved" xml:space="preserve">
+    <value>Chave salva</value>
+  </data>
+  <data name="ProviderKeyMissing" xml:space="preserve">
+    <value>Sem chave</value>
   </data>
 </root>

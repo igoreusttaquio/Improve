@@ -9,6 +9,7 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Themes/Tokens.axaml" />
+        <ResourceInclude Source="/Themes/Controls.axaml" />
       </ResourceDictionary.MergedDictionaries>
       <ResourceDictionary.ThemeDictionaries>
         <ResourceInclude x:Key="Dark" Source="/Themes/Tokens.Dark.axaml" />
@@ -20,6 +21,7 @@
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="/Themes/Typography.axaml" />
+    <StyleInclude Source="/Themes/ControlStyles.axaml" />
   </Application.Styles>
 
   <TrayIcon.Icons>
@@ -28,6 +30,7 @@
         <TrayIcon.Menu>
           <NativeMenu>
             <NativeMenuItem Header="{x:Static res:Strings.TrayOpenSettings}" Click="OnOpenSettings" />
+            <NativeMenuItem Header="{x:Static res:Strings.TrayPause}" Click="OnTogglePause" />
             <NativeMenuItemSeparator />
             <NativeMenuItem Header="{x:Static res:Strings.TrayQuit}" Click="OnQuit" />
           </NativeMenu>

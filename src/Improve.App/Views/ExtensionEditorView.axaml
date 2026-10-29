@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Improve.App.Controls"
+             xmlns:vm="using:Improve.App.ViewModels"
+             xmlns:m="using:Improve.Core.Models"
+             xmlns:res="using:Improve.App.Resources"
+             x:Class="Improve.App.Views.ExtensionEditorView"
+             x:DataType="vm:ExtensionEditorViewModel">
+  <DockPanel>
+    <!-- Rodapé fixo com as ações. -->
+    <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,1,0,0" Padding="32,12">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <Button Classes="danger" IsVisible="{Binding !IsNew}" Command="{Binding DeleteCommand}">
+          <StackPanel Classes="button-content">
+            <c:LucideIcon Icon="trash-2" />
+            <TextBlock Text="{x:Static res:Strings.Delete}" />
+          </StackPanel>
+        </Button>
+        <TextBlock Grid.Column="1" Classes="caption danger" Text="{Binding ValidationError}" VerticalAlignment="Center" Margin="16,0" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <Button Classes="ghost" Content="{x:Static res:Strings.Cancel}" Command="{Binding CancelCommand}" />
+          <Button Classes="primary" Command="{Binding SaveCommand}">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="check" />
+              <TextBlock Text="{x:Static res:Strings.Save}" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <ScrollViewer>
+      <Grid Margin="32,24">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" MaxWidth="720" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Spacing="20">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="ghost icon" Command="{Binding CancelCommand}" ToolTip.Tip="{x:Static res:Strings.Back}">
+              <c:LucideIcon Icon="arrow-left" />
+            </Button>
+            <TextBlock Classes="title" Text="{Binding Title}" VerticalAlignment="Center" />
+          </StackPanel>
+
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <StackPanel>
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldIcon}" />
+              <c:IconPicker Icon="{Binding Icon}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldName}" />
+              <TextBox Text="{Binding Name}" MinHeight="40" />
+            </StackPanel>
+          </Grid>
+
+          <StackPanel>
+            <TextBlock Classes="field" Text="{x:Static res:Strings.FieldPrompt}" />
+            <c:PromptEditor Text="{Binding Prompt}" />
+            <TextBlock Classes="caption muted" Text="{x:Static res:Strings.PromptHint}" TextWrapping="Wrap" Margin="0,6,0,0" />
+          </StackPanel>
+
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <StackPanel>
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldProvider}" />
+              <ComboBox ItemsSource="{Binding Providers}" SelectedItem="{Binding Provider}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="m:ProviderConfig">
+                    <TextBlock Text="{Binding Name}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldModel}" />
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <AutoCompleteBox Text="{Binding Model}" ItemsSource="{Binding Models}" FilterMode="Contains"
+                                 MinimumPrefixLength="0" PlaceholderText="{x:Static res:Strings.ModelPlaceholder}" />
+                <Button Grid.Column="1" Classes="ghost icon" Command="{Binding LoadModelsCommand}" ToolTip.Tip="{x:Static res:Strings.LoadModels}">
+                  <c:LucideIcon Icon="refresh-cw" />
+                </Button>
+              </Grid>
+              <TextBlock Classes="caption muted" Classes.danger="{Binding ModelsStatusIsError}" Text="{Binding ModelsStatus}"
+                         TextWrapping="Wrap" Margin="0,6,0,0" />
+            </StackPanel>
+          </Grid>
+
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="24">
+            <StackPanel>
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldMode}" />
+              <Border Classes="segmented">
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                  <RadioButton Theme="{StaticResource Segment}" GroupName="mode" IsChecked="{Binding IsReplace}" Content="{x:Static res:Strings.ModeReplace}" />
+                  <RadioButton Theme="{StaticResource Segment}" GroupName="mode" IsChecked="{Binding IsSuggest}" Content="{x:Static res:Strings.ModeSuggest}" />
+                  <RadioButton Theme="{StaticResource Segment}" GroupName="mode" IsChecked="{Binding IsCopy}" Content="{x:Static res:Strings.ModeCopy}" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+              <TextBlock Classes="field" Text="{x:Static res:Strings.FieldHotkey}" />
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <c:HotkeyBox Hotkey="{Binding Hotkey}" />
+                <Button Grid.Column="1" Classes="ghost icon" Command="{Binding ClearHotkeyCommand}" ToolTip.Tip="{x:Static res:Strings.HotkeyClear}">
+                  <c:LucideIcon Icon="x" />
+                </Button>
+              </Grid>
+              <TextBlock Classes="caption danger" Text="{Binding HotkeyError}" Margin="0,6,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+          </Grid>
+
+          <!-- Teste com texto de exemplo, em streaming. -->
+          <Border Classes="card">
+            <StackPanel Spacing="12">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="label" Text="{x:Static res:Strings.TestTitle}" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                  <Button Classes="ghost" Content="{x:Static res:Strings.TestStop}" Command="{Binding TestCancelCommand}"
+                          IsVisible="{Binding TestCommand.IsRunning}" />
+                  <Button Command="{Binding TestCommand}">
+                    <StackPanel Classes="button-content">
+                      <c:LucideIcon Icon="play" />
+                      <TextBlock Text="{x:Static res:Strings.TestRun}" />
+                    </StackPanel>
+                  </Button>
+                </StackPanel>
+              </Grid>
+              <StackPanel>
+                <TextBlock Classes="caption muted" Text="{x:Static res:Strings.TestSample}" Margin="0,0,0,6" />
+                <TextBox Classes="multiline" Text="{Binding Sample}" MinHeight="64" />
+              </StackPanel>
+              <Border Background="{DynamicResource Surface100Brush}" CornerRadius="{StaticResource RadiusMd}" Padding="12,10"
+                      IsVisible="{Binding TestOutput, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <SelectableTextBlock Classes="body" Text="{Binding TestOutput}" TextWrapping="Wrap" />
+              </Border>
+              <TextBlock Classes="caption danger" Text="{Binding TestError}" TextWrapping="Wrap"
+                         IsVisible="{Binding TestError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

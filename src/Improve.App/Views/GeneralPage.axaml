@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:Improve.App.Controls"
+             xmlns:vm="using:Improve.App.ViewModels"
+             xmlns:res="using:Improve.App.Resources"
+             x:Class="Improve.App.Views.GeneralPage"
+             x:DataType="vm:GeneralPageViewModel">
+  <ScrollViewer>
+    <Grid Margin="32,24">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MaxWidth="560" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <StackPanel Spacing="24">
+        <TextBlock Classes="title" Text="{x:Static res:Strings.NavGeneral}" />
+
+        <StackPanel>
+          <TextBlock Classes="field" Text="{x:Static res:Strings.FieldGlobalHotkey}" />
+          <c:HotkeyBox Hotkey="{Binding GlobalHotkey}" Width="280" HorizontalAlignment="Left" />
+          <TextBlock Classes="caption muted" Text="{x:Static res:Strings.GlobalHotkeyHint}" Margin="0,6,0,0" />
+          <TextBlock Classes="caption danger" Text="{Binding HotkeyError}" TextWrapping="Wrap"
+                     IsVisible="{Binding HotkeyError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+
+        <StackPanel>
+          <TextBlock Classes="field" Text="{x:Static res:Strings.FieldTheme}" />
+          <ComboBox ItemsSource="{x:Static vm:ThemeOption.All}" SelectedItem="{Binding Theme}" Width="280" HorizontalAlignment="Left">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeOption">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding StartWithSystem}" />
+          <TextBlock Classes="body" Text="{x:Static res:Strings.StartWithSystem}" VerticalAlignment="Center" />
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</UserControl>
