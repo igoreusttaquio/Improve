@@ -67,6 +67,7 @@ public sealed class AboutPageViewModel : ObservableObject
     public IReadOnlyList<LicenseInfo> Licenses { get; } =
     [
         new("Avalonia", "MIT"),
+        new("AvaloniaEdit", "MIT"),
         new("CommunityToolkit.Mvvm", "MIT"),
         new("Microsoft.Extensions.*", "MIT"),
         new("Lucide", "ISC"),

@@ -1,7 +1,8 @@
 <!-- Ajustes sobre os templates do Fluent (campos, combos) e classes utilitárias, sempre com tokens. -->
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:c="using:Improve.App.Controls">
+        xmlns:c="using:Improve.App.Controls"
+        xmlns:ae="using:AvaloniaEdit">
 
   <Style Selector="TextBlock.muted">
     <Setter Property="Foreground" Value="{DynamicResource InkMutedBrush}" />
@@ -59,6 +60,27 @@
     <Setter Property="TextWrapping" Value="Wrap" />
     <Setter Property="VerticalContentAlignment" Value="Top" />
     <Setter Property="Padding" Value="12,8" />
+  </Style>
+
+  <!-- Editor de prompt: mesma moldura dos campos de texto. -->
+  <Style Selector="Border.prompt-frame">
+    <Setter Property="Background" Value="{DynamicResource Surface200Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}" />
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="BorderBrush" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="c|PromptEditor:editing Border.prompt-frame">
+    <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
+  </Style>
+  <Style Selector="ae|TextEditor.prompt">
+    <Setter Property="FontFamily" Value="{StaticResource FontMono}" />
+    <Setter Property="FontSize" Value="13" />
   </Style>
 
   <!-- Combos. -->

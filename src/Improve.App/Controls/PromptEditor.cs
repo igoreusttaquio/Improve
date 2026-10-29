@@ -1,49 +1,49 @@
 using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using Avalonia.Data;
-using Avalonia.Layout;
 using Avalonia.Media;
+using AvaloniaEdit;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 
 namespace Improve.App.Controls;
 
 /// <summary>
-/// Campo de prompt em fonte mono com realce de <c>{{variáveis}}</c>. O TextBox fica com o texto transparente
-/// e um TextBlock com a mesma fonte, quebra e margem desenha o texto colorido por cima.
+/// Editor de prompt (AvaloniaEdit) em fonte mono, com realce do Markdown usado em prompts
+/// (títulos, listas, negrito, itálico, código, citações) e das <c>{{variáveis}}</c>.
 /// </summary>
 public sealed partial class PromptEditor : UserControl
 {
     public static readonly StyledProperty<string?> TextProperty =
         AvaloniaProperty.Register<PromptEditor, string?>(nameof(Text), defaultBindingMode: BindingMode.TwoWay);
 
-    private readonly TextBox _input;
-    private readonly TextBlock _overlay;
+    private readonly TextEditor _editor;
 
     public PromptEditor()
     {
-        _input = new TextBox { MinHeight = 120, Foreground = Brushes.Transparent };
-        _input.Classes.AddRange(["code", "multiline"]);
-        _overlay = new TextBlock
+        _editor = new TextEditor
         {
-            IsHitTestVisible = false,
-            TextWrapping = TextWrapping.Wrap,
-            VerticalAlignment = VerticalAlignment.Top,
+            WordWrap = true,
+            ShowLineNumbers = false,
+            MinHeight = 120,
+            MaxHeight = 320,
+            Padding = new Thickness(12, 8),
+            Background = Brushes.Transparent,
         };
-        _overlay.Classes.Add("code");
-        // Mesma posição do texto dentro do TextBox: borda (1) + padding da classe multiline (12,8).
-        _overlay.Margin = new Thickness(13, 9, 13, 9);
+        _editor.Classes.Add("prompt");
+        _editor.TextArea.TextView.LineTransformers.Add(new PromptColorizer(this));
+        _editor.Document.TextChanged += (_, _) => Text = _editor.Document.Text;
+        _editor.TextArea.GotFocus += (_, _) => PseudoClasses.Set(":editing", true);
+        _editor.TextArea.LostFocus += (_, _) => PseudoClasses.Set(":editing", false);
+        ActualThemeVariantChanged += (_, _) =>
+        {
+            ApplyThemeBrushes();
+            _editor.TextArea.TextView.Redraw();
+        };
 
-        _input.PropertyChanged += (_, e) =>
-        {
-            if (e.Property == TextBox.TextProperty)
-            {
-                Text = _input.Text;
-                UpdateOverlay();
-            }
-        };
-        ActualThemeVariantChanged += (_, _) => UpdateOverlay();
-        Content = new Panel { Children = { _input, _overlay } };
+        Content = new Border { Classes = { "prompt-frame" }, Child = _editor };
+        ApplyThemeBrushes();
     }
 
     public string? Text
@@ -55,32 +55,89 @@ public sealed partial class PromptEditor : UserControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == TextProperty && _input.Text != Text)
-            _input.Text = Text;
-
+        if (change.Property == TextProperty && _editor.Document.Text != (Text ?? ""))
+            _editor.Document.Text = Text ?? "";
     }
 
-    private void UpdateOverlay()
-    {
-        var text = _input.Text ?? "";
-        var inlines = new InlineCollection();
-        var last = 0;
-        foreach (Match match in Variable().Matches(text))
-        {
-            if (match.Index > last)
-                inlines.Add(new Run(text[last..match.Index]) { Foreground = Resource("InkBrush") });
-            // Só a cor muda: peso e tamanho iguais para não desalinhar do texto real.
-            inlines.Add(new Run(match.Value) { Foreground = Resource("AccentInkBrush"), Background = Resource("AccentSoftBrush") });
-            last = match.Index + match.Length;
-        }
-        if (last < text.Length)
-            inlines.Add(new Run(text[last..]) { Foreground = Resource("InkBrush") });
-        _overlay.Inlines = inlines;
-    }
-
-    private IBrush? Resource(string key) =>
+    internal IBrush? Brush(string key) =>
         this.TryFindResource(key, ActualThemeVariant, out var value) ? value as IBrush : null;
 
-    [GeneratedRegex(@"\{\{(selection|app|clipboard)\}\}")]
-    private static partial Regex Variable();
+    private void ApplyThemeBrushes()
+    {
+        _editor.Foreground = Brush("InkBrush");
+        _editor.TextArea.SelectionBrush = Brush("AccentSoftBrush");
+        _editor.TextArea.SelectionForeground = null;
+        _editor.TextArea.Caret.CaretBrush = Brush("InkBrush");
+    }
+
+    /// <summary>Colore cada linha com expressões regulares; só cor, peso e estilo, sem mudar o texto.</summary>
+    private sealed partial class PromptColorizer(PromptEditor owner) : DocumentColorizingTransformer
+    {
+        protected override void ColorizeLine(DocumentLine line)
+        {
+            var text = CurrentContext.Document.GetText(line);
+            var start = line.Offset;
+
+            if (Heading().Match(text) is { Success: true } heading)
+            {
+                Apply(start, start + text.Length, owner.Brush("InkBrush"), weight: FontWeight.SemiBold);
+                Apply(start + heading.Groups["mark"].Index, start + heading.Groups["mark"].Index + heading.Groups["mark"].Length, owner.Brush("InkMutedBrush"));
+            }
+            else if (Quote().IsMatch(text))
+            {
+                Apply(start, start + text.Length, owner.Brush("InkMutedBrush"), style: FontStyle.Italic);
+            }
+
+            if (ListMarker().Match(text) is { Success: true } marker)
+                Apply(start + marker.Groups["mark"].Index, start + marker.Groups["mark"].Index + marker.Groups["mark"].Length, owner.Brush("AccentInkBrush"));
+
+            foreach (Match m in Bold().Matches(text))
+                Apply(start + m.Index, start + m.Index + m.Length, null, weight: FontWeight.SemiBold);
+            foreach (Match m in Italic().Matches(text))
+                Apply(start + m.Index, start + m.Index + m.Length, null, style: FontStyle.Italic);
+            foreach (Match m in InlineCode().Matches(text))
+                Apply(start + m.Index, start + m.Index + m.Length, owner.Brush("InkBrush"), background: owner.Brush("Surface300Brush"));
+            foreach (Match m in Variable().Matches(text))
+                Apply(start + m.Index, start + m.Index + m.Length, owner.Brush("AccentInkBrush"), background: owner.Brush("AccentSoftBrush"));
+        }
+
+        private void Apply(int from, int to, IBrush? foreground, IBrush? background = null, FontWeight? weight = null, FontStyle? style = null)
+        {
+            if (to <= from)
+                return;
+            ChangeLinePart(from, to, element =>
+            {
+                if (foreground is not null)
+                    element.TextRunProperties.SetForegroundBrush(foreground);
+                if (background is not null)
+                    element.TextRunProperties.SetBackgroundBrush(background);
+                if (weight is not null || style is not null)
+                {
+                    var current = element.TextRunProperties.Typeface;
+                    element.TextRunProperties.SetTypeface(new Typeface(current.FontFamily, style ?? current.Style, weight ?? current.Weight));
+                }
+            });
+        }
+
+        [GeneratedRegex(@"^(?<mark>#{1,6})\s")]
+        private static partial Regex Heading();
+
+        [GeneratedRegex(@"^\s*>")]
+        private static partial Regex Quote();
+
+        [GeneratedRegex(@"^\s*(?<mark>[-*+]|\d+[.)])\s")]
+        private static partial Regex ListMarker();
+
+        [GeneratedRegex(@"\*\*[^*\n]+\*\*|__[^_\n]+__")]
+        private static partial Regex Bold();
+
+        [GeneratedRegex(@"(?<![*\w])\*[^*\s][^*\n]*\*(?!\*)|(?<![_\w])_[^_\s][^_\n]*_(?!_)")]
+        private static partial Regex Italic();
+
+        [GeneratedRegex(@"`[^`\n]+`")]
+        private static partial Regex InlineCode();
+
+        [GeneratedRegex(@"\{\{(selection|app|clipboard)\}\}")]
+        private static partial Regex Variable();
+    }
 }
