@@ -34,3 +34,20 @@ Armazenamento de chaves (por SO):
 - Windows: a chave gravada fica em `%APPDATA%\improve\secrets.dat` cifrada (não aparece em texto puro).
 - macOS: aparece no app Acesso às Chaves como item `improve`, conta = id do provedor.
 - Linux com GNOME Keyring/KWallet: `secret-tool lookup service improve account <id>` devolve a chave. Sem serviço de segredos: `~/.config/improve/secrets.json` com permissão `-rw-------`.
+
+## Fase 2 — Configurações
+
+Para não mexer na configuração real: `$env:IMPROVE_CONFIG_DIR = "$env:TEMP\improve-teste"; dotnet run --project src/Improve.App`
+
+1. Bandeja → "Abrir configurações": janela com menu lateral (Extensões, Provedores, Geral, Sobre) e conteúdo em painéis arredondados.
+2. Provedores → Anthropic: colar a chave, Salvar. Reabrir: "Chave salva. Deixe em branco para manter." Conferir que a chave não aparece em `settings.json` nem `extensions.json`.
+3. "Testar conexão" com chave válida: ícone e texto em verde com a latência. Com chave inválida: vermelho, "Chave de API inválida…".
+4. Adicionar provedor "Compatível com OpenAI" (DeepSeek ou Ollama `http://localhost:11434/v1`); trocar o tipo troca a URL padrão.
+5. Extensões → Nova extensão: escolher ícone pela busca, escrever prompt com `{{selection}}` (fica realçado), escolher provedor; a lista de modelos carrega sozinha (ou pelo botão ⟳); escolher modelo e modo.
+6. Atalho próprio: clicar no campo e pressionar uma combinação; repetir o atalho global mostra "Em uso: atalho global."; Backspace limpa.
+7. "Testar": o resultado aparece em streaming; "Parar" interrompe.
+8. Salvar; o cartão aparece na lista com o chip do modo. Arrastar pela alça reordena; Alt+↑/↓ também. O interruptor desliga a extensão (o chip fica neutro e o número do atalho some).
+9. Exportar e depois Importar o arquivo: a barra pede o provedor; as extensões entram no fim da lista.
+10. Geral: trocar o tema alterna a janela na hora; o atalho global aceita só combinações válidas.
+11. Fechar o app (Sair) e abrir de novo: tudo persiste.
+12. Bandeja → "Pausar improve" vira "Retomar improve".

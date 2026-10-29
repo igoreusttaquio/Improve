@@ -31,3 +31,19 @@ Decisões tomadas durante a implementação que o `PLANO.md` não cobria ou que 
 - **Arquivo de configuração corrompido:** é renomeado para `*.corrompido-<data>` e o app recomeça do padrão. Arquivo de versão mais nova gera erro e não é tocado.
 - **Segredos:** Windows usa DPAPI (`System.Security.Cryptography.ProtectedData`, dependência nova) em `secrets.dat`; macOS usa o CLI `security` como primeiro passo, e a chave aparece por um instante nos argumentos do processo ao gravar, então o próximo passo é trocar por P/Invoke no Security.framework (fase 5); Linux usa `secret-tool`, com a chave pelo stdin, e cai para `secrets.json` com permissão 600 (`IsSecure = false`) se não houver serviço de segredos.
 - **Avisos de análise desligados:** CA1863 (cachear `CompositeFormat`), porque as strings vêm de `.resx` e variam com a cultura; CA1707 só em `tests/`, porque os nomes de teste usam sublinhados.
+
+## Fase 2
+
+- **`ExtensionGenerator` separado do `ExtensionRunner`:** a geração (prompt → streaming → limpeza) não depende do SO, então o botão "Testar" da janela funciona antes das integrações da fase 3. O `ExtensionRunner` cuida da captura e da aplicação e delega a geração.
+- **`ConfigState` no Core:** configurações e extensões em memória, compartilhadas pela janela (e depois pelo popup), com evento `Changed`. Toda alteração é gravada na hora. O evento pode chegar fora da thread de UI; os ViewModels usam `Dispatcher.UIThread.Post`.
+- **Salvar explícito nos editores, imediato na aba Geral:** extensão e provedor têm Salvar/Cancelar (para não gravar um prompt pela metade); atalho, tema e "iniciar com o sistema" gravam assim que mudam.
+- **Atalhos (`Hotkey`):** formato texto `Ctrl+Alt+Shift+Cmd+Tecla` (no Windows/Linux o modificador Meta aparece como `Win`). Exige um modificador, exceto F1–F24. Conflito detectado entre o atalho global e os atalhos das extensões ativas. Conflito com atalhos de outros apps só é detectável ao registrar (fase 3).
+- **Importação:** o arquivo exportado não leva provedor nem atalho; ao importar, uma barra pede o provedor antes de adicionar.
+- **Realce de `{{variáveis}}` sem dependência nova:** um `TextBox` com texto transparente e um `TextBlock` com a mesma fonte, quebra e margem por cima, desenhando as variáveis em `accent-ink` sobre `accent-soft`. Só a cor muda, para não desalinhar do texto real (conferido sobrepondo os dois).
+- **Seletor de ícones:** busca por partes do nome entre os 2.275 ícones do Lucide, mostrando no máximo 120 resultados para abrir rápido.
+- **Reordenar:** arrastando pela alça (ponteiro, sem a API de drag-and-drop) ou com Alt+↑/↓ na alça.
+- **Controles com `ControlTheme` próprio:** botão (primário, secundário, fantasma, perigo), interruptor e segmentado seguem `referencia-componentes.css` com tokens. Campos e combos mantêm o template do Fluent, com cores sobrescritas pelos tokens.
+- **Layout em colunas:** a pedido do usuário, a janela de configurações tem dois painéis arredondados (`radius-lg`) sobre `surface-100`: navegação em `surface-200` e conteúdo em `surface-100` com contorno `border-subtle`. Nenhum token novo.
+- **"Iniciar com o sistema" e "Pausar improve":** a opção é gravada e o estado de pausa existe no app, mas o efeito real (chave Run, LaunchAgent, desligar o atalho) vem com as integrações de cada SO (fases 3, 5 e 6).
+- **`IMPROVE_CONFIG_DIR`:** variável de ambiente que troca a pasta de configuração (testes manuais sem mexer na configuração real; instalação portátil).
+- **Dependências novas:** `Microsoft.Extensions.DependencyInjection` (previsto no plano) e `Microsoft.Extensions.Logging` (implementação do `ILogger` usado pelo Core; nenhum destino de log configurado ainda).
