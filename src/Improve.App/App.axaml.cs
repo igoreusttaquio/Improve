@@ -6,6 +6,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Improve.App.Resources;
+using Improve.App.Services;
 using Improve.App.ViewModels;
 using Improve.App.Views;
 using Improve.Core.Models;
@@ -15,20 +16,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Improve.App;
 
-public partial class App(IServiceProvider services) : Application
+public partial class App(IServiceProvider services, SingleInstance instance) : Application
 {
     private SettingsWindow? _settings;
-
-    /// <summary>Com o improve pausado, o atalho global não abre o popup (fase 3).</summary>
-    public bool IsPaused { get; private set; }
+    private FlowController? _flow;
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
     {
         var config = services.GetRequiredService<ConfigState>();
-        ApplyTheme(config.Settings.Theme);
-        config.Changed += (_, _) => Dispatcher.UIThread.Post(() => ApplyTheme(config.Settings.Theme));
+        var autostart = services.GetService<IAutostartService>();
+        ApplySettings(config, autostart);
+        config.Changed += (_, _) => Dispatcher.UIThread.Post(() => ApplySettings(config, autostart));
+
+        // Integrações de SO (por enquanto só no Windows).
+        _flow = services.GetService<FlowController>();
+        _flow?.Start();
+        instance.Listen(args => Dispatcher.UIThread.Post(() => OnSecondInstance(args)));
 
         UpdateTrayGlyph();
         if (PlatformSettings is { } settings)
@@ -36,12 +41,26 @@ public partial class App(IServiceProvider services) : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void ApplyTheme(ThemePreference theme) => RequestedThemeVariant = theme switch
+    private void ApplySettings(ConfigState config, IAutostartService? autostart)
     {
-        ThemePreference.Dark => ThemeVariant.Dark,
-        ThemePreference.Light => ThemeVariant.Light,
-        _ => ThemeVariant.Default,
-    };
+        RequestedThemeVariant = config.Settings.Theme switch
+        {
+            ThemePreference.Dark => ThemeVariant.Dark,
+            ThemePreference.Light => ThemeVariant.Light,
+            _ => ThemeVariant.Default,
+        };
+        if (autostart is not null && autostart.IsEnabled() != config.Settings.StartWithSystem)
+            autostart.SetEnabled(config.Settings.StartWithSystem);
+    }
+
+    // "improve --trigger" executa o atalho global; abrir o app de novo mostra as configurações.
+    private void OnSecondInstance(string[] args)
+    {
+        if (args.Contains("--trigger") && _flow is not null)
+            _ = _flow.TriggerAsync();
+        else
+            OnOpenSettings(null, EventArgs.Empty);
+    }
 
     // Glifo claro em barra escura e vice-versa. No macOS o glifo "mono" é usado como template.
     private void UpdateTrayGlyph()
@@ -68,9 +87,11 @@ public partial class App(IServiceProvider services) : Application
 
     private void OnTogglePause(object? sender, EventArgs e)
     {
-        IsPaused = !IsPaused;
+        if (_flow is null)
+            return;
+        _flow.IsPaused = !_flow.IsPaused;
         if (sender is NativeMenuItem item)
-            item.Header = IsPaused ? Strings.TrayResume : Strings.TrayPause;
+            item.Header = _flow.IsPaused ? Strings.TrayResume : Strings.TrayPause;
     }
 
     private void OnQuit(object? sender, EventArgs e)

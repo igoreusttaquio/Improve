@@ -51,3 +51,22 @@ Para não mexer na configuração real: `$env:IMPROVE_CONFIG_DIR = "$env:TEMP\im
 10. Geral: trocar o tema alterna a janela na hora; o atalho global aceita só combinações válidas.
 11. Fechar o app (Sair) e abrir de novo: tudo persiste.
 12. Bandeja → "Pausar improve" vira "Retomar improve".
+
+## Fase 3 — Integração Windows
+
+Preparação: provedor com chave válida, uma extensão em modo **Substituir** como a primeira da lista e, opcionalmente, um atalho próprio numa extensão. Antes de cada teste, copie um texto qualquer ("CLIP") para conferir que ele volta.
+
+Para cada app — Bloco de Notas, Word, Chrome (campo de texto e Gmail), VS Code, Slack/Teams, Windows Terminal:
+
+1. Selecionar um trecho e pressionar o atalho global (Ctrl+Shift+Space): o trecho é substituído pelo resultado (até a fase 4, o atalho global executa a primeira extensão ativa).
+2. Ctrl+Z no app desfaz a substituição.
+3. Colar (Ctrl+V): sai "CLIP", a área de transferência do usuário voltou intacta. Repetir com uma imagem copiada antes.
+4. Sem seleção: nada acontece e a área de transferência continua igual.
+5. Atalho próprio de uma extensão: executa direto aquela extensão.
+6. Durante o processamento, clicar em outra janela: nada é colado nela; o resultado fica na área de transferência (provisório até a fase 4).
+7. Bandeja → Pausar improve: o atalho passa a chegar ao app normalmente; Retomar volta a funcionar.
+8. Com a janela de configurações em foco, o atalho não dispara (dá para gravar o próprio atalho no campo).
+9. Rodar `improve.exe --trigger` com outro app em foco e um trecho selecionado: mesmo efeito do atalho. Abrir `improve.exe` de novo: abre as configurações da instância que já roda.
+10. Geral → Iniciar com o sistema: aparece/some o valor `improve` em `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
+
+Windows Terminal: Ctrl+C sem seleção envia interrupção ao processo; com seleção, copia. Testar sempre com seleção.

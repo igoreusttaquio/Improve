@@ -10,9 +10,17 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        // Instância única: um segundo processo (ex.: "improve --trigger") repassa os argumentos e sai.
+        using var instance = SingleInstance.TryAcquire();
+        if (instance is null)
+        {
+            SingleInstance.SendToRunning(args);
+            return;
+        }
+
         // A configuração é carregada antes da UI; ainda não há contexto de sincronização aqui.
         using var services = AppServices.BuildAsync().GetAwaiter().GetResult();
-        AppBuilder.Configure(() => new App(services))
+        AppBuilder.Configure(() => new App(services, instance))
             .UsePlatformDetect()
             .ConfigureFonts(fonts => fonts.AddFontCollection(new ImproveFontCollection()))
             .LogToTrace()
