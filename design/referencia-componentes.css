@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* improve — classes de referência dos componentes. Valores vêm dos tokens. */
+.imp { font-family: var(--font-sans); color: var(--ink); font-size: 14px; line-height: 20px; -webkit-font-smoothing: antialiased; }
+.imp svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
+
+/* Popup de ações */
+.imp-popup { width: 280px; padding: var(--space-2); background: var(--surface-glass); backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-popup); box-shadow: var(--shadow-popup); }
+.imp-search { display: flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-3) 10px; color: var(--ink-muted);
+  border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--space-1); font-size: 13px; }
+.imp-row { display: flex; align-items: center; gap: var(--space-2); padding: 7px var(--space-3); border-radius: var(--radius-md);
+  font-size: 13px; line-height: 18px; font-weight: 500; }
+.imp-row .imp-row-icon { color: var(--accent-ink); }
+.imp-row:hover { background: var(--surface-300); }
+.imp-row[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+.imp-row[aria-selected="true"] .imp-row-icon { color: var(--on-accent); }
+.imp-row .imp-kbd { margin-left: auto; }
+.imp-kbd { font: 500 11px/16px var(--font-sans); min-width: 18px; text-align: center; padding: 0 5px; border-radius: var(--radius-sm);
+  background: var(--surface-300); color: var(--ink-muted); }
+.imp-row[aria-selected="true"] .imp-kbd { background: rgba(22, 22, 20, 0.12); color: var(--on-accent); }
+.imp-foot { display: flex; gap: var(--space-3); padding: 8px var(--space-3) 4px; font-size: 12px; line-height: 16px; color: var(--ink-muted);
+  border-top: 1px solid var(--border-subtle); margin-top: var(--space-1); }
+
+/* Painel de sugestão */
+.imp-panel { width: 420px; background: var(--surface-glass); backdrop-filter: blur(24px) saturate(1.4); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-popup); box-shadow: var(--shadow-popup); overflow: hidden; }
+.imp-panel-head { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600; }
+.imp-panel-head .imp-row-icon { color: var(--accent-ink); }
+.imp-panel-body { padding: var(--space-4); max-height: 240px; overflow: auto; }
+.imp-panel-body.is-code { font: 400 13px/20px var(--font-mono); white-space: pre; }
+.imp-caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -2px; background: var(--accent-ink); margin-left: 1px; }
+.imp-refine { margin: 0 var(--space-4) var(--space-3); display: flex; align-items: center; gap: var(--space-2); padding: 7px var(--space-3);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-md); color: var(--ink-muted); font-size: 13px; background: var(--surface-200); }
+.imp-panel-foot { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-subtle); }
+.imp-panel-foot .imp-spacer { flex: 1; }
+
+/* Chips */
+.imp-chip { display: inline-flex; align-items: center; gap: var(--space-1); padding: 1px 8px; border-radius: var(--radius-pill);
+  font-size: 12px; line-height: 18px; font-weight: 500; background: var(--surface-300); color: var(--ink-muted); }
+.imp-chip.is-accent { background: var(--accent-soft); color: var(--ink); }
+
+/* Botões */
+.imp-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 var(--space-3); border-radius: var(--radius-md);
+  font: 500 13px/18px var(--font-sans); border: 1px solid transparent; cursor: pointer; background: none; color: var(--ink); }
+.imp-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.imp-btn.is-primary { background: var(--accent); color: var(--on-accent); }
+.imp-btn.is-primary:hover { filter: brightness(0.95); }
+.imp-btn.is-secondary { background: var(--surface-300); }
+.imp-btn.is-secondary:hover { border-color: var(--border-subtle); }
+.imp-btn.is-ghost:hover { background: var(--surface-300); }
+.imp-btn.is-danger { color: var(--danger); }
+.imp-btn.is-danger:hover { background: var(--surface-300); }
+.imp-btn .imp-kbd { margin-left: 2px; }
+.imp-btn.is-primary .imp-kbd { background: rgba(22, 22, 20, 0.12); color: var(--on-accent); }
+
+/* Cartão de extensão (configurações) */
+.imp-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); background: var(--surface-200);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); }
+.imp-tile { width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--ink); flex: none; }
+.imp-tile svg.lucide { width: 18px; height: 18px; }
+.imp-card-title { font-weight: 600; font-size: 14px; line-height: 20px; }
+.imp-card-meta { font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.imp-card .imp-spacer { flex: 1; }
+.imp-toggle { width: 34px; height: 20px; border-radius: var(--radius-pill); background: var(--accent); position: relative; flex: none; }
+.imp-toggle::after { content: ""; position: absolute; top: 3px; right: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--on-accent); }
+.imp-toggle.is-off { background: var(--surface-300); box-shadow: inset 0 0 0 1px var(--border-strong); }
+.imp-toggle.is-off::after { right: auto; left: 3px; background: var(--ink-muted); }
+
+/* Texto selecionado (demonstração) */
+.imp-doc { font-size: 14px; line-height: 22px; color: var(--ink-muted); max-width: 300px; }
+.imp-doc mark { background: var(--accent-soft); color: var(--ink); border-radius: 3px; padding: 1px 0; }
