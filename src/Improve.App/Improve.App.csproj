@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>improve</AssemblyName>
+    <RootNamespace>Improve.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\AppIcon\improve.ico</ApplicationIcon>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" Exclude="Assets\AppIcon\*.icns" />
+    <None Include="Assets\AppIcon\*.icns" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx"
+                      StronglyTypedLanguage="CSharp"
+                      StronglyTypedNamespace="Improve.App.Resources"
+                      StronglyTypedClassName="Strings"
+                      PublicClass="true"
+                      StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Improve.Core\Improve.Core.csproj" />
+    <ProjectReference Include="..\Improve.Platform\Improve.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

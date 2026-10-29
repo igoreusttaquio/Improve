@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:Improve.App.Controls"
+        xmlns:res="using:Improve.App.Resources"
+        x:Class="Improve.App.Views.SettingsWindow"
+        Title="{x:Static res:Strings.SettingsTitle}"
+        Icon="/Assets/AppIcon/improve-256.png"
+        Width="720" Height="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Surface100Brush}"
+        Foreground="{DynamicResource InkBrush}">
+  <!-- Esqueleto da fase 0: confirma fontes, ícones e tokens nos dois temas. A janela real vem na fase 2. -->
+  <StackPanel Margin="{StaticResource Space8Thickness}" Spacing="{StaticResource Space2}">
+    <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space3}">
+      <Border Width="36" Height="36" CornerRadius="{StaticResource RadiusMd}" Background="{DynamicResource AccentSoftBrush}">
+        <c:LucideIcon Icon="wand-sparkles" Size="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+      <TextBlock Classes="display" Text="improve" VerticalAlignment="Center" />
+    </StackPanel>
+    <TextBlock Classes="body" Foreground="{DynamicResource InkMutedBrush}" Text="{x:Static res:Strings.AppTagline}" />
+  </StackPanel>
+</Window>
