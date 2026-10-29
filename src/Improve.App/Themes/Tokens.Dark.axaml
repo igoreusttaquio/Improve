@@ -1,0 +1,21 @@
+<!-- Gerado por tools/gen-tokens a partir de design/tokens.json. Não edite à mão. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <SolidColorBrush x:Key="Surface100Brush" Color="#111110" />
+  <SolidColorBrush x:Key="Surface200Brush" Color="#1A1A18" />
+  <SolidColorBrush x:Key="Surface300Brush" Color="#242422" />
+  <SolidColorBrush x:Key="SurfaceGlassBrush" Color="#D11A1A18" />
+  <SolidColorBrush x:Key="BorderSubtleBrush" Color="#33332F" />
+  <SolidColorBrush x:Key="BorderStrongBrush" Color="#6E6E67" />
+  <SolidColorBrush x:Key="InkBrush" Color="#F2F2EC" />
+  <SolidColorBrush x:Key="InkMutedBrush" Color="#A3A39A" />
+  <SolidColorBrush x:Key="AccentBrush" Color="#C5F03C" />
+  <SolidColorBrush x:Key="OnAccentBrush" Color="#161614" />
+  <SolidColorBrush x:Key="AccentInkBrush" Color="#D2F566" />
+  <SolidColorBrush x:Key="AccentSoftBrush" Color="#29C5F03C" />
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#C5F03C" />
+  <SolidColorBrush x:Key="SuccessBrush" Color="#5CC98A" />
+  <SolidColorBrush x:Key="WarningBrush" Color="#F2B84B" />
+  <SolidColorBrush x:Key="DangerBrush" Color="#FF7A70" />
+  <BoxShadows x:Key="ShadowPopup">0 16 40 0 #8C000000, 0 0 0 1 #0FFFFFFF</BoxShadows>
+</ResourceDictionary>

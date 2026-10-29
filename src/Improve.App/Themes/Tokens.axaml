@@ -1,0 +1,23 @@
+<!-- Gerado por tools/gen-tokens a partir de design/tokens.json. Não edite à mão. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Double x:Key="Space1">4</x:Double>
+  <Thickness x:Key="Space1Thickness">4</Thickness>
+  <x:Double x:Key="Space2">8</x:Double>
+  <Thickness x:Key="Space2Thickness">8</Thickness>
+  <x:Double x:Key="Space3">12</x:Double>
+  <Thickness x:Key="Space3Thickness">12</Thickness>
+  <x:Double x:Key="Space4">16</x:Double>
+  <Thickness x:Key="Space4Thickness">16</Thickness>
+  <x:Double x:Key="Space6">24</x:Double>
+  <Thickness x:Key="Space6Thickness">24</Thickness>
+  <x:Double x:Key="Space8">32</x:Double>
+  <Thickness x:Key="Space8Thickness">32</Thickness>
+  <CornerRadius x:Key="RadiusSm">6</CornerRadius>
+  <CornerRadius x:Key="RadiusMd">10</CornerRadius>
+  <CornerRadius x:Key="RadiusLg">14</CornerRadius>
+  <CornerRadius x:Key="RadiusPopup">16</CornerRadius>
+  <CornerRadius x:Key="RadiusPill">999</CornerRadius>
+  <FontFamily x:Key="FontSans">fonts:Improve#Inter, Segoe UI Variable, SF Pro Text</FontFamily>
+  <FontFamily x:Key="FontMono">fonts:Improve#JetBrains Mono, Cascadia Code, SF Mono</FontFamily>
+</ResourceDictionary>
