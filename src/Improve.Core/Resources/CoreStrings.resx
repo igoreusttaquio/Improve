@@ -39,6 +39,12 @@
   <data name="ErrorNoProvider" xml:space="preserve">
     <value>A extensão "{0}" não tem provedor configurado. Abra Configurações &gt; Extensões.</value>
   </data>
+  <data name="GlobalHotkeyOwner" xml:space="preserve">
+    <value>atalho global</value>
+  </data>
+  <data name="ImportInvalidFile" xml:space="preserve">
+    <value>O arquivo não é uma exportação de extensões do improve.</value>
+  </data>
   <data name="ErrorNoModel" xml:space="preserve">
     <value>Escolha um modelo para a extensão "{0}" em Configurações &gt; Extensões.</value>
   </data>
