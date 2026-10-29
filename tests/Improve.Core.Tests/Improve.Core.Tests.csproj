@@ -3,8 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <!-- Fase 0: o Core ainda não tem testes (código 8 = nenhum teste). Remover na fase 1. -->
-    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
   </PropertyGroup>
 
   <ItemGroup>

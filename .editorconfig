@@ -387,3 +387,12 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+
+# improve: regras do projeto
+[*.cs]
+# Strings vêm de .resx e variam com a cultura; cachear CompositeFormat não compensa para mensagens de UI.
+dotnet_diagnostic.CA1863.severity = none
+
+[tests/**.cs]
+# Nomes de teste usam sublinhados para ler como frases.
+dotnet_diagnostic.CA1707.severity = none

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SettingsNewerVersion" xml:space="preserve">
+    <value>{0} foi criado por uma versão mais nova do improve. Atualize o app para continuar.</value>
+  </data>
+  <data name="ErrorInvalidKey" xml:space="preserve">
+    <value>Chave de API inválida para {0}. Abra Configurações &gt; Provedores.</value>
+  </data>
+  <data name="ErrorMissingKey" xml:space="preserve">
+    <value>Nenhuma chave de API configurada para {0}. Abra Configurações &gt; Provedores.</value>
+  </data>
+  <data name="ErrorRateLimited" xml:space="preserve">
+    <value>Limite de uso atingido em {0}. Tente de novo em instantes.</value>
+  </data>
+  <data name="ErrorUnavailable" xml:space="preserve">
+    <value>{0} está indisponível no momento. Tente de novo em instantes.</value>
+  </data>
+  <data name="ErrorNoNetwork" xml:space="preserve">
+    <value>Sem conexão com {0}. Verifique sua internet e o endereço do provedor.</value>
+  </data>
+  <data name="ErrorBadRequest" xml:space="preserve">
+    <value>{0} recusou o pedido: {1}</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Erro inesperado em {0}. Tente de novo.</value>
+  </data>
+  <data name="ErrorNoProvider" xml:space="preserve">
+    <value>A extensão "{0}" não tem provedor configurado. Abra Configurações &gt; Extensões.</value>
+  </data>
+  <data name="ErrorNoModel" xml:space="preserve">
+    <value>Escolha um modelo para a extensão "{0}" em Configurações &gt; Extensões.</value>
+  </data>
+</root>

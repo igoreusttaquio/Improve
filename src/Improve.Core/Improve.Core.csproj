@@ -4,4 +4,16 @@
     <InternalsVisibleTo Include="Improve.Core.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\CoreStrings.resx"
+                      StronglyTypedLanguage="CSharp"
+                      StronglyTypedNamespace="Improve.Core.Resources"
+                      StronglyTypedClassName="CoreStrings"
+                      StronglyTypedFileName="$(IntermediateOutputPath)CoreStrings.Designer.cs" />
+  </ItemGroup>
+
 </Project>
