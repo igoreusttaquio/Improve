@@ -23,6 +23,9 @@ public sealed partial class ExtensionCardViewModel(Extension extension, string m
     [ObservableProperty]
     private bool _enabled = extension.Enabled;
 
+    [ObservableProperty]
+    private bool _isDragging;
+
     partial void OnEnabledChanged(bool value) => _ = setEnabled(this, value);
 
     public static string ModeText(OutputMode mode) => mode switch

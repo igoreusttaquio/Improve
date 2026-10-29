@@ -12,9 +12,21 @@ namespace Improve.App.Views;
 
 public partial class ExtensionsPage : UserControl
 {
-    private ExtensionCardViewModel? _dragging;
+    private const double DragThreshold = 4;
 
-    public ExtensionsPage() => InitializeComponent();
+    private ExtensionCardViewModel? _pressed;
+    private Point _pressPoint;
+    private bool _dragging;
+    private bool _justDragged;
+    private List<double> _slots = [];
+
+    public ExtensionsPage()
+    {
+        InitializeComponent();
+        CardList.AddHandler(PointerPressedEvent, OnCardPointerPressed, RoutingStrategies.Tunnel, handledEventsToo: true);
+        CardList.AddHandler(PointerMovedEvent, OnCardPointerMoved, RoutingStrategies.Tunnel, handledEventsToo: true);
+        CardList.AddHandler(PointerReleasedEvent, OnCardPointerReleased, RoutingStrategies.Tunnel, handledEventsToo: true);
+    }
 
     private ExtensionsPageViewModel ViewModel => (ExtensionsPageViewModel)DataContext!;
 
@@ -49,49 +61,74 @@ public partial class ExtensionsPage : UserControl
         await stream.WriteAsync(ViewModel.Export());
     }
 
-    // Clique no cartão abre o editor, exceto quando o clique foi no interruptor ou na alça.
+    // Clique no cartão abre o editor, exceto quando foi no interruptor, na alça ou no fim de um arraste.
     private void OnCardTapped(object? sender, TappedEventArgs e)
     {
+        if (_justDragged)
+        {
+            _justDragged = false;
+            return;
+        }
         if (e.Source is Visual source && source.FindAncestorOfType<ToggleButton>(includeSelf: true) is null
             && source.FindAncestorOfType<Button>(includeSelf: true) is null
             && sender is Control { DataContext: ExtensionCardViewModel card })
             ViewModel.EditCommand.Execute(card);
     }
 
-    private void OnGripPressed(object? sender, PointerPressedEventArgs e)
+    // Arraste pelo cartão inteiro. Os eventos são ouvidos no túnel e mesmo já tratados, porque
+    // botões (como a alça) consomem o PointerPressed. O arraste só começa depois de DragThreshold.
+    private void OnCardPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is Control { DataContext: ExtensionCardViewModel card } grip && e.GetCurrentPoint(grip).Properties.IsLeftButtonPressed)
-        {
-            _dragging = card;
-            e.Pointer.Capture(grip);
-            e.Handled = true;
-        }
+        if (!e.GetCurrentPoint(CardList).Properties.IsLeftButtonPressed
+            || e.Source is not Control { DataContext: ExtensionCardViewModel card } source
+            || source.FindAncestorOfType<ToggleButton>(includeSelf: true) is not null)
+            return;
+        _pressed = card;
+        _pressPoint = e.GetPosition(CardList);
     }
 
     // Reordena ao vivo: o cartão vai para a posição cujo centro o ponteiro já passou.
-    private void OnGripMoved(object? sender, PointerEventArgs e)
+    private void OnCardPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (_dragging is null)
+        if (_pressed is null)
             return;
-        var y = e.GetPosition(CardList).Y;
-        var target = 0;
-        foreach (var container in CardList.GetRealizedContainers())
+        var position = e.GetPosition(CardList);
+        if (!_dragging)
         {
-            if (container.DataContext != _dragging && container.Bounds.Center.Y < y)
-                target++;
+            if (Math.Abs(position.Y - _pressPoint.Y) < DragThreshold && Math.Abs(position.X - _pressPoint.X) < DragThreshold)
+                return;
+            _dragging = true;
+            _pressed.IsDragging = true;
+            e.Pointer.Capture(CardList);
+            // Centros dos espaços no início do arraste: durante o arraste o layout ainda não
+            // refletiu as trocas, então os Bounds atuais não servem.
+            _slots = [.. CardList.GetRealizedContainers().Select(c => c.Bounds.Center.Y).Order()];
         }
-        ViewModel.MoveLive(ViewModel.Cards.IndexOf(_dragging), Math.Min(target, ViewModel.Cards.Count - 1));
+
+        // O cartão vai para o espaço cujo centro está mais perto do ponteiro.
+        var target = 0;
+        for (var i = 1; i < _slots.Count; i++)
+        {
+            if (Math.Abs(_slots[i] - position.Y) < Math.Abs(_slots[target] - position.Y))
+                target = i;
+        }
+        ViewModel.MoveLive(ViewModel.Cards.IndexOf(_pressed), target);
+        e.Handled = true;
     }
 
-    private async void OnGripReleased(object? sender, PointerReleasedEventArgs e)
+    private async void OnCardPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (_dragging is null)
+        var wasDragging = _dragging;
+        _pressed?.IsDragging = false;
+        _pressed = null;
+        _dragging = false;
+        if (!wasDragging)
             return;
-        _dragging = null;
+        _justDragged = true;
         e.Pointer.Capture(null);
+        e.Handled = true;
         await ViewModel.CommitOrderAsync();
     }
-
     // Alternativa pelo teclado: Alt+↑/↓ na alça.
     private async void OnGripKeyDown(object? sender, KeyEventArgs e)
     {
