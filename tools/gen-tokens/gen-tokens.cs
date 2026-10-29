@@ -83,6 +83,17 @@ static string SharedDictionary(JsonElement root)
         var key = Pascal(token.GetProperty("name").GetString()!);
         sb.Append($"  <CornerRadius x:Key=\"{key}\">{Px(token.GetProperty("value").GetString()!)}</CornerRadius>\n");
     }
+    if (root.TryGetProperty("motion", out var motion))
+    {
+        foreach (var token in motion.GetProperty("tokens").EnumerateArray())
+        {
+            var key = Pascal(token.GetProperty("name").GetString()!);
+            var value = token.GetProperty("value").GetString()!;
+            sb.Append(value.StartsWith("cubic-bezier", StringComparison.Ordinal)
+                ? $"  <SplineEasing x:Key=\"{key}\" {ToSpline(value)} />\n"
+                : $"  <x:TimeSpan x:Key=\"{key}\">{TimeSpan.FromMilliseconds(double.Parse(value.Replace("ms", ""), CultureInfo.InvariantCulture)):c}</x:TimeSpan>\n");
+        }
+    }
     foreach (var family in root.GetProperty("type").GetProperty("families").EnumerateObject())
         sb.Append($"  <FontFamily x:Key=\"Font{Pascal(family.Name)}\">{ToFontFamily(family.Value.GetString()!)}</FontFamily>\n");
     return Footer(sb, "ResourceDictionary");
@@ -159,6 +170,13 @@ static string ToBoxShadows(string css)
         return $"{string.Join(' ', lengths)} {ToAvaloniaColor(m.Groups[2].Value)}";
     });
     return string.Join(", ", shadows);
+}
+
+// "cubic-bezier(x1, y1, x2, y2)" → atributos do SplineEasing.
+static string ToSpline(string css)
+{
+    var p = css["cubic-bezier(".Length..^1].Split(',', StringSplitOptions.TrimEntries);
+    return $"X1=\"{p[0]}\" Y1=\"{p[1]}\" X2=\"{p[2]}\" Y2=\"{p[3]}\"";
 }
 
 // Inter e JetBrains Mono vêm embutidas (coleção "fonts:Improve"); nomes genéricos do CSS são descartados.

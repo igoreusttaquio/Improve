@@ -34,7 +34,15 @@
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+            <ContentPresenter.Transitions>
+              <Transitions>
+                <BrushTransition Property="Background" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+                <BrushTransition Property="BorderBrush" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+                <DoubleTransition Property="Opacity" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+              </Transitions>
+            </ContentPresenter.Transitions>
+          </ContentPresenter>
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -87,18 +95,33 @@
                   BorderBrush="{DynamicResource FocusRingBrush}" IsVisible="False" />
           <Border Name="PART_Track" CornerRadius="{StaticResource RadiusPill}"
                   Background="{DynamicResource Surface300Brush}"
-                  BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1" />
+                  BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1">
+            <Border.Transitions>
+              <Transitions>
+                <BrushTransition Property="Background" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+                <BrushTransition Property="BorderBrush" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+              </Transitions>
+            </Border.Transitions>
+          </Border>
           <Ellipse Name="PART_Knob" Width="14" Height="14" Margin="3,0" HorizontalAlignment="Left"
-                   Fill="{DynamicResource InkMutedBrush}" />
+                   Fill="{DynamicResource InkMutedBrush}" RenderTransform="translateX(0px)">
+            <Ellipse.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+                <BrushTransition Property="Fill" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+              </Transitions>
+            </Ellipse.Transitions>
+          </Ellipse>
         </Panel>
       </ControlTemplate>
     </Setter>
     <Style Selector="^:checked /template/ Border#PART_Track">
       <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
     </Style>
+    <!-- 34 de largura − 2×3 de margem − 14 do botão = 14 de deslocamento. -->
     <Style Selector="^:checked /template/ Ellipse#PART_Knob">
-      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="RenderTransform" Value="translateX(14px)" />
       <Setter Property="Fill" Value="{DynamicResource OnAccentBrush}" />
     </Style>
     <Style Selector="^:focus-visible /template/ Border#PART_FocusRing">
@@ -115,7 +138,12 @@
     <Setter Property="Padding" Value="12,0" />
     <Setter Property="MinHeight" Value="28" />
     <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Template">
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+        <BrushTransition Property="Foreground" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+      </Transitions>
+    </Setter>    <Setter Property="Template">
       <ControlTemplate>
         <Panel>
           <Border Name="PART_FocusRing" Margin="-3" BorderThickness="2" CornerRadius="{StaticResource RadiusMd}"
@@ -151,7 +179,12 @@
     <Setter Property="MinHeight" Value="34" />
     <Setter Property="Margin" Value="0,0,0,2" />
     <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Template">
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+        <BrushTransition Property="Foreground" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+      </Transitions>
+    </Setter>    <Setter Property="Template">
       <ControlTemplate>
         <ContentPresenter Name="PART_ContentPresenter"
                           Background="{TemplateBinding Background}"

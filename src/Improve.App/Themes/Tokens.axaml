@@ -18,6 +18,8 @@
   <CornerRadius x:Key="RadiusLg">14</CornerRadius>
   <CornerRadius x:Key="RadiusPopup">16</CornerRadius>
   <CornerRadius x:Key="RadiusPill">999</CornerRadius>
+  <x:TimeSpan x:Key="MotionFast">00:00:00.1200000</x:TimeSpan>
+  <SplineEasing x:Key="MotionEase" X1="0.215" Y1="0.61" X2="0.355" Y2="1" />
   <FontFamily x:Key="FontSans">fonts:Improve#Inter, Segoe UI Variable, SF Pro Text</FontFamily>
   <FontFamily x:Key="FontMono">fonts:Improve#JetBrains Mono, Cascadia Code, SF Mono</FontFamily>
 </ResourceDictionary>

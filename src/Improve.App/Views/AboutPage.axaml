@@ -4,7 +4,7 @@
              xmlns:res="using:Improve.App.Resources"
              x:Class="Improve.App.Views.AboutPage"
              x:DataType="vm:AboutPageViewModel">
-  <ScrollViewer>
+  <ScrollViewer Classes="enter">
     <Grid Margin="32,24">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" MaxWidth="560" />
