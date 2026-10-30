@@ -39,6 +39,9 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     public static partial nint SetClipboardData(uint format, nint hMem);
 
+    [LibraryImport("user32.dll")]
+    public static partial uint GetClipboardSequenceNumber();
+
     [LibraryImport("kernel32.dll", SetLastError = true)]
     public static partial nint GlobalAlloc(uint flags, nuint bytes);
 
@@ -88,6 +91,52 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool ShowWindow(nint hWnd, int cmdShow);
+
+    // Teclado.
+    public const uint INPUT_KEYBOARD = 1;
+    public const uint KEYEVENTF_KEYUP = 0x0002;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct INPUT
+    {
+        public uint Type;
+        public InputUnion Data;
+    }
+
+    // O tamanho da união é o do maior membro (MOUSEINPUT); o SendInput confere o tamanho da estrutura.
+    [StructLayout(LayoutKind.Explicit)]
+    public struct InputUnion
+    {
+        [FieldOffset(0)] public MOUSEINPUT Mouse;
+        [FieldOffset(0)] public KEYBDINPUT Keyboard;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MOUSEINPUT
+    {
+        public int Dx;
+        public int Dy;
+        public uint MouseData;
+        public uint Flags;
+        public uint Time;
+        public nint ExtraInfo;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct KEYBDINPUT
+    {
+        public ushort VirtualKey;
+        public ushort ScanCode;
+        public uint Flags;
+        public uint Time;
+        public nint ExtraInfo;
+    }
+
+    [LibraryImport("user32.dll", SetLastError = true)]
+    public static partial uint SendInput(uint count, [In] INPUT[] inputs, int size);
+
+    [LibraryImport("user32.dll")]
+    public static partial short GetAsyncKeyState(int virtualKey);
 
     // Cursor.
     [LibraryImport("user32.dll")]

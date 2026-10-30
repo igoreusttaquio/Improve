@@ -32,11 +32,16 @@ public sealed class ExtensionRunner(ISelectionService selection, IFocusService f
         Generator.RefineAsync(session, instruction, onChunk, ct);
 
     /// <summary>Passo 7a: volta ao app de origem e cola, só se a janela em foco não mudou.</summary>
-    public async Task<ApplyOutcome> ApplyAsync(RunSession session, CancellationToken ct)
+    public Task<ApplyOutcome> ApplyAsync(RunSession session, CancellationToken ct) => ApplyAsync(session, null, ct);
+
+    /// <param name="afterFocusRestored">Chamado com o app de origem já em foco, antes de colar (ex.: esconder o popup).</param>
+    public async Task<ApplyOutcome> ApplyAsync(RunSession session, Func<Task>? afterFocusRestored, CancellationToken ct)
     {
         var result = session.Result ?? throw new InvalidOperationException("Não há resultado para aplicar.");
         if (session.Capture.Focus is not { } target || !await focus.RestoreAsync(target, ct).ConfigureAwait(false))
             return ApplyOutcome.WindowChanged;
+        if (afterFocusRestored is not null)
+            await afterFocusRestored().ConfigureAwait(false);
         await selection.PasteAsync(result, ct).ConfigureAwait(false);
         return ApplyOutcome.Applied;
     }

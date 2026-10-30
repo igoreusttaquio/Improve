@@ -14,6 +14,8 @@ public sealed class FakeDesktop : IClipboard, IKeyboard
     /// <summary>Executado logo depois do colar simulado (para simular o usuário copiando algo no meio-tempo).</summary>
     public Action? AfterPaste { get; set; }
 
+    public Action? AfterCopy { get; set; }
+
     public Task<ClipboardSnapshot> SnapshotAsync(CancellationToken ct)
     {
         Log.Add("snapshot");
@@ -27,7 +29,16 @@ public sealed class FakeDesktop : IClipboard, IKeyboard
         return Task.CompletedTask;
     }
 
-    public Task<string?> GetTextAsync(CancellationToken ct) => Task.FromResult(Text);
+    /// <summary>Quando definido, simula o contador de mudanças do SO (cada gravação incrementa).</summary>
+    public long? ChangeCount { get; set; }
+
+    public int TextReads { get; private set; }
+
+    public Task<string?> GetTextAsync(CancellationToken ct)
+    {
+        TextReads++;
+        return Task.FromResult(Text);
+    }
 
     public Task SetTextAsync(string text, CancellationToken ct)
     {
@@ -46,6 +57,7 @@ public sealed class FakeDesktop : IClipboard, IKeyboard
         Log.Add("copy");
         if (Selection is not null)
             Text = Selection;
+        AfterCopy?.Invoke();
         return Task.CompletedTask;
     }
 

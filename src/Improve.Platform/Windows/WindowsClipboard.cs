@@ -62,6 +62,8 @@ public sealed class WindowsClipboard : IClipboard
         return Task.CompletedTask;
     }
 
+    public long? ChangeCount => GetClipboardSequenceNumber();
+
     public Task ClearAsync(CancellationToken ct)
     {
         WithClipboard(EmptyClipboard);

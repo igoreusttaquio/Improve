@@ -19,14 +19,22 @@ public sealed class ClipboardSelectionService(IClipboard clipboard, IKeyboard ke
     {
         var previous = await clipboard.SnapshotAsync(ct).ConfigureAwait(false);
         await clipboard.ClearAsync(ct).ConfigureAwait(false);
+        var cleared = clipboard.ChangeCount;
         await keyboard.SendCopyAsync(ct).ConfigureAwait(false);
 
         string? text = null;
         var start = _time.GetTimestamp();
         while (true)
         {
-            text = await clipboard.GetTextAsync(ct).ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(text) || _time.GetElapsedTime(start) >= _timings.CaptureTimeout)
+            // Com contador de mudanças, só abre a área de transferência quando ela mudou: abrir a cada
+            // volta pode atrapalhar o app de origem justamente enquanto ele grava a cópia.
+            if (cleared is null || clipboard.ChangeCount != cleared)
+            {
+                text = await clipboard.GetTextAsync(ct).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(text))
+                    break;
+            }
+            if (_time.GetElapsedTime(start) >= _timings.CaptureTimeout)
                 break;
             await Task.Delay(_timings.PollInterval, _time, ct).ConfigureAwait(false);
         }

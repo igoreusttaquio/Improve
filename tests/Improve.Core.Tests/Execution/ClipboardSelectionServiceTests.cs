@@ -35,6 +35,32 @@ public class ClipboardSelectionServiceTests
     }
 
     [Fact]
+    public async Task Capture_with_change_count_does_not_open_clipboard_while_nothing_changed()
+    {
+        var desktop = new FakeDesktop { Text = "antes", Selection = null, ChangeCount = 7 };
+        var service = new ClipboardSelectionService(desktop, desktop, Fast);
+
+        var capture = await service.CaptureAsync(Ct);
+
+        Assert.Null(capture.Text);
+        // Só a conferência final antes de restaurar; nenhuma leitura durante a espera.
+        Assert.Equal(1, desktop.TextReads);
+    }
+
+    [Fact]
+    public async Task Capture_with_change_count_reads_once_the_copy_arrives()
+    {
+        var desktop = new FakeDesktop { Text = "antes", Selection = "selecionado", ChangeCount = 7 };
+        desktop.AfterCopy = () => desktop.ChangeCount++;
+        var service = new ClipboardSelectionService(desktop, desktop, Fast);
+
+        var capture = await service.CaptureAsync(Ct);
+
+        Assert.Equal("selecionado", capture.Text);
+        Assert.Equal("antes", desktop.Text);
+    }
+
+    [Fact]
     public async Task Paste_puts_result_pastes_and_restores_the_previous_clipboard()
     {
         var desktop = new FakeDesktop { Text = "do usuário" };

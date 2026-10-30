@@ -51,7 +51,7 @@ public sealed class WindowsFocusService : IFocusService
 
     // O Windows só deixa trocar o foco quem recebeu a última entrada; ligar a fila de entrada à da
     // janela em foco contorna essa trava.
-    private static void ForceForeground(nint window)
+    internal static void ForceForeground(nint window)
     {
         var foregroundThread = GetWindowThreadProcessId(GetForegroundWindow(), out _);
         var ownThread = GetCurrentThreadId();

@@ -29,6 +29,12 @@ public interface ICursorService
     (int X, int Y) GetPosition();
 }
 
+/// <summary>Traz uma janela do improve para o primeiro plano, mesmo quando o SO trava a troca de foco.</summary>
+public interface IWindowActivator
+{
+    void Activate(nint windowHandle);
+}
+
 /// <summary>Iniciar com o sistema.</summary>
 public interface IAutostartService
 {

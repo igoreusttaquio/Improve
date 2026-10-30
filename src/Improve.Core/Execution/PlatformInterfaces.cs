@@ -11,6 +11,12 @@ public interface IClipboard
     Task<string?> GetTextAsync(CancellationToken ct);
     Task SetTextAsync(string text, CancellationToken ct);
     Task ClearAsync(CancellationToken ct);
+
+    /// <summary>
+    /// Contador que muda a cada alteração, lido sem abrir a área de transferência (no Windows,
+    /// GetClipboardSequenceNumber). <c>null</c> se o SO não oferecer: aí a espera lê o texto.
+    /// </summary>
+    long? ChangeCount => null;
 }
 
 /// <summary>Simulação de teclas no app em foco.</summary>
