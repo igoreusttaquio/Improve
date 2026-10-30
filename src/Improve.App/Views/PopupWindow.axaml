@@ -140,12 +140,18 @@
 
         <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16">
           <Panel>
-            <SelectableTextBlock Classes="body" Classes.code="{Binding IsCode}" TextWrapping="Wrap" IsVisible="{Binding !HasError}">
-              <Run Text="{Binding Output}" />
-              <InlineUIContainer BaselineAlignment="Center">
-                <Border Classes="caret" IsVisible="{Binding IsStreaming}" />
-              </InlineUIContainer>
-            </SelectableTextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsWaiting}">
+              <c:LucideIcon Classes="spin" Icon="loader-circle" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
+              <TextBlock Classes="body muted" Text="{x:Static res:Strings.PopupWaiting}" VerticalAlignment="Center" />
+            </StackPanel>
+            <Panel IsVisible="{Binding !IsWaiting}">
+              <SelectableTextBlock Classes="body" Classes.code="{Binding IsCode}" TextWrapping="Wrap" IsVisible="{Binding !HasError}">
+                <Run Text="{Binding Output}" />
+                <InlineUIContainer BaselineAlignment="Center">
+                  <Border Classes="caret" IsVisible="{Binding IsStreaming}" />
+                </InlineUIContainer>
+              </SelectableTextBlock>
+            </Panel>
             <StackPanel Spacing="12" IsVisible="{Binding HasError}">
               <TextBlock Classes="body danger" Text="{Binding Error}" TextWrapping="Wrap" />
               <Button HorizontalAlignment="Left" Command="{Binding OpenSettingsCommand}">

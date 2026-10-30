@@ -67,7 +67,7 @@ public sealed partial class PopupViewModel : ObservableObject
     [ObservableProperty] private string _output = "";
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanAct))]
+    [NotifyPropertyChangedFor(nameof(CanAct), nameof(IsWaiting))]
     private bool _isStreaming;
 
     [ObservableProperty]
@@ -84,7 +84,14 @@ public sealed partial class PopupViewModel : ObservableObject
     /// <summary>Aplicar/Copiar/Refinar só com um resultado completo.</summary>
     public bool CanAct => !IsStreaming && Error is null && Output.Length > 0;
 
-    partial void OnOutputChanged(string value) => OnPropertyChanged(nameof(CanAct));
+    /// <summary>Gerando, mas o primeiro pedaço ainda não chegou: mostra o indicador de espera.</summary>
+    public bool IsWaiting => IsStreaming && Output.Length == 0;
+
+    partial void OnOutputChanged(string value)
+    {
+        OnPropertyChanged(nameof(CanAct));
+        OnPropertyChanged(nameof(IsWaiting));
+    }
 
     public PopupItem? Selected => Items.FirstOrDefault(i => i.IsSelected);
 

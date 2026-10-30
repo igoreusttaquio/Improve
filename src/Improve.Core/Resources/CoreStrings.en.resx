@@ -52,13 +52,13 @@
     <value>Improve message</value>
   </data>
   <data name="ExampleImprovePrompt" xml:space="preserve">
-    <value>Rewrite the message to be clear, friendly and error-free, keeping its language and tone.</value>
+    <value>Rewrite the message to be clear, friendly and error-free, keeping its language, tone and every piece of information, greetings included.</value>
   </data>
   <data name="ExampleFormalName" xml:space="preserve">
     <value>Make formal</value>
   </data>
   <data name="ExampleFormalPrompt" xml:space="preserve">
-    <value>Rewrite the text in a formal, professional tone, keeping its meaning and language.</value>
+    <value>Rewrite the text in a formal, professional tone, keeping its meaning, language and every piece of information. Adapt greetings and casual expressions to the formal tone instead of removing them.</value>
   </data>
   <data name="ExampleTranslateName" xml:space="preserve">
     <value>Translate to Spanish</value>

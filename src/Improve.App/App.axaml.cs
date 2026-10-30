@@ -16,8 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Improve.App;
 
-public partial class App(IServiceProvider services, SingleInstance instance) : Application
+public partial class App(IServiceProvider services, SingleInstance instance, string[] args) : Application
 {
+    /// <summary>Argumento usado pelo início automático com o sistema: abre só na bandeja.</summary>
+    public const string BackgroundArgument = "--background";
+
     private SettingsWindow? _settings;
     private FlowController? _flow;
     private LanguagePreference _language;
@@ -40,6 +43,10 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
             _flow.Start();
         }
         instance.Listen(args => Dispatcher.UIThread.Post(() => OnSecondInstance(args)));
+
+        // Aberto pelo usuário: mostra as configurações (senão parece que nada abriu). Pelo autostart: só a bandeja.
+        if (!args.Contains(BackgroundArgument))
+            OpenSettings(createExtension: false);
 
         UpdateTrayGlyph();
         if (PlatformSettings is { } settings)

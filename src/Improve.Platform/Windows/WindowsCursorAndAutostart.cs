@@ -24,7 +24,8 @@ public sealed class WindowsAutostart : IAutostartService
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
     private const string ValueName = "improve";
 
-    private static string Command => $"\"{Environment.ProcessPath}\"";
+    // --background: iniciado com o Windows, o app fica só na bandeja.
+    private static string Command => $"\"{Environment.ProcessPath}\" --background";
 
     public bool IsEnabled()
     {

@@ -79,8 +79,9 @@
             <StackPanel Grid.Column="1">
               <TextBlock Classes="field" Text="{x:Static res:Strings.FieldModel}" />
               <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
-                <AutoCompleteBox Text="{Binding Model}" ItemsSource="{Binding Models}" FilterMode="Contains"
-                                 MinimumPrefixLength="0" PlaceholderText="{x:Static res:Strings.ModelPlaceholder}" />
+                <AutoCompleteBox Name="ModelBox" Text="{Binding Model}" ItemsSource="{Binding Models}" FilterMode="Contains"
+                                 MinimumPrefixLength="0" MaxDropDownHeight="280" GotFocus="OnModelFocused"
+                                 PlaceholderText="{x:Static res:Strings.ModelPlaceholder}" />
                 <Button Grid.Column="1" Classes="ghost icon" Command="{Binding LoadModelsCommand}" ToolTip.Tip="{x:Static res:Strings.LoadModels}">
                   <c:LucideIcon Icon="refresh-cw" />
                 </Button>

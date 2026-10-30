@@ -85,3 +85,12 @@ Decisões tomadas durante a implementação que o `PLANO.md` não cobria ou que 
 - **Giro do indicador** de 0,9 s: animação contínua, não uma transição, por isso fora do token `motion-fast`.
 - **Log em arquivo opcional:** `IMPROVE_LOG=1` grava `improve.log` na pasta de configuração, só com metadados (tipo de atalho, tamanhos, tempos, provedor/modelo).
 - **Tipografia gerada com `:is(TextBlock)`:** para os estilos `body`, `code` etc. valerem também em `SelectableTextBlock` (resultado do painel).
+
+## Ajustes após o primeiro uso real (DeepSeek)
+
+- **Campo de modelo:** volta a ser `AutoCompleteBox` (filtra ao digitar, aceita ID livre), mas abre a lista completa ao receber o foco, e a legenda diz "clique no campo para ver a lista". O `ComboBox` editável do Fluent foi testado e descartado: a caixa de texto interna fica com moldura própria e escolher um item não atualizava o texto ligado ao modelo.
+- **Abrir mostra a janela:** aberto pelo usuário, o app abre as configurações (só a bandeja dava a impressão de que nada tinha aberto). O início automático com o Windows usa `--background` e fica só na bandeja.
+- **Instância única por pasta de configuração:** o nome do mutex/pipe inclui um hash da pasta. Com a pasta padrão nada muda; uma pasta de teste (`IMPROVE_CONFIG_DIR`) roda como instância separada e não recebe nem envia `--trigger` para a instância do usuário.
+- **Prompts de exemplo mais explícitos:** "Deixar formal" removia saudações informais ("meu amigo, como vai"). Os exemplos agora pedem para manter todas as informações e adaptar saudações ao tom em vez de removê-las. Vale só para novas instalações.
+- **Feedback de espera no painel:** até o primeiro pedaço chegar, o corpo mostra o indicador girando e "Gerando resposta…"; durante o streaming, o cursor limão pisca.
+- **Traduções no repositório:** `tools/gen-strings/gen-strings.py` guarda as tabelas pt-BR/en/es e gera os seis `.resx`. Edite as tabelas e rode o script, em vez de editar os `.resx` à mão.

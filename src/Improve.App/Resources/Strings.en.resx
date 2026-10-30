@@ -139,13 +139,13 @@
     <value>Model</value>
   </data>
   <data name="ModelPlaceholder" xml:space="preserve">
-    <value>Model ID</value>
+    <value>Pick from the list or type the ID</value>
   </data>
   <data name="LoadModels" xml:space="preserve">
     <value>Load models</value>
   </data>
   <data name="ModelsLoaded" xml:space="preserve">
-    <value>{0} models available.</value>
+    <value>{0} models available: click the field to see the list.</value>
   </data>
   <data name="FieldMode" xml:space="preserve">
     <value>Mode</value>
@@ -299,6 +299,9 @@
   </data>
   <data name="PopupEscCancel" xml:space="preserve">
     <value>Esc cancels</value>
+  </data>
+  <data name="PopupWaiting" xml:space="preserve">
+    <value>Generating response…</value>
   </data>
   <data name="Apply" xml:space="preserve">
     <value>Apply</value>

@@ -291,6 +291,25 @@
     <Setter Property="Margin" Value="1,0,0,0" />
     <Setter Property="Background" Value="{DynamicResource AccentInkBrush}" />
   </Style>
+  <!-- Cursor do streaming pisca enquanto o texto chega. -->
+  <Style Selector="Border.caret[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1" />
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="1" />
+        </KeyFrame>
+        <KeyFrame Cue="51%">
+          <Setter Property="Opacity" Value="0" />
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="0" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
   <Style Selector="c|LucideIcon.spin">
     <Style.Animations>
       <!-- Giro contínuo do indicador: não é transição, por isso não usa motion-fast. -->

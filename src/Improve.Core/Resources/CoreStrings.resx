@@ -52,13 +52,13 @@
     <value>Melhorar mensagem</value>
   </data>
   <data name="ExampleImprovePrompt" xml:space="preserve">
-    <value>Reescreva a mensagem para ficar clara, cordial e sem erros, mantendo o idioma e o tom.</value>
+    <value>Reescreva a mensagem para ficar clara, cordial e sem erros, mantendo o idioma, o tom e todas as informações, inclusive saudações.</value>
   </data>
   <data name="ExampleFormalName" xml:space="preserve">
     <value>Deixar formal</value>
   </data>
   <data name="ExampleFormalPrompt" xml:space="preserve">
-    <value>Reescreva o texto em tom formal e profissional, mantendo o sentido e o idioma.</value>
+    <value>Reescreva o texto em tom formal e profissional, mantendo o sentido, o idioma e todas as informações. Adapte saudações e expressões informais ao tom formal em vez de removê-las.</value>
   </data>
   <data name="ExampleTranslateName" xml:space="preserve">
     <value>Traduzir para inglês</value>
