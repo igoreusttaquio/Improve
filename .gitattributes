@@ -1,0 +1,4 @@
+# Scripts e arquivos lidos no Linux/macOS precisam de LF, mesmo vindo de um checkout no Windows.
+*.sh text eol=lf
+*.desktop text eol=lf
+*.plist text eol=lf
