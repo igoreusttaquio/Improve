@@ -149,7 +149,9 @@
           <TextBlock Classes="caption warning" Text="{x:Static res:Strings.WindowChanged}" TextWrapping="Wrap" />
         </StackPanel>
 
-        <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16">
+        <c:CodeView Classes="panel-code" IsVisible="{Binding ShowsCode}" Text="{Binding Output}" Language="{Binding CodeLanguage}" />
+
+        <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16" IsVisible="{Binding !ShowsCode}">
           <Panel>
             <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsWaiting}">
               <c:LucideIcon Classes="spin" Icon="loader-circle" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />

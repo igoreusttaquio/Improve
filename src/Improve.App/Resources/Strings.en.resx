@@ -150,6 +150,18 @@
   <data name="FieldMode" xml:space="preserve">
     <value>Mode</value>
   </data>
+  <data name="TreatAsCode" xml:space="preserve">
+    <value>Treat result as code</value>
+  </data>
+  <data name="TreatAsCodeHint" xml:space="preserve">
+    <value>The result is shown with syntax colors, like in a code editor, in light or dark theme.</value>
+  </data>
+  <data name="FieldCodeLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="CodeLanguageAuto" xml:space="preserve">
+    <value>Automatic (from the selection)</value>
+  </data>
   <data name="FieldHotkey" xml:space="preserve">
     <value>Own shortcut (optional)</value>
   </data>
@@ -266,6 +278,12 @@
   </data>
   <data name="FieldLanguage" xml:space="preserve">
     <value>Language</value>
+  </data>
+  <data name="FieldCodeFontSize" xml:space="preserve">
+    <value>Code font size</value>
+  </data>
+  <data name="CodeFontSizeHint" xml:space="preserve">
+    <value>Used in the suggestion panel when the extension treats the result as code.</value>
   </data>
   <data name="LanguageSystem" xml:space="preserve">
     <value>Follow the system</value>

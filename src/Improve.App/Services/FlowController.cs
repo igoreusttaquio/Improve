@@ -5,6 +5,7 @@ using Improve.App.ViewModels;
 using Improve.App.Views;
 using Improve.Core.Execution;
 using Improve.Core.Models;
+using Improve.Core.Prompting;
 using Improve.Core.Providers;
 using Improve.Core.Storage;
 using Improve.Platform;
@@ -173,7 +174,7 @@ public sealed partial class FlowController : IDisposable
         catch (ExtensionConfigurationException ex)
         {
             _session = null;
-            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions, CodeLanguageFor(extension, capture));
             _popup.Error = ex.Message;
             Show(activate: true);
             return;
@@ -181,7 +182,7 @@ public sealed partial class FlowController : IDisposable
 
         if (extension.Mode == OutputMode.Suggest)
         {
-            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions, CodeLanguageFor(extension, capture));
             Show(activate: true);
             await GenerateAsync(() => GenerateStreamingAsync(session));
             return;
@@ -195,7 +196,7 @@ public sealed partial class FlowController : IDisposable
             if (_popup.Error is not null)
             {
                 var error = _popup.Error;
-                _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
+                _popup.ShowSuggestion(extension, provider?.Name, _fromActions, CodeLanguageFor(extension, capture));
                 _popup.Error = error;
                 Show(activate: true);
             }
@@ -213,7 +214,7 @@ public sealed partial class FlowController : IDisposable
         {
             // Não cola numa janela diferente: mostra o resultado para Copiar ou Aplicar.
             var result = session.Result!;
-            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions, CodeLanguageFor(extension, capture));
             _popup.Output = result;
             _popup.WindowChanged = true;
             Show(activate: true);
@@ -308,6 +309,10 @@ public sealed partial class FlowController : IDisposable
         if (_popup.State is PopupState.Actions || (_popup.State is PopupState.Suggestion && !_popup.IsStreaming))
             Close();
     }
+
+    // A linguagem escolhida na extensão, ou detectada no texto selecionado (o resultado costuma ser da mesma).
+    private static string? CodeLanguageFor(Extension extension, Capture capture) =>
+        extension.TreatAsCode ? extension.CodeLanguage ?? CodeLanguages.Detect(capture.Text) : null;
 
     // Volta do painel para a lista, com a mesma seleção, para escolher outra extensão.
     private void Back()

@@ -23,6 +23,10 @@ public sealed record AppSettings
     public ThemePreference Theme { get; init; } = ThemePreference.System;
     public LanguagePreference Language { get; init; } = LanguagePreference.System;
     public bool StartWithSystem { get; init; } = true;
+
+    /// <summary>Tamanho da fonte do visualizador de código, em px (limitado a 9–24 ao aplicar).</summary>
+    public double CodeFontSize { get; init; } = 12;
+
     public IReadOnlyList<ProviderConfig> Providers { get; init; } = [];
 
     public static AppSettings CreateDefault() => new()
@@ -68,6 +72,7 @@ public sealed record ExtensionsDocument
             new()
             {
                 Name = CoreStrings.ExampleRefactorName, Icon = "code", Mode = OutputMode.Suggest, Order = 3, ProviderId = providerId,
+                TreatAsCode = true,
                 Prompt = CoreStrings.ExampleRefactorPrompt,
             },
         ],

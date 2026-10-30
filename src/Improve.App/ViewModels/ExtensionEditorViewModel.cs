@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Improve.App.Resources;
 using Improve.Core.Execution;
 using Improve.Core.Models;
+using Improve.Core.Prompting;
 using Improve.Core.Providers;
 using Improve.Core.Storage;
 
@@ -38,6 +39,8 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
         _model = original?.Model ?? "";
         _hotkey = original?.Hotkey;
         _mode = original?.Mode ?? OutputMode.Suggest;
+        _treatAsCode = original?.TreatAsCode ?? false;
+        _codeLanguage = CodeLanguageOption.All.FirstOrDefault(o => o.Id == original?.CodeLanguage) ?? CodeLanguageOption.All[0];
         _provider = Providers.FirstOrDefault(p => p.Id == original?.ProviderId) ?? (original is null && Providers.Count > 0 ? Providers[0] : null);
         _sample = Strings.TestSampleDefault;
         _ = LoadModelsAsync(CancellationToken.None);
@@ -60,9 +63,24 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsReplace), nameof(IsSuggest), nameof(IsCopy))]
     private OutputMode _mode;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TestLanguage))]
+    private bool _treatAsCode;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TestLanguage))]
+    private CodeLanguageOption _codeLanguage;
+
+    public static IReadOnlyList<CodeLanguageOption> CodeLanguageOptions => CodeLanguageOption.All;
+
+    /// <summary>Linguagem do realce no teste: a escolhida, ou a detectada no texto de exemplo.</summary>
+    public string? TestLanguage => TreatAsCode ? CodeLanguage.Id ?? CodeLanguages.Detect(Sample) : null;
+
     [ObservableProperty] private string? _hotkey;
     [ObservableProperty] private string? _hotkeyError;
-    [ObservableProperty] private string _sample;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TestLanguage))]
+    private string _sample;
     [ObservableProperty] private string _testOutput = "";
     [ObservableProperty] private string? _testError;
     [ObservableProperty] private string? _validationError;
@@ -160,7 +178,7 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
         var values = new Extension
         {
             Name = Name.Trim(), Icon = Icon, Prompt = Prompt.Trim(), ProviderId = Provider?.Id, Model = Model.Trim(),
-            Mode = Mode, Hotkey = hotkey,
+            Mode = Mode, Hotkey = hotkey, TreatAsCode = TreatAsCode, CodeLanguage = TreatAsCode ? CodeLanguage.Id : null,
         };
         return _original is null
             ? values with { Order = int.MaxValue }
@@ -168,6 +186,7 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
             {
                 Name = values.Name, Icon = values.Icon, Prompt = values.Prompt, ProviderId = values.ProviderId,
                 Model = values.Model, Mode = values.Mode, Hotkey = values.Hotkey,
+                TreatAsCode = values.TreatAsCode, CodeLanguage = values.CodeLanguage,
             };
     }
 
@@ -180,4 +199,11 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
         var owner = HotkeyConflicts.ForExtension(hotkey, _original?.Id ?? Guid.Empty, _config.Settings, _config.Extensions.Extensions);
         return owner is null ? null : string.Format(CultureInfo.CurrentCulture, Strings.HotkeyConflict, owner);
     }
+}
+
+/// <summary>Opção de linguagem no editor: "Automática" (<c>Id</c> nulo) ou uma linguagem da lista.</summary>
+public sealed record CodeLanguageOption(string? Id, string Name)
+{
+    public static IReadOnlyList<CodeLanguageOption> All =>
+        [new(null, Strings.CodeLanguageAuto), .. CodeLanguages.All.Select(l => new CodeLanguageOption(l.Id, l.Name))];
 }

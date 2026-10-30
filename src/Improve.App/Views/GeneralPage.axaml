@@ -44,6 +44,18 @@
           </ComboBox>
         </StackPanel>
 
+        <StackPanel>
+          <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeFontSize}" />
+          <ComboBox ItemsSource="{x:Static vm:GeneralPageViewModel.CodeFontSizes}" SelectedItem="{Binding CodeFontSize}" Width="120" HorizontalAlignment="Left">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="x:Double">
+                <TextBlock Text="{Binding StringFormat='{}{0} px'}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Classes="caption muted" Text="{x:Static res:Strings.CodeFontSizeHint}" TextWrapping="Wrap" Margin="0,6,0,0" />
+        </StackPanel>
+
         <StackPanel Orientation="Horizontal" Spacing="12">
           <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding StartWithSystem}" />
           <TextBlock Classes="body" Text="{x:Static res:Strings.StartWithSystem}" VerticalAlignment="Center" />

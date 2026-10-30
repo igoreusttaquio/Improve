@@ -99,3 +99,5 @@ Para medir: `$env:IMPROVE_LOG = "1"` antes de abrir o app; o tempo "Popup visív
 14. Aplicar clicando no botão (não só com ↵): o texto é substituído.
 15. Extensão sem modelo pelo popup: o painel mostra o erro com ←; ← volta para a lista com a mesma seleção e outra extensão funciona. "Abrir configurações" abre na frente, já no editor daquela extensão.
 16. Refinar: digitar "mais curto" e clicar em Refinar (ou ↵ no campo): o painel mostra o novo resultado; só Aplicar substitui o texto.
+17. Extensão com "Tratar resultado como código" (ex.: Refatorar código), linguagem Automática: selecionar um trecho de C#/Python/SQL; o painel mostra o resultado colorido, que acompanha o tema claro/escuro. Aplicar e Copiar levam o texto puro.
+18. Geral → Tamanho da fonte do código: trocar para 10 e 16; o painel e o teste do editor mudam na hora.

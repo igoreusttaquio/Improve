@@ -62,6 +62,7 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
             ThemePreference.Light => ThemeVariant.Light,
             _ => ThemeVariant.Default,
         };
+        Resources["CodeFontSize"] = Math.Clamp(config.Settings.CodeFontSize, 9, 24);
         if (autostart is not null && autostart.IsEnabled() != config.Settings.StartWithSystem)
             autostart.SetEnabled(config.Settings.StartWithSystem);
         if (config.Settings.Language != _language)

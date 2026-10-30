@@ -114,7 +114,29 @@
             </StackPanel>
           </Grid>
 
-          <!-- Teste com texto de exemplo, em streaming. -->
+          <!-- Resultado como código: realce de sintaxe no painel. -->
+        <StackPanel Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding TreatAsCode}" />
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock Classes="label" Text="{x:Static res:Strings.TreatAsCode}" />
+              <TextBlock Classes="caption muted" Text="{x:Static res:Strings.TreatAsCodeHint}" TextWrapping="Wrap" />
+            </StackPanel>
+          </StackPanel>
+          <StackPanel IsVisible="{Binding TreatAsCode}">
+            <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeLanguage}" />
+            <ComboBox ItemsSource="{x:Static vm:ExtensionEditorViewModel.CodeLanguageOptions}" SelectedItem="{Binding CodeLanguage}"
+                      Width="280" HorizontalAlignment="Left" MaxDropDownHeight="320">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:CodeLanguageOption">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+        </StackPanel>
+
+        <!-- Teste com texto de exemplo, em streaming. -->
           <Border Classes="card">
             <StackPanel Spacing="12">
               <Grid ColumnDefinitions="*,Auto">
@@ -136,7 +158,10 @@
               </StackPanel>
               <Border Background="{DynamicResource Surface100Brush}" CornerRadius="{StaticResource RadiusMd}" Padding="12,10"
                       IsVisible="{Binding TestOutput, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                <SelectableTextBlock Classes="body" Text="{Binding TestOutput}" TextWrapping="Wrap" />
+                <Panel>
+                <SelectableTextBlock Classes="body" Text="{Binding TestOutput}" TextWrapping="Wrap" IsVisible="{Binding !TreatAsCode}" />
+                <c:CodeView Text="{Binding TestOutput}" Language="{Binding TestLanguage}" IsVisible="{Binding TreatAsCode}" MaxHeight="280" />
+              </Panel>
               </Border>
               <TextBlock Classes="caption danger" Text="{Binding TestError}" TextWrapping="Wrap"
                          IsVisible="{Binding TestError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />

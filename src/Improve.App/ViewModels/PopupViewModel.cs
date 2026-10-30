@@ -63,7 +63,12 @@ public sealed partial class PopupViewModel : ObservableObject
     [ObservableProperty] private string _title = "";
     [ObservableProperty] private string _icon = "wand-sparkles";
     [ObservableProperty] private string? _providerName;
-    [ObservableProperty] private bool _isCode;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsCode))]
+    private bool _isCode;
+
+    /// <summary>Linguagem do realce quando <see cref="IsCode"/> (id TextMate); <c>null</c> sem cores.</summary>
+    [ObservableProperty] private string? _codeLanguage;
     [ObservableProperty] private string _output = "";
 
     [ObservableProperty]
@@ -95,16 +100,28 @@ public sealed partial class PopupViewModel : ObservableObject
 
     public bool CanRefine => CanAct && RefineText.Trim().Length > 0;
 
+    /// <summary>Mostra o resultado no visualizador de código (e não como texto corrido).</summary>
+    public bool ShowsCode => IsCode && !IsWaiting && Error is null;
+
     partial void OnOutputChanged(string value)
     {
         OnPropertyChanged(nameof(CanAct));
         OnPropertyChanged(nameof(CanRefine));
         OnPropertyChanged(nameof(IsWaiting));
+        OnPropertyChanged(nameof(ShowsCode));
     }
 
-    partial void OnIsStreamingChanged(bool value) => OnPropertyChanged(nameof(CanRefine));
+    partial void OnIsStreamingChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanRefine));
+        OnPropertyChanged(nameof(ShowsCode));
+    }
 
-    partial void OnErrorChanged(string? value) => OnPropertyChanged(nameof(CanRefine));
+    partial void OnErrorChanged(string? value)
+    {
+        OnPropertyChanged(nameof(CanRefine));
+        OnPropertyChanged(nameof(ShowsCode));
+    }
 
     public PopupItem? Selected => Items.FirstOrDefault(i => i.IsSelected);
 
@@ -117,14 +134,15 @@ public sealed partial class PopupViewModel : ObservableObject
         State = PopupState.Actions;
     }
 
-    public void ShowSuggestion(Extension extension, string? providerName, bool canGoBack)
+    /// <param name="codeLanguage">Linguagem já resolvida (escolhida na extensão ou detectada na seleção).</param>
+    public void ShowSuggestion(Extension extension, string? providerName, bool canGoBack, string? codeLanguage = null)
     {
         CanGoBack = canGoBack;
+        CodeLanguage = codeLanguage;
         Title = extension.Name;
         Icon = extension.Icon;
         ProviderName = providerName;
-        IsCode = extension.Icon.Contains("code", StringComparison.Ordinal) || extension.Icon.Contains("terminal", StringComparison.Ordinal)
-            || extension.Icon.Contains("braces", StringComparison.Ordinal);
+        IsCode = extension.TreatAsCode;
         Output = "";
         Error = null;
         WindowChanged = false;

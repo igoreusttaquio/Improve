@@ -41,6 +41,7 @@ public sealed partial class GeneralPageViewModel : ObservableObject
         _theme = ThemeOption.All.First(t => t.Value == config.Settings.Theme);
         _language = LanguageOption.All.First(l => l.Value == config.Settings.Language);
         _startWithSystem = config.Settings.StartWithSystem;
+        _codeFontSize = config.Settings.CodeFontSize;
     }
 
     [ObservableProperty] private string? _globalHotkey;
@@ -48,6 +49,9 @@ public sealed partial class GeneralPageViewModel : ObservableObject
     [ObservableProperty] private ThemeOption _theme;
     [ObservableProperty] private LanguageOption _language;
     [ObservableProperty] private bool _startWithSystem;
+    [ObservableProperty] private double _codeFontSize;
+
+    public static IReadOnlyList<double> CodeFontSizes { get; } = [10, 11, 12, 13, 14, 15, 16, 18, 20];
 
     partial void OnGlobalHotkeyChanged(string? value)
     {
@@ -59,6 +63,8 @@ public sealed partial class GeneralPageViewModel : ObservableObject
     partial void OnThemeChanged(ThemeOption value) => _ = _config.UpdateSettingsAsync(s => s with { Theme = value.Value });
 
     partial void OnLanguageChanged(LanguageOption value) => _ = _config.UpdateSettingsAsync(s => s with { Language = value.Value });
+
+    partial void OnCodeFontSizeChanged(double value) => _ = _config.UpdateSettingsAsync(s => s with { CodeFontSize = value });
 
     partial void OnStartWithSystemChanged(bool value) => _ = _config.UpdateSettingsAsync(s => s with { StartWithSystem = value });
 

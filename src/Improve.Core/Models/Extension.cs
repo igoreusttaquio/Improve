@@ -16,6 +16,12 @@ public sealed record Extension
     public string Model { get; init; } = "";
 
     public OutputMode Mode { get; init; } = OutputMode.Suggest;
+
+    /// <summary>O resultado é código: o painel mostra com realce de sintaxe.</summary>
+    public bool TreatAsCode { get; init; }
+
+    /// <summary>Id da linguagem (TextMate, ex.: <c>csharp</c>); <c>null</c> detecta pela seleção.</summary>
+    public string? CodeLanguage { get; init; }
     public double? Temperature { get; init; }
 
     /// <summary>Atalho direto opcional, que pula o popup.</summary>

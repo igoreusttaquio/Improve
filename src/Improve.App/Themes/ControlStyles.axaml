@@ -78,6 +78,14 @@
   <Style Selector="c|PromptEditor:editing Border.prompt-frame">
     <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
   </Style>
+  <Style Selector="ae|TextEditor.code-view">
+    <Setter Property="FontFamily" Value="{StaticResource FontMono}" />
+    <Setter Property="FontSize" Value="{DynamicResource CodeFontSize}" />
+  </Style>
+  <Style Selector="c|CodeView.panel-code">
+    <Setter Property="MaxHeight" Value="240" />
+    <Setter Property="Margin" Value="16,16,8,16" />
+  </Style>
   <Style Selector="ae|TextEditor.prompt">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}" />
     <Setter Property="FontSize" Value="13" />
