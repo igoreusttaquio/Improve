@@ -256,9 +256,14 @@ public sealed partial class FlowController : IDisposable
     private async Task ApplyAsync()
     {
         if (_session?.Result is null)
+        {
+            LogApplyWithoutResult();
             return;
+        }
         _popup.WindowChanged = false;
-        if (await _runner.ApplyAsync(_session, HideAsync, CancellationToken.None) == ApplyOutcome.WindowChanged)
+        var outcome = await _runner.ApplyAsync(_session, HideAsync, CancellationToken.None);
+        LogApply(outcome);
+        if (outcome == ApplyOutcome.WindowChanged)
         {
             _popup.WindowChanged = true;
             Show(activate: true);
@@ -334,6 +339,12 @@ public sealed partial class FlowController : IDisposable
 
     [LoggerMessage(Level = LogLevel.Debug, Message = "Seleção capturada: {Length} caracteres em {ElapsedMs} ms.")]
     private partial void LogCaptured(int length, long elapsedMs);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Aplicar: {Outcome}.")]
+    private partial void LogApply(ApplyOutcome outcome);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Aplicar sem resultado pronto.")]
+    private partial void LogApplyWithoutResult();
 
     [LoggerMessage(Level = LogLevel.Debug, Message = "Popup visível em {ElapsedMs} ms desde o atalho.")]
     private partial void LogPopupShown(long elapsedMs);

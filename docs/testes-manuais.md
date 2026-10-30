@@ -95,3 +95,5 @@ Para medir: `$env:IMPROVE_LOG = "1"` antes de abrir o app; o tempo "Popup visív
 10. Atalho sem seleção: aviso "Selecione um texto primeiro" junto ao cursor, que some sozinho, sem tirar o foco do app.
 11. Clicar fora do popup fecha; durante o streaming do painel, não fecha.
 12. Repetir 1, 5 e 8 no tema claro.
+13. Arrastar o popup pelo cabeçalho/rodapé: ele se move; ao virar painel, continua onde foi deixado; na próxima abertura volta para junto do cursor. Clicar em linhas, botões e no campo de busca não arrasta.
+14. Aplicar clicando no botão (não só com ↵): o texto é substituído.

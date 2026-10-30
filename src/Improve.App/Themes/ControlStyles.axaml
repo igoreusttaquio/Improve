@@ -193,6 +193,8 @@
     <Setter Property="CornerRadius" Value="{StaticResource RadiusPopup}" />
     <Setter Property="BoxShadow" Value="{DynamicResource ShadowPopup}" />
     <Setter Property="Focusable" Value="True" />
+    <!-- Dá para arrastar pelas áreas livres; os controles internos mantêm o próprio cursor. -->
+    <Setter Property="Cursor" Value="SizeAll" />
   </Style>
   <Style Selector="Border.popup.opening">
     <Style.Animations>

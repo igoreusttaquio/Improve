@@ -17,6 +17,9 @@ public partial class PopupWindow : Window
 
     private PixelPoint _anchor;
 
+    /// <summary>O usuário arrastou a janela nesta exibição: não volta para junto do cursor ao mudar de tamanho.</summary>
+    private bool _movedByUser;
+
     public PopupWindow() => InitializeComponent();
 
     public PopupWindow(PopupViewModel viewModel)
@@ -27,6 +30,13 @@ public partial class PopupWindow : Window
         Deactivated += (_, _) => FocusLost?.Invoke(this, EventArgs.Empty);
         // Ao trocar de estado o tamanho muda: reposiciona mantendo o mesmo ponto de ancoragem.
         SizeChanged += (_, _) => Place();
+        // Arrastar pelas áreas livres do cartão (botões, campos, linhas e o texto tratam o clique antes).
+        Card.PointerPressed += OnCardPressed;
+        PropertyChanged += (_, e) =>
+        {
+            if (e.Property == IsVisibleProperty && !IsVisible)
+                _movedByUser = false;
+        };
     }
 
     /// <summary>A janela perdeu o foco (o <c>FlowController</c> decide se fecha).</summary>
@@ -80,23 +90,34 @@ public partial class PopupWindow : Window
 
     private void Place()
     {
-        if ((Screens.ScreenFromPoint(_anchor) ?? Screens.Primary) is not { } screen)
+        var margin = Card.Margin;
+        var reference = _movedByUser ? Position : _anchor;
+        if ((Screens.ScreenFromPoint(reference) ?? Screens.Primary) is not { } screen)
             return;
         var scale = screen.Scaling;
         var area = screen.WorkingArea;
-        var margin = Card.Margin;
         var size = IsVisible ? Bounds.Size : Card.DesiredSize;
         var cardWidth = (int)Math.Ceiling((size.Width - margin.Left - margin.Right) * scale);
         var cardHeight = (int)Math.Ceiling((size.Height - margin.Top - margin.Bottom) * scale);
         var offset = (int)(CursorOffset * scale);
 
-        // O cartão (não a janela, que tem a margem da sombra) fica abaixo/à direita do cursor; vira se não couber.
-        var left = _anchor.X + offset;
-        if (left + cardWidth > area.Right)
-            left = _anchor.X - offset - cardWidth;
-        var top = _anchor.Y + offset;
-        if (top + cardHeight > area.Bottom)
-            top = _anchor.Y - offset - cardHeight;
+        int left, top;
+        if (_movedByUser)
+        {
+            // Arrastado: fica onde o usuário deixou, só ajustado para caber na tela.
+            left = Position.X + (int)(margin.Left * scale);
+            top = Position.Y + (int)(margin.Top * scale);
+        }
+        else
+        {
+            // O cartão (não a janela, que tem a margem da sombra) fica abaixo/à direita do cursor; vira se não couber.
+            left = _anchor.X + offset;
+            if (left + cardWidth > area.Right)
+                left = _anchor.X - offset - cardWidth;
+            top = _anchor.Y + offset;
+            if (top + cardHeight > area.Bottom)
+                top = _anchor.Y - offset - cardHeight;
+        }
         left = Math.Clamp(left, area.X, Math.Max(area.X, area.Right - cardWidth));
         top = Math.Clamp(top, area.Y, Math.Max(area.Y, area.Bottom - cardHeight));
 
@@ -147,6 +168,17 @@ public partial class PopupWindow : Window
     private void OnRowPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is Control { DataContext: PopupItem item })
+        {
+            e.Handled = true;
             ViewModel.RunCommand.Execute(item);
+        }
+    }
+
+    private void OnCardPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.Handled || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
+        _movedByUser = true;
+        BeginMoveDrag(e);
     }
 }
