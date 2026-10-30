@@ -118,6 +118,20 @@ public sealed partial class PopupViewModel : ObservableObject
         State = PopupState.Suggestion;
     }
 
+    /// <summary>Esquece tudo da execução anterior (texto, erro, refinamento, lista) e esconde.</summary>
+    public void Clear()
+    {
+        State = PopupState.Hidden;
+        IsStreaming = false;
+        Output = "";
+        Error = null;
+        WindowChanged = false;
+        RefineText = "";
+        Search = "";
+        _all = [];
+        Items.Clear();
+    }
+
     public void ShowToast(string text, string icon)
     {
         ToastText = text;

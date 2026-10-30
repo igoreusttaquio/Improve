@@ -116,6 +116,25 @@ public sealed class ExtensionRunnerTests : IDisposable
     }
 
     [Fact]
+    public async Task Each_selection_is_a_brand_new_request_even_after_refining_the_previous_one()
+    {
+        var runner = CreateRunner();
+        var first = ExtensionGenerator.CreateSession(Improve, [Provider], new Capture("primeira seleção", null, null));
+        await runner.GenerateAsync(first, null, Ct);
+        await runner.RefineAsync(first, "mais curto", null, Ct);
+
+        var second = ExtensionGenerator.CreateSession(Improve, [Provider], new Capture("segunda seleção", null, null));
+        await runner.GenerateAsync(second, null, Ct);
+
+        // 1ª geração, refinamento (com histórico) e a nova seleção: esta só com system + o texto novo.
+        var last = JsonNode.Parse(_http.Requests[^1].Body!)!["messages"]!.AsArray();
+        Assert.Equal(["system", "user"], last.Select(m => m!["role"]!.GetValue<string>()));
+        Assert.Equal("<texto>\nsegunda seleção\n</texto>", last[1]!["content"]!.GetValue<string>());
+        Assert.DoesNotContain("primeira", _http.Requests[^1].Body!, StringComparison.Ordinal);
+        Assert.Equal(4, JsonNode.Parse(_http.Requests[1].Body!)!["messages"]!.AsArray().Count);
+    }
+
+    [Fact]
     public void Session_requires_provider_and_model()
     {
         var capture = new Capture("x", null, null);

@@ -225,6 +225,7 @@ public sealed partial class FlowController : IDisposable
     private async Task<bool> GenerateAsync(Func<Task<string>> generate)
     {
         _generation?.Cancel();
+        _generation?.Dispose();
         _generation = new CancellationTokenSource();
         var id = ++_generationId;
         _popup.Output = "";
@@ -284,12 +285,8 @@ public sealed partial class FlowController : IDisposable
     private Task RefineAsync(string instruction) =>
         _session is { Result: not null } session ? GenerateAsync(() => GenerateStreamingAsync(session, instruction)) : Task.CompletedTask;
 
-    // Esc: cancela o que estiver em andamento e fecha.
-    private void Close()
-    {
-        _generation?.Cancel();
-        Hide();
-    }
+    // Esc: cancela o que estiver em andamento, esquece a execução e fecha.
+    private void Close() => Hide();
 
     // Fecha ao perder o foco, exceto durante o processamento ou o streaming do painel.
     private void OnFocusLost()
@@ -322,10 +319,20 @@ public sealed partial class FlowController : IDisposable
         _toastTimer.Start();
     }
 
+    /// <summary>
+    /// Fecha e esquece a execução: cada seleção + extensão é um pedido novo, sem nada da anterior (nem a
+    /// seleção, nem o resultado, nem o histórico do Refinar) guardado em memória.
+    /// </summary>
     private void Hide()
     {
         _toastTimer.Stop();
-        _popup.State = PopupState.Hidden;
+        _generation?.Cancel();
+        _generation?.Dispose();
+        _generation = null;
+        _generationId++;
+        _capture = null;
+        _session = null;
+        _popup.Clear();
         _window.Hide();
     }
 
