@@ -4,9 +4,6 @@
 
   <StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="FontSans" />
 
-  <!-- Tamanho da fonte do código; o App troca pelo valor da aba Geral. -->
-  <x:Double x:Key="CodeFontSize">12</x:Double>
-
   <!-- Botão: secundário por padrão; classes primary, ghost, danger e icon. -->
   <ControlTheme x:Key="{x:Type Button}" TargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Surface300Brush}" />

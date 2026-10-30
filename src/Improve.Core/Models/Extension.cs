@@ -22,6 +22,13 @@ public sealed record Extension
 
     /// <summary>Id da linguagem (TextMate, ex.: <c>csharp</c>); <c>null</c> detecta pela seleção.</summary>
     public string? CodeLanguage { get; init; }
+
+    /// <summary>Família da fonte do código; <c>null</c> usa a JetBrains Mono embutida.</summary>
+    public string? CodeFontFamily { get; init; }
+
+    /// <summary>Tamanho da fonte do código, em px.</summary>
+    public double CodeFontSize { get; init; } = 12;
+
     public double? Temperature { get; init; }
 
     /// <summary>Atalho direto opcional, que pula o popup.</summary>

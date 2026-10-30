@@ -123,16 +123,46 @@
               <TextBlock Classes="caption muted" Text="{x:Static res:Strings.TreatAsCodeHint}" TextWrapping="Wrap" />
             </StackPanel>
           </StackPanel>
-          <StackPanel IsVisible="{Binding TreatAsCode}">
-            <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeLanguage}" />
-            <ComboBox ItemsSource="{x:Static vm:ExtensionEditorViewModel.CodeLanguageOptions}" SelectedItem="{Binding CodeLanguage}"
-                      Width="280" HorizontalAlignment="Left" MaxDropDownHeight="320">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:CodeLanguageOption">
-                  <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
+          <StackPanel IsVisible="{Binding TreatAsCode}" Spacing="12">
+            <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="12">
+              <StackPanel>
+                <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeLanguage}" />
+                <ComboBox ItemsSource="{x:Static vm:ExtensionEditorViewModel.CodeLanguageOptions}" SelectedItem="{Binding CodeLanguage}" MaxDropDownHeight="320">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CodeLanguageOption">
+                      <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+              <StackPanel Grid.Column="1">
+                <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeFont}" />
+                <ComboBox ItemsSource="{Binding CodeFontOptions}" SelectedItem="{Binding CodeFont}" MaxDropDownHeight="320">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CodeFontOption">
+                      <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+              <StackPanel Grid.Column="2">
+                <TextBlock Classes="field" Text="{x:Static res:Strings.FieldCodeFontSize}" />
+                <ComboBox ItemsSource="{x:Static vm:ExtensionEditorViewModel.CodeFontSizes}" SelectedItem="{Binding CodeFontSize}" Width="110">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="x:Double">
+                      <TextBlock Text="{Binding StringFormat='{}{0} px'}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+            </Grid>
+            <StackPanel>
+              <TextBlock Classes="caption muted" Text="{x:Static res:Strings.CodePreview}" Margin="0,0,0,6" />
+              <Border Classes="code-preview">
+                <c:CodeView Text="{Binding PreviewCode}" Language="{Binding PreviewLanguage}"
+                            CodeFontFamily="{Binding CodeFont.Family}" CodeFontSize="{Binding CodeFontSize}" />
+              </Border>
+            </StackPanel>
           </StackPanel>
         </StackPanel>
 
@@ -160,7 +190,8 @@
                       IsVisible="{Binding TestOutput, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                 <Panel>
                 <SelectableTextBlock Classes="body" Text="{Binding TestOutput}" TextWrapping="Wrap" IsVisible="{Binding !TreatAsCode}" />
-                <c:CodeView Text="{Binding TestOutput}" Language="{Binding TestLanguage}" IsVisible="{Binding TreatAsCode}" MaxHeight="280" />
+                <c:CodeView Text="{Binding TestOutput}" Language="{Binding TestLanguage}" IsVisible="{Binding TreatAsCode}" MaxHeight="280"
+                            CodeFontFamily="{Binding CodeFont.Family}" CodeFontSize="{Binding CodeFontSize}" />
               </Panel>
               </Border>
               <TextBlock Classes="caption danger" Text="{Binding TestError}" TextWrapping="Wrap"

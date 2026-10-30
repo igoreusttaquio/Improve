@@ -149,7 +149,8 @@
           <TextBlock Classes="caption warning" Text="{x:Static res:Strings.WindowChanged}" TextWrapping="Wrap" />
         </StackPanel>
 
-        <c:CodeView Classes="panel-code" IsVisible="{Binding ShowsCode}" Text="{Binding Output}" Language="{Binding CodeLanguage}" />
+        <c:CodeView Classes="panel-code" IsVisible="{Binding ShowsCode}" Text="{Binding Output}" Language="{Binding CodeLanguage}"
+                    CodeFontFamily="{Binding CodeFontFamily}" CodeFontSize="{Binding CodeFontSize}" />
 
         <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16" IsVisible="{Binding !ShowsCode}">
           <Panel>

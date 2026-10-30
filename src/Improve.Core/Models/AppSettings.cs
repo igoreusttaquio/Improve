@@ -24,9 +24,6 @@ public sealed record AppSettings
     public LanguagePreference Language { get; init; } = LanguagePreference.System;
     public bool StartWithSystem { get; init; } = true;
 
-    /// <summary>Tamanho da fonte do visualizador de código, em px (limitado a 9–24 ao aplicar).</summary>
-    public double CodeFontSize { get; init; } = 12;
-
     public IReadOnlyList<ProviderConfig> Providers { get; init; } = [];
 
     public static AppSettings CreateDefault() => new()

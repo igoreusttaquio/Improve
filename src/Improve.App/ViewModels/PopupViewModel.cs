@@ -69,6 +69,8 @@ public sealed partial class PopupViewModel : ObservableObject
 
     /// <summary>Linguagem do realce quando <see cref="IsCode"/> (id TextMate); <c>null</c> sem cores.</summary>
     [ObservableProperty] private string? _codeLanguage;
+    [ObservableProperty] private string? _codeFontFamily;
+    [ObservableProperty] private double _codeFontSize = 12;
     [ObservableProperty] private string _output = "";
 
     [ObservableProperty]
@@ -143,6 +145,8 @@ public sealed partial class PopupViewModel : ObservableObject
         Icon = extension.Icon;
         ProviderName = providerName;
         IsCode = extension.TreatAsCode;
+        CodeFontFamily = extension.CodeFontFamily;
+        CodeFontSize = extension.CodeFontSize;
         Output = "";
         Error = null;
         WindowChanged = false;

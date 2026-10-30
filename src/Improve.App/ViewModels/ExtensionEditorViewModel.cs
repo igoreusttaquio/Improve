@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -41,6 +42,8 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
         _mode = original?.Mode ?? OutputMode.Suggest;
         _treatAsCode = original?.TreatAsCode ?? false;
         _codeLanguage = CodeLanguageOption.All.FirstOrDefault(o => o.Id == original?.CodeLanguage) ?? CodeLanguageOption.All[0];
+        _codeFont = CodeFontOptions.FirstOrDefault(o => o.Family == original?.CodeFontFamily) ?? CodeFontOptions[0];
+        _codeFontSize = original?.CodeFontSize ?? 12;
         _provider = Providers.FirstOrDefault(p => p.Id == original?.ProviderId) ?? (original is null && Providers.Count > 0 ? Providers[0] : null);
         _sample = Strings.TestSampleDefault;
         _ = LoadModelsAsync(CancellationToken.None);
@@ -68,10 +71,22 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
     private bool _treatAsCode;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TestLanguage))]
+    [NotifyPropertyChangedFor(nameof(TestLanguage), nameof(PreviewCode), nameof(PreviewLanguage))]
     private CodeLanguageOption _codeLanguage;
 
     public static IReadOnlyList<CodeLanguageOption> CodeLanguageOptions => CodeLanguageOption.All;
+
+    public IReadOnlyList<CodeFontOption> CodeFontOptions { get; } = CodeFontOption.Available();
+
+    public static IReadOnlyList<double> CodeFontSizes { get; } = [10, 11, 12, 13, 14, 15, 16, 18, 20];
+
+    [ObservableProperty] private CodeFontOption _codeFont;
+    [ObservableProperty] private double _codeFontSize;
+
+    /// <summary>Trecho de exemplo da linguagem escolhida, para a prévia da fonte.</summary>
+    public string PreviewCode => CodeSamples.For(PreviewLanguage);
+
+    public string PreviewLanguage => CodeLanguage.Id ?? "csharp";
 
     /// <summary>Linguagem do realce no teste: a escolhida, ou a detectada no texto de exemplo.</summary>
     public string? TestLanguage => TreatAsCode ? CodeLanguage.Id ?? CodeLanguages.Detect(Sample) : null;
@@ -179,6 +194,7 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
         {
             Name = Name.Trim(), Icon = Icon, Prompt = Prompt.Trim(), ProviderId = Provider?.Id, Model = Model.Trim(),
             Mode = Mode, Hotkey = hotkey, TreatAsCode = TreatAsCode, CodeLanguage = TreatAsCode ? CodeLanguage.Id : null,
+            CodeFontFamily = CodeFont.Family, CodeFontSize = CodeFontSize,
         };
         return _original is null
             ? values with { Order = int.MaxValue }
@@ -187,6 +203,7 @@ public sealed partial class ExtensionEditorViewModel : ObservableObject
                 Name = values.Name, Icon = values.Icon, Prompt = values.Prompt, ProviderId = values.ProviderId,
                 Model = values.Model, Mode = values.Mode, Hotkey = values.Hotkey,
                 TreatAsCode = values.TreatAsCode, CodeLanguage = values.CodeLanguage,
+                CodeFontFamily = values.CodeFontFamily, CodeFontSize = values.CodeFontSize,
             };
     }
 
@@ -206,4 +223,34 @@ public sealed record CodeLanguageOption(string? Id, string Name)
 {
     public static IReadOnlyList<CodeLanguageOption> All =>
         [new(null, Strings.CodeLanguageAuto), .. CodeLanguages.All.Select(l => new CodeLanguageOption(l.Id, l.Name))];
+}
+
+/// <summary>Fonte do código: a JetBrains Mono embutida (<c>Family</c> nulo) ou uma monoespaçada instalada.</summary>
+public sealed record CodeFontOption(string? Family, string Name)
+{
+    // Monoespaçadas conhecidas; só aparecem as instaladas no sistema.
+    private static readonly string[] Known =
+    [
+        "Cascadia Code", "Cascadia Mono", "Consolas", "Fira Code", "Source Code Pro", "SF Mono", "Menlo", "Monaco",
+        "Ubuntu Mono", "DejaVu Sans Mono", "Liberation Mono", "Hack", "IBM Plex Mono", "Roboto Mono", "Courier New",
+    ];
+
+    public static IReadOnlyList<CodeFontOption> Available()
+    {
+        var installed = FontManager.Current.SystemFonts.Select(f => f.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return [new(null, "JetBrains Mono"), .. Known.Where(installed.Contains).Select(name => new CodeFontOption(name, name))];
+    }
+}
+
+/// <summary>Trechos curtos para a prévia da fonte, por linguagem.</summary>
+internal static class CodeSamples
+{
+    public static string For(string language) => language switch
+    {
+        "python" => "def total(itens, desconto=0.1):\n    # Soma com desconto aplicado\n    return sum(i.preco for i in itens) * (1 - desconto)",
+        "javascript" or "typescript" => "const total = (itens, desconto = 0.1) =>\n  // Soma com desconto aplicado\n  itens.reduce((s, i) => s + i.preco, 0) * (1 - desconto);",
+        "sql" => "-- Pedidos pagos do mês\nSELECT cliente, SUM(total) AS valor\nFROM pedidos\nWHERE status = 'pago'\nGROUP BY cliente;",
+        "json" => "{\n  \"nome\": \"improve\",\n  \"versao\": 1,\n  \"ativo\": true\n}",
+        _ => "public decimal Total(decimal desconto = 0.1m)\n{\n    // Soma com desconto aplicado\n    return Itens.Sum(i => i.Preco) * (1 - desconto);\n}",
+    };
 }

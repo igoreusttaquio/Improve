@@ -22,6 +22,13 @@ public sealed class CodeView : UserControl
     public static readonly StyledProperty<string?> LanguageProperty =
         AvaloniaProperty.Register<CodeView, string?>(nameof(Language));
 
+    /// <summary>Família da fonte; <c>null</c> usa a JetBrains Mono embutida (recurso <c>FontMono</c>).</summary>
+    public static readonly StyledProperty<string?> CodeFontFamilyProperty =
+        AvaloniaProperty.Register<CodeView, string?>(nameof(CodeFontFamily));
+
+    public static readonly StyledProperty<double> CodeFontSizeProperty =
+        AvaloniaProperty.Register<CodeView, double>(nameof(CodeFontSize), 12);
+
     private readonly TextEditor _editor;
     private readonly RegistryOptions _registry;
     private readonly TextMate.Installation _textMate;
@@ -45,6 +52,7 @@ public sealed class CodeView : UserControl
         ActualThemeVariantChanged += (_, _) => ApplyTheme();
         Content = _editor;
         ApplyTheme();
+        ApplyFont();
     }
 
     public string? Text
@@ -59,6 +67,18 @@ public sealed class CodeView : UserControl
         set => SetValue(LanguageProperty, value);
     }
 
+    public string? CodeFontFamily
+    {
+        get => GetValue(CodeFontFamilyProperty);
+        set => SetValue(CodeFontFamilyProperty, value);
+    }
+
+    public double CodeFontSize
+    {
+        get => GetValue(CodeFontSizeProperty);
+        set => SetValue(CodeFontSizeProperty, value);
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -66,6 +86,8 @@ public sealed class CodeView : UserControl
             UpdateText(Text ?? "");
         else if (change.Property == LanguageProperty)
             _textMate.SetGrammar(Language is { } id ? _registry.GetScopeByLanguageId(id) : null);
+        else if (change.Property == CodeFontFamilyProperty || change.Property == CodeFontSizeProperty)
+            ApplyFont();
     }
 
     // No streaming o texto só cresce: acrescenta o pedaço novo em vez de recolorir o documento inteiro.
@@ -86,6 +108,14 @@ public sealed class CodeView : UserControl
         _editor.Background = Brushes.Transparent;
         _editor.Foreground = this.TryFindResource("InkBrush", ActualThemeVariant, out var ink) ? ink as IBrush : null;
         _editor.TextArea.SelectionBrush = this.TryFindResource("AccentSoftBrush", ActualThemeVariant, out var soft) ? soft as IBrush : null;
+    }
+
+    private void ApplyFont()
+    {
+        _editor.FontSize = Math.Clamp(CodeFontSize, 8, 32);
+        _editor.FontFamily = CodeFontFamily is { Length: > 0 } family
+            ? new FontFamily(family)
+            : this.TryFindResource("FontMono", out var mono) && mono is FontFamily embedded ? embedded : FontFamily.Default;
     }
 
     private static ThemeName ThemeFor(ThemeVariant variant) => variant == ThemeVariant.Light ? ThemeName.LightPlus : ThemeName.DarkPlus;

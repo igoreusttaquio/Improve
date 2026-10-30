@@ -162,6 +162,15 @@
   <data name="CodeLanguageAuto" xml:space="preserve">
     <value>Automatic (from the selection)</value>
   </data>
+  <data name="FieldCodeFont" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="FieldCodeFontSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="CodePreview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
   <data name="FieldHotkey" xml:space="preserve">
     <value>Own shortcut (optional)</value>
   </data>
@@ -278,12 +287,6 @@
   </data>
   <data name="FieldLanguage" xml:space="preserve">
     <value>Language</value>
-  </data>
-  <data name="FieldCodeFontSize" xml:space="preserve">
-    <value>Code font size</value>
-  </data>
-  <data name="CodeFontSizeHint" xml:space="preserve">
-    <value>Used in the suggestion panel when the extension treats the result as code.</value>
   </data>
   <data name="LanguageSystem" xml:space="preserve">
     <value>Follow the system</value>
