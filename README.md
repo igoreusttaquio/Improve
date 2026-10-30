@@ -84,3 +84,7 @@ Os instaladores são gerados pelo GitHub Actions ao publicar uma tag `v*`.
 ## Feito com
 
 .NET 10, [Avalonia](https://avaloniaui.net/), CommunityToolkit.Mvvm, [AvaloniaEdit](https://github.com/AvaloniaUI/AvaloniaEdit) + TextMateSharp, [SharpHook](https://github.com/TolikPylypchuk/SharpHook), ícones [Lucide](https://lucide.dev/), fontes Inter e JetBrains Mono. As licenças estão em [`licenses/`](licenses) e na tela Sobre do app.
+
+## Licença
+
+[MIT](LICENSE).
