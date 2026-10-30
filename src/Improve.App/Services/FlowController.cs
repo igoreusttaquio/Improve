@@ -34,6 +34,8 @@ public sealed partial class FlowController : IDisposable
     private PixelPoint _anchor;
     private Capture? _capture;
     private RunSession? _session;
+    private Extension? _extension;
+    private bool _fromActions;
     private CancellationTokenSource? _generation;
     private int _generationId;
     private bool _capturing;
@@ -52,8 +54,11 @@ public sealed partial class FlowController : IDisposable
         _toastTimer.Tick += (_, _) => Hide();
     }
 
-    /// <summary>Abre as configurações (o parâmetro pede o editor de nova extensão). Definido pelo App.</summary>
-    public Action<bool>? OpenSettings { get; set; }
+    /// <summary>
+    /// Abre as configurações: com <c>true</c>, no editor de nova extensão; com um id, no editor daquela
+    /// extensão. Definido pelo App.
+    /// </summary>
+    public Action<bool, Guid?>? OpenSettings { get; set; }
 
     public bool IsPaused
     {
@@ -64,7 +69,7 @@ public sealed partial class FlowController : IDisposable
     /// <summary>Cria a janela oculta (abertura instantânea depois) e registra os atalhos. Chamar na thread de UI.</summary>
     public void Start()
     {
-        _popup = new PopupViewModel(new PopupActions(RunAsync, ApplyAsync, CopyAsync, RetryAsync, RefineAsync, Close, OpenSettingsFromPopup));
+        _popup = new PopupViewModel(new PopupActions(RunFromListAsync, ApplyAsync, CopyAsync, RetryAsync, RefineAsync, Close, Back, OpenSettingsFromPopup));
         _window = new PopupWindow(_popup);
         _window.FocusLost += (_, _) => OnFocusLost();
         // Aquece com a lista real, para os itens e fontes já estarem prontos no primeiro atalho.
@@ -122,6 +127,7 @@ public sealed partial class FlowController : IDisposable
             _capture = capture;
             LogCaptured(capture.Text.Length, watch.ElapsedMilliseconds);
 
+            _fromActions = false;
             if (id == GlobalHotkeyId)
             {
                 _popup.ShowActions(_config.EnabledExtensions);
@@ -144,11 +150,19 @@ public sealed partial class FlowController : IDisposable
         }
     }
 
+    // Escolhida no popup: o painel ganha o botão de voltar para a lista.
+    private Task RunFromListAsync(Extension extension)
+    {
+        _fromActions = true;
+        return RunAsync(extension);
+    }
+
     // Passos 6–7: executa a extensão escolhida no modo dela.
     private async Task RunAsync(Extension extension)
     {
         if (_capture is not { } capture)
             return;
+        _extension = extension;
         var provider = _config.Settings.Providers.FirstOrDefault(p => p.Id == extension.ProviderId);
         RunSession session;
         try
@@ -159,7 +173,7 @@ public sealed partial class FlowController : IDisposable
         catch (ExtensionConfigurationException ex)
         {
             _session = null;
-            _popup.ShowSuggestion(extension, provider?.Name);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
             _popup.Error = ex.Message;
             Show(activate: true);
             return;
@@ -167,7 +181,7 @@ public sealed partial class FlowController : IDisposable
 
         if (extension.Mode == OutputMode.Suggest)
         {
-            _popup.ShowSuggestion(extension, provider?.Name);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
             Show(activate: true);
             await GenerateAsync(() => GenerateStreamingAsync(session));
             return;
@@ -181,7 +195,7 @@ public sealed partial class FlowController : IDisposable
             if (_popup.Error is not null)
             {
                 var error = _popup.Error;
-                _popup.ShowSuggestion(extension, provider?.Name);
+                _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
                 _popup.Error = error;
                 Show(activate: true);
             }
@@ -199,7 +213,7 @@ public sealed partial class FlowController : IDisposable
         {
             // Não cola numa janela diferente: mostra o resultado para Copiar ou Aplicar.
             var result = session.Result!;
-            _popup.ShowSuggestion(extension, provider?.Name);
+            _popup.ShowSuggestion(extension, provider?.Name, _fromActions);
             _popup.Output = result;
             _popup.WindowChanged = true;
             Show(activate: true);
@@ -295,10 +309,23 @@ public sealed partial class FlowController : IDisposable
             Close();
     }
 
+    // Volta do painel para a lista, com a mesma seleção, para escolher outra extensão.
+    private void Back()
+    {
+        _generation?.Cancel();
+        _generationId++;
+        _session = null;
+        _popup.ShowActions(_config.EnabledExtensions);
+        Show(activate: true);
+    }
+
+    // Abre as configurações antes de esconder o popup: enquanto o popup está em foco, o improve pode trazer
+    // outra janela sua para frente; depois de escondido, o Windows bloquearia.
     private void OpenSettingsFromPopup(bool createExtension)
     {
+        var extensionId = createExtension ? null : _extension?.Id;
+        OpenSettings?.Invoke(createExtension, extensionId);
         Close();
-        OpenSettings?.Invoke(createExtension);
     }
 
     private void Show(bool activate)
@@ -332,6 +359,8 @@ public sealed partial class FlowController : IDisposable
         _generationId++;
         _capture = null;
         _session = null;
+        _extension = null;
+        _fromActions = false;
         _popup.Clear();
         _window.Hide();
     }

@@ -142,6 +142,8 @@ APP = {
     "Apply": ("Aplicar", "Apply", "Aplicar"),
     "Copy": ("Copiar", "Copy", "Copiar"),
     "Retry": ("Tentar de novo", "Try again", "Reintentar"),
+    "Refine": ("Refinar", "Refine", "Refinar"),
+    "BackToExtensions": ("Voltar para as extensões", "Back to extensions", "Volver a las extensiones"),
     "Close": ("Fechar", "Close", "Cerrar"),
     "RefinePlaceholder": ("Refinar: mais curto, mais formal…", "Refine: shorter, more formal…", "Refinar: más corto, más formal…"),
     "WindowChanged": ("A janela mudou; use Copiar ou Aplicar.", "The window changed; use Copy or Apply.", "La ventana cambió; usa Copiar o Aplicar."),

@@ -117,8 +117,11 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
 
     private void OnOpenSettings(object? sender, EventArgs e) => OpenSettings(createExtension: false);
 
-    /// <summary>Abre (ou traz para frente) as configurações; com <paramref name="createExtension"/>, já no editor de nova extensão.</summary>
-    private void OpenSettings(bool createExtension)
+    /// <summary>
+    /// Abre (ou traz para frente) as configurações; com <paramref name="createExtension"/>, no editor de nova
+    /// extensão; com <paramref name="extensionId"/>, no editor daquela extensão.
+    /// </summary>
+    private void OpenSettings(bool createExtension, Guid? extensionId = null)
     {
         if (_settings is null)
         {
@@ -127,10 +130,20 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
         }
         _settings.Show();
         _settings.Activate();
-        if (createExtension && _settings.DataContext is SettingsViewModel vm && vm.Pages[0].Page is ExtensionsPageViewModel extensions)
+        if (_settings.TryGetPlatformHandle()?.Handle is { } handle)
+            services.GetService<IWindowActivator>()?.Activate(handle);
+
+        if (_settings.DataContext is not SettingsViewModel { Pages: [{ Page: ExtensionsPageViewModel extensions } page, ..] } vm)
+            return;
+        if (createExtension)
         {
-            vm.SelectedPage = vm.Pages[0];
+            vm.SelectedPage = page;
             extensions.NewCommand.Execute(null);
+        }
+        else if (extensions.Cards.FirstOrDefault(c => c.Extension.Id == extensionId) is { } card)
+        {
+            vm.SelectedPage = page;
+            extensions.EditCommand.Execute(card);
         }
     }
 

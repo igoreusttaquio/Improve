@@ -157,7 +157,7 @@ public partial class PopupWindow : Window
         else if (vm.IsSuggestion && e.Key == Key.Enter)
         {
             // No campo Refinar, ↵ refina; fora dele, ↵ aplica.
-            if (RefineBox.IsFocused)
+            if (RefineBox.IsKeyboardFocusWithin)
                 vm.RefineCommand.Execute(null);
             else
                 vm.ApplyCommand.Execute(null);

@@ -312,6 +312,12 @@
   <data name="Retry" xml:space="preserve">
     <value>Tentar de novo</value>
   </data>
+  <data name="Refine" xml:space="preserve">
+    <value>Refinar</value>
+  </data>
+  <data name="BackToExtensions" xml:space="preserve">
+    <value>Voltar para as extensões</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Fechar</value>
   </data>

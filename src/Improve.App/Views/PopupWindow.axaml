@@ -85,13 +85,17 @@
       <!-- SuggestionPanel -->
       <DockPanel Width="420" IsVisible="{Binding IsSuggestion}">
         <Border DockPanel.Dock="Top" Classes="panel-head">
-          <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
-            <c:LucideIcon Icon="{Binding Icon}" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-            <Border Grid.Column="2" Classes="chip" IsVisible="{Binding ProviderName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+          <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+            <Button Classes="ghost icon" Width="28" Height="28" MinHeight="28" Margin="-6,0,0,0" IsVisible="{Binding CanGoBack}"
+                    Command="{Binding BackCommand}" ToolTip.Tip="{x:Static res:Strings.BackToExtensions}">
+              <c:LucideIcon Icon="arrow-left" />
+            </Button>
+            <c:LucideIcon Grid.Column="1" Icon="{Binding Icon}" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <Border Grid.Column="3" Classes="chip" IsVisible="{Binding ProviderName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
               <TextBlock Text="{Binding ProviderName}" />
             </Border>
-            <Button Grid.Column="3" Classes="ghost icon" Width="28" Height="28" MinHeight="28" Command="{Binding CloseCommand}" ToolTip.Tip="{x:Static res:Strings.Close}">
+            <Button Grid.Column="4" Classes="ghost icon" Width="28" Height="28" MinHeight="28" Command="{Binding CloseCommand}" ToolTip.Tip="{x:Static res:Strings.Close}">
               <c:LucideIcon Icon="x" />
             </Button>
           </Grid>
@@ -126,10 +130,17 @@
 
         <!-- Refinar -->
         <Border DockPanel.Dock="Bottom" Classes="refine" IsVisible="{Binding !HasError}">
-          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
             <c:LucideIcon Icon="sparkles" Foreground="{DynamicResource InkMutedBrush}" VerticalAlignment="Center" />
             <TextBox Name="RefineBox" Grid.Column="1" Classes="bare" Text="{Binding RefineText}" PlaceholderText="{x:Static res:Strings.RefinePlaceholder}"
                      IsEnabled="{Binding CanAct}" />
+            <Button Grid.Column="2" Classes="ghost" MinHeight="26" Padding="10,0" Margin="0,3,-8,3" Command="{Binding RefineCommand}"
+                    IsEnabled="{Binding CanRefine}" ToolTip.Tip="↵">
+              <StackPanel Classes="button-content">
+                <c:LucideIcon Icon="wand-sparkles" />
+                <TextBlock Text="{x:Static res:Strings.Refine}" />
+              </StackPanel>
+            </Button>
           </Grid>
         </Border>
 

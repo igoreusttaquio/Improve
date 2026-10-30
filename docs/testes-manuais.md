@@ -97,3 +97,5 @@ Para medir: `$env:IMPROVE_LOG = "1"` antes de abrir o app; o tempo "Popup visív
 12. Repetir 1, 5 e 8 no tema claro.
 13. Arrastar o popup pelo cabeçalho/rodapé: ele se move; ao virar painel, continua onde foi deixado; na próxima abertura volta para junto do cursor. Clicar em linhas, botões e no campo de busca não arrasta.
 14. Aplicar clicando no botão (não só com ↵): o texto é substituído.
+15. Extensão sem modelo pelo popup: o painel mostra o erro com ←; ← volta para a lista com a mesma seleção e outra extensão funciona. "Abrir configurações" abre na frente, já no editor daquela extensão.
+16. Refinar: digitar "mais curto" e clicar em Refinar (ou ↵ no campo): o painel mostra o novo resultado; só Aplicar substitui o texto.

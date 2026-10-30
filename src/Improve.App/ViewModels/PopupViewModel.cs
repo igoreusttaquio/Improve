@@ -75,7 +75,13 @@ public sealed partial class PopupViewModel : ObservableObject
     private string? _error;
 
     [ObservableProperty] private bool _windowChanged;
-    [ObservableProperty] private string _refineText = "";
+
+    /// <summary>O painel veio da lista: mostra o botão de voltar para escolher outra extensão.</summary>
+    [ObservableProperty] private bool _canGoBack;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanRefine))]
+    private string _refineText = "";
     [ObservableProperty] private string _toastText = "";
     [ObservableProperty] private string _toastIcon = "info";
 
@@ -87,11 +93,18 @@ public sealed partial class PopupViewModel : ObservableObject
     /// <summary>Gerando, mas o primeiro pedaço ainda não chegou: mostra o indicador de espera.</summary>
     public bool IsWaiting => IsStreaming && Output.Length == 0;
 
+    public bool CanRefine => CanAct && RefineText.Trim().Length > 0;
+
     partial void OnOutputChanged(string value)
     {
         OnPropertyChanged(nameof(CanAct));
+        OnPropertyChanged(nameof(CanRefine));
         OnPropertyChanged(nameof(IsWaiting));
     }
+
+    partial void OnIsStreamingChanged(bool value) => OnPropertyChanged(nameof(CanRefine));
+
+    partial void OnErrorChanged(string? value) => OnPropertyChanged(nameof(CanRefine));
 
     public PopupItem? Selected => Items.FirstOrDefault(i => i.IsSelected);
 
@@ -104,8 +117,9 @@ public sealed partial class PopupViewModel : ObservableObject
         State = PopupState.Actions;
     }
 
-    public void ShowSuggestion(Extension extension, string? providerName)
+    public void ShowSuggestion(Extension extension, string? providerName, bool canGoBack)
     {
+        CanGoBack = canGoBack;
         Title = extension.Name;
         Icon = extension.Icon;
         ProviderName = providerName;
@@ -168,7 +182,7 @@ public sealed partial class PopupViewModel : ObservableObject
     [RelayCommand]
     private void Refine()
     {
-        if (CanAct && RefineText.Trim() is { Length: > 0 } instruction)
+        if (CanRefine && RefineText.Trim() is { } instruction)
         {
             RefineText = "";
             _ = Actions.Refine(instruction);
@@ -179,6 +193,7 @@ public sealed partial class PopupViewModel : ObservableObject
     [RelayCommand] private void Copy() => _ = CanAct ? Actions.Copy() : Task.CompletedTask;
     [RelayCommand] private void Retry() => _ = Actions.Retry();
     [RelayCommand] private void Close() => Actions.Close();
+    [RelayCommand] private void Back() => Actions.Back();
     [RelayCommand] private void OpenSettings() => Actions.OpenSettings(false);
     [RelayCommand] private void CreateExtension() => Actions.OpenSettings(true);
 
@@ -202,4 +217,5 @@ public sealed record PopupActions(
     Func<Task> Retry,
     Func<string, Task> Refine,
     Action Close,
+    Action Back,
     Action<bool> OpenSettings);
