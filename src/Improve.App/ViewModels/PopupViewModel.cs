@@ -1,0 +1,184 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Improve.Core.Models;
+
+namespace Improve.App.ViewModels;
+
+public enum PopupState
+{
+    Hidden,
+    Actions,
+    Processing,
+    Suggestion,
+    Toast,
+}
+
+/// <summary>Linha do ActionPopup.</summary>
+public sealed partial class PopupItem(Extension extension, int number) : ObservableObject
+{
+    public Extension Extension { get; } = extension;
+    public string Name => Extension.Name;
+    public string Icon => Extension.Icon;
+
+    /// <summary>Atalho de 1 a 9 pela posição na lista completa; vazio a partir da 10ª.</summary>
+    public string Number { get; } = number <= 9 ? number.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
+
+    [ObservableProperty]
+    private bool _isSelected;
+}
+
+/// <summary>
+/// Estado do popup flutuante: lista de extensões, indicador de processamento, painel de sugestão ou aviso.
+/// As ações são executadas por quem cria o ViewModel (o <c>FlowController</c>).
+/// </summary>
+public sealed partial class PopupViewModel : ObservableObject
+{
+    private IReadOnlyList<PopupItem> _all = [];
+
+    public PopupViewModel(PopupActions actions) => Actions = actions;
+
+    public PopupActions Actions { get; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsActions), nameof(IsProcessing), nameof(IsSuggestion), nameof(IsToast))]
+    private PopupState _state;
+
+    public bool IsActions => State == PopupState.Actions;
+    public bool IsProcessing => State == PopupState.Processing;
+    public bool IsSuggestion => State == PopupState.Suggestion;
+    public bool IsToast => State == PopupState.Toast;
+
+    // ActionPopup.
+    public ObservableCollection<PopupItem> Items { get; } = [];
+    public bool HasExtensions => _all.Count > 0;
+    public bool HasNoMatches => _all.Count > 0 && Items.Count == 0;
+
+    [ObservableProperty]
+    private string _search = "";
+
+    partial void OnSearchChanged(string value) => Filter();
+
+    // SuggestionPanel.
+    [ObservableProperty] private string _title = "";
+    [ObservableProperty] private string _icon = "wand-sparkles";
+    [ObservableProperty] private string? _providerName;
+    [ObservableProperty] private bool _isCode;
+    [ObservableProperty] private string _output = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanAct))]
+    private bool _isStreaming;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasError), nameof(CanAct))]
+    private string? _error;
+
+    [ObservableProperty] private bool _windowChanged;
+    [ObservableProperty] private string _refineText = "";
+    [ObservableProperty] private string _toastText = "";
+    [ObservableProperty] private string _toastIcon = "info";
+
+    public bool HasError => Error is not null;
+
+    /// <summary>Aplicar/Copiar/Refinar só com um resultado completo.</summary>
+    public bool CanAct => !IsStreaming && Error is null && Output.Length > 0;
+
+    partial void OnOutputChanged(string value) => OnPropertyChanged(nameof(CanAct));
+
+    public PopupItem? Selected => Items.FirstOrDefault(i => i.IsSelected);
+
+    public void ShowActions(IReadOnlyList<Extension> extensions)
+    {
+        _all = [.. extensions.Select((e, i) => new PopupItem(e, i + 1))];
+        Search = "";
+        Filter();
+        OnPropertyChanged(nameof(HasExtensions));
+        State = PopupState.Actions;
+    }
+
+    public void ShowSuggestion(Extension extension, string? providerName)
+    {
+        Title = extension.Name;
+        Icon = extension.Icon;
+        ProviderName = providerName;
+        IsCode = extension.Icon.Contains("code", StringComparison.Ordinal) || extension.Icon.Contains("terminal", StringComparison.Ordinal)
+            || extension.Icon.Contains("braces", StringComparison.Ordinal);
+        Output = "";
+        Error = null;
+        WindowChanged = false;
+        RefineText = "";
+        State = PopupState.Suggestion;
+    }
+
+    public void ShowToast(string text, string icon)
+    {
+        ToastText = text;
+        ToastIcon = icon;
+        State = PopupState.Toast;
+    }
+
+    /// <summary>Move a seleção (↑/↓), dando a volta nas pontas.</summary>
+    public void MoveSelection(int delta)
+    {
+        if (Items.Count == 0)
+            return;
+        var index = Selected is { } current ? Items.IndexOf(current) : -1;
+        Select(Items[((index + delta) % Items.Count + Items.Count) % Items.Count]);
+    }
+
+    public void Select(PopupItem item)
+    {
+        foreach (var other in Items)
+            other.IsSelected = other == item;
+        OnPropertyChanged(nameof(Selected));
+    }
+
+    /// <summary>Atalho 1–9: pelo número da lista completa, mesmo com filtro.</summary>
+    public PopupItem? ByNumber(int number) => _all.FirstOrDefault(i => i.Number == number.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+    [RelayCommand]
+    private void Run(PopupItem? item)
+    {
+        if ((item ?? Selected) is { } chosen)
+            _ = Actions.Run(chosen.Extension);
+    }
+
+    [RelayCommand]
+    private void Refine()
+    {
+        if (CanAct && RefineText.Trim() is { Length: > 0 } instruction)
+        {
+            RefineText = "";
+            _ = Actions.Refine(instruction);
+        }
+    }
+
+    [RelayCommand] private void Apply() => _ = CanAct ? Actions.Apply() : Task.CompletedTask;
+    [RelayCommand] private void Copy() => _ = CanAct ? Actions.Copy() : Task.CompletedTask;
+    [RelayCommand] private void Retry() => _ = Actions.Retry();
+    [RelayCommand] private void Close() => Actions.Close();
+    [RelayCommand] private void OpenSettings() => Actions.OpenSettings(false);
+    [RelayCommand] private void CreateExtension() => Actions.OpenSettings(true);
+
+    private void Filter()
+    {
+        var terms = Search.Trim();
+        Items.Clear();
+        foreach (var item in _all.Where(i => terms.Length == 0 || i.Name.Contains(terms, StringComparison.CurrentCultureIgnoreCase)))
+            Items.Add(item);
+        if (Items.Count > 0)
+            Select(Items[0]);
+        OnPropertyChanged(nameof(HasNoMatches));
+    }
+}
+
+/// <summary>O que o popup pede para fazer; implementado pelo <c>FlowController</c>.</summary>
+public sealed record PopupActions(
+    Func<Extension, Task> Run,
+    Func<Task> Apply,
+    Func<Task> Copy,
+    Func<Task> Retry,
+    Func<string, Task> Refine,
+    Action Close,
+    Action<bool> OpenSettings);

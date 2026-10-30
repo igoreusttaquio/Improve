@@ -1,0 +1,163 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:Improve.App.Controls"
+        xmlns:vm="using:Improve.App.ViewModels"
+        xmlns:res="using:Improve.App.Resources"
+        x:Class="Improve.App.Views.PopupWindow"
+        x:DataType="vm:PopupViewModel"
+        Title="improve"
+        WindowDecorations="None"
+        Topmost="True"
+        ShowInTaskbar="False"
+        CanResize="False"
+        SizeToContent="WidthAndHeight"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        Foreground="{DynamicResource InkBrush}"
+        FontFamily="{DynamicResource FontSans}"
+        FontSize="14">
+
+  <!-- A margem dá espaço para a sombra shadow-popup dentro da janela transparente. -->
+  <Border Name="Card" Classes="popup" Margin="24,16,24,40">
+    <Panel>
+
+      <!-- ActionPopup -->
+      <StackPanel Width="280" Margin="8" IsVisible="{Binding IsActions}">
+        <Border Classes="popup-search">
+          <Grid ColumnDefinitions="Auto,*">
+            <c:LucideIcon Icon="search" Foreground="{DynamicResource InkMutedBrush}" VerticalAlignment="Center" />
+            <TextBox Name="SearchBox" Grid.Column="1" Classes="bare" Text="{Binding Search}" PlaceholderText="{x:Static res:Strings.PopupSearch}" />
+          </Grid>
+        </Border>
+
+        <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding HasExtensions}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:PopupItem">
+              <Border Classes="row" Classes.selected="{Binding IsSelected}" PointerPressed="OnRowPressed">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                  <c:LucideIcon Classes="row-icon" Icon="{Binding Icon}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                  <Panel Grid.Column="2" Classes="kbd" IsVisible="{Binding Number, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <Border Classes="kbd-bg" />
+                    <TextBlock Text="{Binding Number}" />
+                  </Panel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Classes="caption muted" Margin="12,8" Text="{x:Static res:Strings.PopupNoMatches}" IsVisible="{Binding HasNoMatches}" />
+
+        <!-- Estado vazio: nenhuma extensão ativa. -->
+        <StackPanel Margin="12,12,12,8" Spacing="10" IsVisible="{Binding !HasExtensions}">
+          <TextBlock Classes="body muted" Text="{x:Static res:Strings.ExtensionsEmpty}" />
+          <Button Classes="primary" HorizontalAlignment="Left" Command="{Binding CreateExtensionCommand}">
+            <StackPanel Classes="button-content">
+              <c:LucideIcon Icon="plus" />
+              <TextBlock Text="{x:Static res:Strings.ExtensionsEmptyAction}" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <Border Classes="popup-foot">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Classes="caption muted" Text="{Binding Source={x:Static res:Strings.PopupRun}, StringFormat='↵ {0}'}" />
+            <TextBlock Classes="caption muted" Text="{Binding Source={x:Static res:Strings.PopupShortcut}, StringFormat='1–9 {0}'}" />
+            <TextBlock Classes="caption muted" Text="{Binding Source={x:Static res:Strings.PopupClose}, StringFormat='Esc {0}'}" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+
+      <!-- Processando (modos substituir e copiar) -->
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="14,10" IsVisible="{Binding IsProcessing}">
+        <c:LucideIcon Classes="spin" Icon="loader-circle" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
+        <TextBlock Classes="label" Text="{x:Static res:Strings.PopupProcessing}" VerticalAlignment="Center" />
+        <TextBlock Classes="caption muted" Text="{x:Static res:Strings.PopupEscCancel}" VerticalAlignment="Center" />
+      </StackPanel>
+
+      <!-- Aviso rápido -->
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="14,10" IsVisible="{Binding IsToast}">
+        <c:LucideIcon Icon="{Binding ToastIcon}" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
+        <TextBlock Classes="label" Text="{Binding ToastText}" VerticalAlignment="Center" />
+      </StackPanel>
+
+      <!-- SuggestionPanel -->
+      <DockPanel Width="420" IsVisible="{Binding IsSuggestion}">
+        <Border DockPanel.Dock="Top" Classes="panel-head">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+            <c:LucideIcon Icon="{Binding Icon}" Foreground="{DynamicResource AccentInkBrush}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <Border Grid.Column="2" Classes="chip" IsVisible="{Binding ProviderName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+              <TextBlock Text="{Binding ProviderName}" />
+            </Border>
+            <Button Grid.Column="3" Classes="ghost icon" Width="28" Height="28" MinHeight="28" Command="{Binding CloseCommand}" ToolTip.Tip="{x:Static res:Strings.Close}">
+              <c:LucideIcon Icon="x" />
+            </Button>
+          </Grid>
+        </Border>
+
+        <Border DockPanel.Dock="Bottom" Classes="panel-foot">
+          <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
+            <Button Classes="primary" Command="{Binding ApplyCommand}" IsEnabled="{Binding CanAct}">
+              <StackPanel Classes="button-content">
+                <c:LucideIcon Icon="check" />
+                <TextBlock Text="{x:Static res:Strings.Apply}" />
+                <Panel Classes="kbd">
+                  <Border Classes="kbd-bg on-accent" />
+                  <TextBlock Text="↵" />
+                </Panel>
+              </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Command="{Binding CopyCommand}" IsEnabled="{Binding CanAct}">
+              <StackPanel Classes="button-content">
+                <c:LucideIcon Icon="copy" />
+                <TextBlock Text="{x:Static res:Strings.Copy}" />
+              </StackPanel>
+            </Button>
+            <Button Grid.Column="3" Classes="ghost" Command="{Binding RetryCommand}" IsEnabled="{Binding !IsStreaming}">
+              <StackPanel Classes="button-content">
+                <c:LucideIcon Icon="refresh-cw" />
+                <TextBlock Text="{x:Static res:Strings.Retry}" />
+              </StackPanel>
+            </Button>
+          </Grid>
+        </Border>
+
+        <!-- Refinar -->
+        <Border DockPanel.Dock="Bottom" Classes="refine" IsVisible="{Binding !HasError}">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+            <c:LucideIcon Icon="sparkles" Foreground="{DynamicResource InkMutedBrush}" VerticalAlignment="Center" />
+            <TextBox Name="RefineBox" Grid.Column="1" Classes="bare" Text="{Binding RefineText}" PlaceholderText="{x:Static res:Strings.RefinePlaceholder}"
+                     IsEnabled="{Binding CanAct}" />
+          </Grid>
+        </Border>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="16,0,16,12" IsVisible="{Binding WindowChanged}">
+          <c:LucideIcon Icon="triangle-alert" Foreground="{DynamicResource WarningBrush}" />
+          <TextBlock Classes="caption warning" Text="{x:Static res:Strings.WindowChanged}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16">
+          <Panel>
+            <SelectableTextBlock Classes="body" Classes.code="{Binding IsCode}" TextWrapping="Wrap" IsVisible="{Binding !HasError}">
+              <Run Text="{Binding Output}" />
+              <InlineUIContainer BaselineAlignment="Center">
+                <Border Classes="caret" IsVisible="{Binding IsStreaming}" />
+              </InlineUIContainer>
+            </SelectableTextBlock>
+            <StackPanel Spacing="12" IsVisible="{Binding HasError}">
+              <TextBlock Classes="body danger" Text="{Binding Error}" TextWrapping="Wrap" />
+              <Button HorizontalAlignment="Left" Command="{Binding OpenSettingsCommand}">
+                <StackPanel Classes="button-content">
+                  <c:LucideIcon Icon="settings" />
+                  <TextBlock Text="{x:Static res:Strings.OpenSettings}" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
+          </Panel>
+        </ScrollViewer>
+      </DockPanel>
+    </Panel>
+  </Border>
+</Window>

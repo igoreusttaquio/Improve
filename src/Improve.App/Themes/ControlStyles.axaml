@@ -185,6 +185,139 @@
     </Setter>
   </Style>
 
+  <!-- Popup e painel flutuantes (referencia-componentes.css: .imp-popup, .imp-panel). -->
+  <Style Selector="Border.popup">
+    <Setter Property="Background" Value="{DynamicResource Surface200Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusPopup}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource ShadowPopup}" />
+    <Setter Property="Focusable" Value="True" />
+  </Style>
+  <Style Selector="Border.popup.opening">
+    <Style.Animations>
+      <Animation Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" FillMode="Forward">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="0" />
+          <Setter Property="ScaleTransform.ScaleX" Value="0.98" />
+          <Setter Property="ScaleTransform.ScaleY" Value="0.98" />
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1" />
+          <Setter Property="ScaleTransform.ScaleX" Value="1" />
+          <Setter Property="ScaleTransform.ScaleY" Value="1" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="Border.popup-search">
+    <Setter Property="Padding" Value="12,6,12,10" />
+    <Setter Property="Margin" Value="0,0,0,4" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+  </Style>
+  <Style Selector="Border.popup-foot">
+    <Setter Property="Padding" Value="12,8,12,4" />
+    <Setter Property="Margin" Value="0,4,0,0" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+  </Style>
+  <Style Selector="Border.row">
+    <Setter Property="Padding" Value="12,7" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Border.row:pointerover">
+    <Setter Property="Background" Value="{DynamicResource Surface300Brush}" />
+  </Style>
+  <Style Selector="Border.row.selected">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+  </Style>
+  <Style Selector="Border.row c|LucideIcon.row-icon">
+    <Setter Property="Foreground" Value="{DynamicResource AccentInkBrush}" />
+  </Style>
+  <Style Selector="Border.row.selected TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+  </Style>
+  <Style Selector="Border.row.selected c|LucideIcon.row-icon">
+    <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+  </Style>
+  <Style Selector="Panel.kbd">
+    <Setter Property="MinWidth" Value="18" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Panel.kbd > Border.kbd-bg">
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusSm}" />
+    <Setter Property="Background" Value="{DynamicResource Surface300Brush}" />
+  </Style>
+  <Style Selector="Panel.kbd > TextBlock">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="LineHeight" Value="16" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Margin" Value="5,0" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Foreground" Value="{DynamicResource InkMutedBrush}" />
+  </Style>
+  <!-- Sobre o limão, o kbd usa on-accent a 12% (como no CSS de referência). -->
+  <Style Selector="Border.row.selected Panel.kbd > Border.kbd-bg, Panel.kbd > Border.kbd-bg.on-accent">
+    <Setter Property="Background" Value="{DynamicResource OnAccentBrush}" />
+    <Setter Property="Opacity" Value="0.12" />
+  </Style>
+  <Style Selector="Border.row.selected Panel.kbd > TextBlock, Button.primary Panel.kbd > TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+  </Style>
+  <Style Selector="Border.panel-head">
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+  </Style>
+  <Style Selector="Border.panel-foot">
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+  </Style>
+  <Style Selector="Border.refine">
+    <Setter Property="Margin" Value="16,0,16,12" />
+    <Setter Property="Padding" Value="12,2" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}" />
+    <Setter Property="Background" Value="{DynamicResource Surface200Brush}" />
+  </Style>
+  <Style Selector="Border.caret">
+    <Setter Property="Width" Value="2" />
+    <Setter Property="Height" Value="16" />
+    <Setter Property="Margin" Value="1,0,0,0" />
+    <Setter Property="Background" Value="{DynamicResource AccentInkBrush}" />
+  </Style>
+  <Style Selector="c|LucideIcon.spin">
+    <Style.Animations>
+      <!-- Giro contínuo do indicador: não é transição, por isso não usa motion-fast. -->
+      <Animation Duration="0:0:0.9" IterationCount="INFINITE">
+        <KeyFrame Cue="0%">
+          <Setter Property="RotateTransform.Angle" Value="0" />
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="RotateTransform.Angle" Value="360" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Campo sem moldura (busca do popup, refinar). -->
+  <Style Selector="TextBox.bare">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+  <Style Selector="TextBox.bare /template/ Border#PART_BorderElement, TextBox.bare:pointerover /template/ Border#PART_BorderElement, TextBox.bare:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
   <!-- Colunas da janela de configurações. -->
   <Style Selector="Border.panel">
     <Setter Property="Background" Value="{DynamicResource Surface100Brush}" />

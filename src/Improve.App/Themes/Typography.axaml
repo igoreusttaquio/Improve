@@ -1,38 +1,38 @@
 <!-- Gerado por tools/gen-tokens a partir de design/tokens.json. Não edite à mão. -->
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Style Selector="TextBlock.display">
+  <Style Selector=":is(TextBlock).display">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}" />
     <Setter Property="FontSize" Value="32" />
     <Setter Property="LineHeight" Value="36" />
     <Setter Property="FontWeight" Value="650" />
     <Setter Property="LetterSpacing" Value="-0.64" />
   </Style>
-  <Style Selector="TextBlock.title">
+  <Style Selector=":is(TextBlock).title">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}" />
     <Setter Property="FontSize" Value="17" />
     <Setter Property="LineHeight" Value="24" />
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
-  <Style Selector="TextBlock.body">
+  <Style Selector=":is(TextBlock).body">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}" />
     <Setter Property="FontSize" Value="14" />
     <Setter Property="LineHeight" Value="20" />
     <Setter Property="FontWeight" Value="Normal" />
   </Style>
-  <Style Selector="TextBlock.label">
+  <Style Selector=":is(TextBlock).label">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}" />
     <Setter Property="FontSize" Value="13" />
     <Setter Property="LineHeight" Value="18" />
     <Setter Property="FontWeight" Value="Medium" />
   </Style>
-  <Style Selector="TextBlock.caption">
+  <Style Selector=":is(TextBlock).caption">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}" />
     <Setter Property="FontSize" Value="12" />
     <Setter Property="LineHeight" Value="16" />
     <Setter Property="FontWeight" Value="Normal" />
   </Style>
-  <Style Selector="TextBlock.code">
+  <Style Selector=":is(TextBlock).code">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}" />
     <Setter Property="FontSize" Value="13" />
     <Setter Property="LineHeight" Value="20" />

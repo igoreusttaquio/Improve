@@ -101,6 +101,7 @@ static string SharedDictionary(JsonElement root)
 
 static string Typography(JsonElement root)
 {
+    // :is(TextBlock) para valer também em SelectableTextBlock.
     var sb = Header("Styles");
     foreach (var group in root.GetProperty("type").GetProperty("groups").EnumerateArray())
     {
@@ -108,7 +109,7 @@ static string Typography(JsonElement root)
         foreach (var style in group.GetProperty("styles").EnumerateArray())
         {
             var size = Px(style.GetProperty("fontSize").GetString()!);
-            sb.Append($"  <Style Selector=\"TextBlock.{style.GetProperty("name").GetString()}\">\n");
+            sb.Append($"  <Style Selector=\":is(TextBlock).{style.GetProperty("name").GetString()}\">\n");
             sb.Append($"    <Setter Property=\"FontFamily\" Value=\"{{StaticResource Font{family}}}\" />\n");
             sb.Append($"    <Setter Property=\"FontSize\" Value=\"{size}\" />\n");
             sb.Append($"    <Setter Property=\"LineHeight\" Value=\"{Px(style.GetProperty("lineHeight").GetString()!)}\" />\n");

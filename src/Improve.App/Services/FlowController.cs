@@ -1,3 +1,8 @@
+using Avalonia;
+using Avalonia.Threading;
+using Improve.App.Resources;
+using Improve.App.ViewModels;
+using Improve.App.Views;
 using Improve.Core.Execution;
 using Improve.Core.Models;
 using Improve.Core.Providers;
@@ -8,91 +13,328 @@ using Microsoft.Extensions.Logging;
 namespace Improve.App.Services;
 
 /// <summary>
-/// Liga os atalhos globais ao fluxo da seção 8: captura → IA → saída. Uma execução por vez.
+/// O fluxo da seção 8: atalho → captura → popup (ou extensão direta) → IA → substituir, sugerir ou copiar.
+/// Roda na thread de UI; o trabalho pesado fica nos serviços, que são assíncronos.
 /// </summary>
-public sealed partial class FlowController(ConfigState config, IHotkeyService hotkeys, ExtensionRunner runner, ILogger<FlowController> logger)
-    : IDisposable
+public sealed partial class FlowController : IDisposable
 {
     public const string GlobalHotkeyId = "global";
+    private static readonly TimeSpan ToastDuration = TimeSpan.FromMilliseconds(1600);
 
-    private int _running;
+    private readonly ConfigState _config;
+    private readonly IHotkeyService _hotkeys;
+    private readonly ExtensionRunner _runner;
+    private readonly ICursorService _cursor;
+    private readonly IWindowActivator _activator;
+    private readonly ILogger<FlowController> _logger;
+    private readonly DispatcherTimer _toastTimer;
+
+    private PopupViewModel _popup = null!;
+    private PopupWindow _window = null!;
+    private PixelPoint _anchor;
+    private Capture? _capture;
+    private RunSession? _session;
+    private CancellationTokenSource? _generation;
+    private int _generationId;
+    private bool _capturing;
+
+    public FlowController(
+        ConfigState config, IHotkeyService hotkeys, ExtensionRunner runner, ICursorService cursor, IWindowActivator activator,
+        ILogger<FlowController> logger)
+    {
+        _config = config;
+        _hotkeys = hotkeys;
+        _runner = runner;
+        _cursor = cursor;
+        _activator = activator;
+        _logger = logger;
+        _toastTimer = new DispatcherTimer { Interval = ToastDuration };
+        _toastTimer.Tick += (_, _) => Hide();
+    }
+
+    /// <summary>Abre as configurações (o parâmetro pede o editor de nova extensão). Definido pelo App.</summary>
+    public Action<bool>? OpenSettings { get; set; }
 
     public bool IsPaused
     {
-        get => hotkeys.IsPaused;
-        set => hotkeys.IsPaused = value;
+        get => _hotkeys.IsPaused;
+        set => _hotkeys.IsPaused = value;
     }
 
+    /// <summary>Cria a janela oculta (abertura instantânea depois) e registra os atalhos. Chamar na thread de UI.</summary>
     public void Start()
     {
-        hotkeys.Pressed += (_, e) => _ = RunAsync(e.Id);
-        config.Changed += (_, _) => RegisterHotkeys();
+        _popup = new PopupViewModel(new PopupActions(RunAsync, ApplyAsync, CopyAsync, RetryAsync, RefineAsync, Close, OpenSettingsFromPopup));
+        _window = new PopupWindow(_popup);
+        _window.FocusLost += (_, _) => OnFocusLost();
+        // Aquece com a lista real, para os itens e fontes já estarem prontos no primeiro atalho.
+        _popup.ShowActions(_config.EnabledExtensions);
+        _window.WarmUp(() => _popup.State = PopupState.Hidden);
+
+        _hotkeys.Pressed += (_, e) => Dispatcher.UIThread.Post(() => _ = OnHotkeyAsync(e.Id));
+        _config.Changed += (_, _) => RegisterHotkeys();
         RegisterHotkeys();
-        hotkeys.Start();
+        _hotkeys.Start();
     }
 
     /// <summary>O mesmo que o atalho global (usado por <c>improve --trigger</c>).</summary>
-    public Task TriggerAsync() => RunAsync(GlobalHotkeyId);
+    public Task TriggerAsync() => OnHotkeyAsync(GlobalHotkeyId);
 
-    public void Dispose() => hotkeys.Dispose();
+    public void Dispose()
+    {
+        _generation?.Cancel();
+        _hotkeys.Dispose();
+    }
 
     private void RegisterHotkeys()
     {
         var map = new Dictionary<string, Hotkey>();
-        if (Hotkey.TryParse(config.Settings.GlobalHotkey, out var global) && global.IsValid)
+        if (Hotkey.TryParse(_config.Settings.GlobalHotkey, out var global) && global.IsValid)
             map[GlobalHotkeyId] = global;
-        foreach (var extension in config.EnabledExtensions)
+        foreach (var extension in _config.EnabledExtensions)
         {
             if (Hotkey.TryParse(extension.Hotkey, out var hotkey) && hotkey.IsValid)
                 map.TryAdd(extension.Id.ToString(), hotkey);
         }
-        hotkeys.SetHotkeys(map);
+        _hotkeys.SetHotkeys(map);
     }
 
-    private async Task RunAsync(string id)
+    // Passos 1–5: captura e abre o popup (atalho global) ou executa direto (atalho da extensão).
+    private async Task OnHotkeyAsync(string id)
     {
-        if (Interlocked.Exchange(ref _running, 1) == 1)
+        if (_capturing)
             return;
+        _capturing = true;
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        LogHotkey(id == GlobalHotkeyId ? "global" : "extensão");
         try
         {
-            // Provisório até o popup (fase 4): o atalho global executa a primeira extensão ativa.
-            var enabled = config.EnabledExtensions;
-            var extension = id == GlobalHotkeyId
-                ? (enabled.Count > 0 ? enabled[0] : null)
-                : enabled.FirstOrDefault(e => e.Id.ToString() == id);
-            if (extension is null)
-                return;
-
-            using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(2));
-            var capture = await runner.CaptureAsync(timeout.Token).ConfigureAwait(false);
+            Hide();
+            var position = _cursor.GetPosition();
+            _anchor = new PixelPoint(position.X, position.Y);
+            var capture = await _runner.CaptureAsync(CancellationToken.None);
             if (capture is null)
             {
                 LogNoSelection();
+                ShowToast(Strings.SelectTextFirst, "text-cursor-input");
                 return;
             }
+            _capture = capture;
+            LogCaptured(capture.Text.Length, watch.ElapsedMilliseconds);
 
-            var session = ExtensionGenerator.CreateSession(extension, config.Settings.Providers, capture);
-            await runner.GenerateAsync(session, onChunk: null, timeout.Token).ConfigureAwait(false);
-
-            // Provisório até o painel de sugestão (fase 4): sugerir e "janela mudou" copiam o resultado.
-            if (extension.Mode == OutputMode.Replace && await runner.ApplyAsync(session, timeout.Token).ConfigureAwait(false) == ApplyOutcome.Applied)
-                return;
-            await runner.CopyAsync(session, timeout.Token).ConfigureAwait(false);
+            if (id == GlobalHotkeyId)
+            {
+                _popup.ShowActions(_config.EnabledExtensions);
+                Show(activate: true);
+                LogPopupShown(watch.ElapsedMilliseconds);
+            }
+            else if (_config.EnabledExtensions.FirstOrDefault(e => e.Id.ToString() == id) is { } extension)
+            {
+                await RunAsync(extension);
+            }
         }
-        catch (Exception ex) when (ex is ProviderException or ExtensionConfigurationException or OperationCanceledException or IOException)
+        catch (IOException)
         {
-            // A mensagem pode citar o provedor, nunca o texto; a UI de erro vem na fase 4.
-            LogFailed(ex.GetType().Name);
+            // Área de transferência ocupada por outro programa.
+            ShowToast(Strings.SelectTextFirst, "text-cursor-input");
         }
         finally
         {
-            Volatile.Write(ref _running, 0);
+            _capturing = false;
         }
     }
+
+    // Passos 6–7: executa a extensão escolhida no modo dela.
+    private async Task RunAsync(Extension extension)
+    {
+        if (_capture is not { } capture)
+            return;
+        var provider = _config.Settings.Providers.FirstOrDefault(p => p.Id == extension.ProviderId);
+        RunSession session;
+        try
+        {
+            session = ExtensionGenerator.CreateSession(extension, _config.Settings.Providers, capture);
+            _session = session;
+        }
+        catch (ExtensionConfigurationException ex)
+        {
+            _session = null;
+            _popup.ShowSuggestion(extension, provider?.Name);
+            _popup.Error = ex.Message;
+            Show(activate: true);
+            return;
+        }
+
+        if (extension.Mode == OutputMode.Suggest)
+        {
+            _popup.ShowSuggestion(extension, provider?.Name);
+            Show(activate: true);
+            await GenerateAsync(() => GenerateStreamingAsync(session));
+            return;
+        }
+
+        _popup.State = PopupState.Processing;
+        Show(activate: true);
+        if (!await GenerateAsync(() => GenerateStreamingAsync(session)))
+        {
+            // Falhou ou foi cancelado: o erro aparece no painel; o cancelamento só fecha.
+            if (_popup.Error is not null)
+            {
+                var error = _popup.Error;
+                _popup.ShowSuggestion(extension, provider?.Name);
+                _popup.Error = error;
+                Show(activate: true);
+            }
+            return;
+        }
+
+        if (extension.Mode == OutputMode.Copy)
+        {
+            await _runner.CopyAsync(session, CancellationToken.None);
+            ShowToast(Strings.Copied, "check");
+            return;
+        }
+
+        if (await _runner.ApplyAsync(session, HideAsync, CancellationToken.None) == ApplyOutcome.WindowChanged)
+        {
+            // Não cola numa janela diferente: mostra o resultado para Copiar ou Aplicar.
+            var result = session.Result!;
+            _popup.ShowSuggestion(extension, provider?.Name);
+            _popup.Output = result;
+            _popup.WindowChanged = true;
+            Show(activate: true);
+        }
+    }
+
+    /// <summary>Chama a IA com o token da geração atual; pedaços de uma geração antiga são descartados.</summary>
+    private Task<string> GenerateStreamingAsync(RunSession session, string? refine = null)
+    {
+        var id = _generationId;
+        void OnChunk(string chunk) => Dispatcher.UIThread.Post(() =>
+        {
+            if (id == _generationId)
+                _popup.Output += chunk;
+        });
+        var token = _generation!.Token;
+        return refine is null
+            ? _runner.GenerateAsync(session, OnChunk, token)
+            : _runner.RefineAsync(session, refine, OnChunk, token);
+    }
+
+    /// <summary>Roda uma geração cancelável; o texto final substitui o que veio em streaming. <c>false</c> se falhou ou foi cancelada.</summary>
+    private async Task<bool> GenerateAsync(Func<Task<string>> generate)
+    {
+        _generation?.Cancel();
+        _generation = new CancellationTokenSource();
+        var id = ++_generationId;
+        _popup.Output = "";
+        _popup.Error = null;
+        _popup.IsStreaming = true;
+        try
+        {
+            var result = await generate();
+            if (id == _generationId)
+                _popup.Output = result;
+            return true;
+        }
+        catch (ProviderException ex)
+        {
+            _popup.Error = ex.Message;
+            return false;
+        }
+        catch (OperationCanceledException)
+        {
+            return false;
+        }
+        finally
+        {
+            if (id == _generationId)
+                _popup.IsStreaming = false;
+        }
+    }
+
+    private async Task ApplyAsync()
+    {
+        if (_session?.Result is null)
+            return;
+        _popup.WindowChanged = false;
+        if (await _runner.ApplyAsync(_session, HideAsync, CancellationToken.None) == ApplyOutcome.WindowChanged)
+        {
+            _popup.WindowChanged = true;
+            Show(activate: true);
+        }
+    }
+
+    private async Task CopyAsync()
+    {
+        if (_session?.Result is null)
+            return;
+        await _runner.CopyAsync(_session, CancellationToken.None);
+        Hide();
+    }
+
+    private Task RetryAsync() =>
+        _session is { } session ? GenerateAsync(() => GenerateStreamingAsync(session)) : Task.CompletedTask;
+
+    private Task RefineAsync(string instruction) =>
+        _session is { Result: not null } session ? GenerateAsync(() => GenerateStreamingAsync(session, instruction)) : Task.CompletedTask;
+
+    // Esc: cancela o que estiver em andamento e fecha.
+    private void Close()
+    {
+        _generation?.Cancel();
+        Hide();
+    }
+
+    // Fecha ao perder o foco, exceto durante o processamento ou o streaming do painel.
+    private void OnFocusLost()
+    {
+        if (_popup.State is PopupState.Actions || (_popup.State is PopupState.Suggestion && !_popup.IsStreaming))
+            Close();
+    }
+
+    private void OpenSettingsFromPopup(bool createExtension)
+    {
+        Close();
+        OpenSettings?.Invoke(createExtension);
+    }
+
+    private void Show(bool activate)
+    {
+        _toastTimer.Stop();
+        _window.ShowAt(_anchor, activate);
+        if (activate && _window.TryGetPlatformHandle()?.Handle is { } handle)
+            _activator.Activate(handle);
+        if (activate)
+            _window.FocusContent();
+    }
+
+    private void ShowToast(string text, string icon)
+    {
+        _popup.ShowToast(text, icon);
+        _window.ShowAt(_anchor, activate: false);
+        _toastTimer.Stop();
+        _toastTimer.Start();
+    }
+
+    private void Hide()
+    {
+        _toastTimer.Stop();
+        _popup.State = PopupState.Hidden;
+        _window.Hide();
+    }
+
+    private Task HideAsync() => Dispatcher.UIThread.InvokeAsync(Hide).GetTask();
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Atalho sem texto selecionado.")]
     private partial void LogNoSelection();
 
-    [LoggerMessage(Level = LogLevel.Warning, Message = "Execução pelo atalho falhou: {ErrorType}")]
-    private partial void LogFailed(string errorType);
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Atalho recebido ({Kind}).")]
+    private partial void LogHotkey(string kind);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Seleção capturada: {Length} caracteres em {ElapsedMs} ms.")]
+    private partial void LogCaptured(int length, long elapsedMs);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Popup visível em {ElapsedMs} ms desde o atalho.")]
+    private partial void LogPopupShown(long elapsedMs);
 }

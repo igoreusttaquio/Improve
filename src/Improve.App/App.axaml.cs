@@ -34,7 +34,11 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
 
         // Integrações de SO (por enquanto só no Windows).
         _flow = services.GetService<FlowController>();
-        _flow?.Start();
+        if (_flow is not null)
+        {
+            _flow.OpenSettings = OpenSettings;
+            _flow.Start();
+        }
         instance.Listen(args => Dispatcher.UIThread.Post(() => OnSecondInstance(args)));
 
         UpdateTrayGlyph();
@@ -104,7 +108,10 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
         tray.Icon = new WindowIcon(stream);
     }
 
-    private void OnOpenSettings(object? sender, EventArgs e)
+    private void OnOpenSettings(object? sender, EventArgs e) => OpenSettings(createExtension: false);
+
+    /// <summary>Abre (ou traz para frente) as configurações; com <paramref name="createExtension"/>, já no editor de nova extensão.</summary>
+    private void OpenSettings(bool createExtension)
     {
         if (_settings is null)
         {
@@ -113,6 +120,11 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
         }
         _settings.Show();
         _settings.Activate();
+        if (createExtension && _settings.DataContext is SettingsViewModel vm && vm.Pages[0].Page is ExtensionsPageViewModel extensions)
+        {
+            vm.SelectedPage = vm.Pages[0];
+            extensions.NewCommand.Execute(null);
+        }
     }
 
     private void OnTogglePause(object? sender, EventArgs e)

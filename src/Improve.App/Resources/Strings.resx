@@ -279,6 +279,54 @@
   <data name="AboutLicenses" xml:space="preserve">
     <value>Licenças de terceiros</value>
   </data>
+  <data name="PopupSearch" xml:space="preserve">
+    <value>Buscar extensão…</value>
+  </data>
+  <data name="PopupRun" xml:space="preserve">
+    <value>executar</value>
+  </data>
+  <data name="PopupShortcut" xml:space="preserve">
+    <value>atalho</value>
+  </data>
+  <data name="PopupClose" xml:space="preserve">
+    <value>fechar</value>
+  </data>
+  <data name="PopupNoMatches" xml:space="preserve">
+    <value>Nenhuma extensão encontrada.</value>
+  </data>
+  <data name="PopupProcessing" xml:space="preserve">
+    <value>Processando…</value>
+  </data>
+  <data name="PopupEscCancel" xml:space="preserve">
+    <value>Esc cancela</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Tentar de novo</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="RefinePlaceholder" xml:space="preserve">
+    <value>Refinar: mais curto, mais formal…</value>
+  </data>
+  <data name="WindowChanged" xml:space="preserve">
+    <value>A janela mudou; use Copiar ou Aplicar.</value>
+  </data>
+  <data name="OpenSettings" xml:space="preserve">
+    <value>Abrir configurações</value>
+  </data>
+  <data name="SelectTextFirst" xml:space="preserve">
+    <value>Selecione um texto primeiro</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>Copiado</value>
+  </data>
   <data name="AboutPrivacy" xml:space="preserve">
     <value>Sem telemetria. O texto selecionado só sai da máquina para o provedor que você configurou.</value>
   </data>

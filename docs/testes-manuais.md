@@ -78,3 +78,20 @@ Windows Terminal: Ctrl+C sem seleção envia interrupção ao processo; com sele
 3. Primeira execução (pasta de configuração vazia) com idioma inglês: as extensões de exemplo vêm em inglês.
 4. Mensagens de erro do provedor (chave inválida) aparecem no idioma escolhido.
 5. Editor de extensão: clicar em `{{selection}}`, `{{app}}` e `{{clipboard}}` insere a variável no cursor; com um trecho selecionado no prompt, substitui o trecho.
+
+## Fase 4 — Popup e painel
+
+Para medir: `$env:IMPROVE_LOG = "1"` antes de abrir o app; o tempo "Popup visível em N ms" fica em `improve.log` na pasta de configuração.
+
+1. Selecionar texto e pressionar o atalho global: o popup aparece junto ao cursor (12 px abaixo/à direita), com a primeira extensão selecionada, em menos de 150 ms.
+2. Perto da borda direita/inferior da tela, o popup vira para caber; com dois monitores e escalas diferentes, aparece no monitor do cursor.
+3. Só pelo teclado: ↑/↓ mudam a seleção, digitar filtra, 1–9 executa direto, ↵ executa, Esc fecha.
+4. Extensão "Substituir": aparece "Processando… Esc cancela"; Esc cancela sem mexer no texto; sem Esc, o texto é substituído e o foco volta ao app de origem.
+5. Extensão "Sugerir": o painel mostra o texto chegando com o cursor limão; ↵ aplica; Copiar copia e fecha; "Refinar" + ↵ ajusta; "Tentar de novo" gera outra vez.
+6. Extensão "Copiar": aviso "Copiado" e o resultado na área de transferência.
+7. Durante "Processando", clicar em outra janela: o resultado aparece no painel com "A janela mudou; use Copiar ou Aplicar.".
+8. Chave inválida: painel com o erro em vermelho e o botão "Abrir configurações".
+9. Sem extensões ativas: "Nenhuma extensão ainda." com "Criar primeira extensão", que abre o editor.
+10. Atalho sem seleção: aviso "Selecione um texto primeiro" junto ao cursor, que some sozinho, sem tirar o foco do app.
+11. Clicar fora do popup fecha; durante o streaming do painel, não fecha.
+12. Repetir 1, 5 e 8 no tema claro.
