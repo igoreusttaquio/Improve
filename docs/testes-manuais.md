@@ -70,3 +70,11 @@ Para cada app — Bloco de Notas, Word, Chrome (campo de texto e Gmail), VS Code
 10. Geral → Iniciar com o sistema: aparece/some o valor `improve` em `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
 
 Windows Terminal: Ctrl+C sem seleção envia interrupção ao processo; com seleção, copia. Testar sempre com seleção.
+
+## Idiomas e variáveis do prompt
+
+1. Geral → Idioma → English: a janela reabre em inglês na mesma página; o menu da bandeja muda para "Open settings / Pause improve / Quit". Repetir com Español e Português (Brasil).
+2. "Seguir o sistema" com o Windows em inglês ou em outro idioma não suportado: interface em inglês.
+3. Primeira execução (pasta de configuração vazia) com idioma inglês: as extensões de exemplo vêm em inglês.
+4. Mensagens de erro do provedor (chave inválida) aparecem no idioma escolhido.
+5. Editor de extensão: clicar em `{{selection}}`, `{{app}}` e `{{clipboard}}` insere a variável no cursor; com um trecho selecionado no prompt, substitui o trecho.

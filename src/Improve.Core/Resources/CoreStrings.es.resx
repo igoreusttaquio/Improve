@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SettingsNewerVersion" xml:space="preserve">
+    <value>{0} lo creó una versión más nueva de improve. Actualiza la app para continuar.</value>
+  </data>
+  <data name="ErrorInvalidKey" xml:space="preserve">
+    <value>Clave de API no válida para {0}. Abre Configuración &gt; Proveedores.</value>
+  </data>
+  <data name="ErrorMissingKey" xml:space="preserve">
+    <value>No hay clave de API configurada para {0}. Abre Configuración &gt; Proveedores.</value>
+  </data>
+  <data name="ErrorRateLimited" xml:space="preserve">
+    <value>Límite de uso alcanzado en {0}. Vuelve a intentarlo en un momento.</value>
+  </data>
+  <data name="ErrorUnavailable" xml:space="preserve">
+    <value>{0} no está disponible en este momento. Vuelve a intentarlo en un momento.</value>
+  </data>
+  <data name="ErrorNoNetwork" xml:space="preserve">
+    <value>Sin conexión con {0}. Revisa tu internet y la dirección del proveedor.</value>
+  </data>
+  <data name="ErrorBadRequest" xml:space="preserve">
+    <value>{0} rechazó la solicitud: {1}</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Error inesperado en {0}. Vuelve a intentarlo.</value>
+  </data>
+  <data name="ErrorNoProvider" xml:space="preserve">
+    <value>La extensión "{0}" no tiene proveedor. Abre Configuración &gt; Extensiones.</value>
+  </data>
+  <data name="ErrorNoModel" xml:space="preserve">
+    <value>Elige un modelo para la extensión "{0}" en Configuración &gt; Extensiones.</value>
+  </data>
+  <data name="GlobalHotkeyOwner" xml:space="preserve">
+    <value>atajo global</value>
+  </data>
+  <data name="ImportInvalidFile" xml:space="preserve">
+    <value>El archivo no es una exportación de extensiones de improve.</value>
+  </data>
+  <data name="ExampleImproveName" xml:space="preserve">
+    <value>Mejorar mensaje</value>
+  </data>
+  <data name="ExampleImprovePrompt" xml:space="preserve">
+    <value>Reescribe el mensaje para que sea claro, cordial y sin errores, manteniendo el idioma y el tono.</value>
+  </data>
+  <data name="ExampleFormalName" xml:space="preserve">
+    <value>Hacer formal</value>
+  </data>
+  <data name="ExampleFormalPrompt" xml:space="preserve">
+    <value>Reescribe el texto en un tono formal y profesional, manteniendo el sentido y el idioma.</value>
+  </data>
+  <data name="ExampleTranslateName" xml:space="preserve">
+    <value>Traducir al inglés</value>
+  </data>
+  <data name="ExampleTranslatePrompt" xml:space="preserve">
+    <value>Traduce el texto al inglés, manteniendo el tono y el formato.</value>
+  </data>
+  <data name="ExampleRefactorName" xml:space="preserve">
+    <value>Refactorizar código</value>
+  </data>
+  <data name="ExampleRefactorPrompt" xml:space="preserve">
+    <value>Refactoriza el código para que sea más legible e idiomático, sin cambiar su comportamiento. Mantén el lenguaje y el estilo de sangría.</value>
+  </data>
+</root>

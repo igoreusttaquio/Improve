@@ -33,6 +33,17 @@
           </ComboBox>
         </StackPanel>
 
+        <StackPanel>
+          <TextBlock Classes="field" Text="{x:Static res:Strings.FieldLanguage}" />
+          <ComboBox ItemsSource="{x:Static vm:LanguageOption.All}" SelectedItem="{Binding Language}" Width="280" HorizontalAlignment="Left">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:LanguageOption">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+
         <StackPanel Orientation="Horizontal" Spacing="12">
           <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding StartWithSystem}" />
           <TextBlock Classes="body" Text="{x:Static res:Strings.StartWithSystem}" VerticalAlignment="Center" />

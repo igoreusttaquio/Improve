@@ -56,9 +56,14 @@
 
           <StackPanel>
             <TextBlock Classes="field" Text="{x:Static res:Strings.FieldPrompt}" />
-            <c:PromptEditor Text="{Binding Prompt}" />
-            <TextBlock Classes="caption muted" Text="{x:Static res:Strings.PromptHint}" TextWrapping="Wrap" Margin="0,6,0,0" />
-          </StackPanel>
+            <c:PromptEditor Name="PromptInput" Text="{Binding Prompt}" />
+            <TextBlock Classes="caption muted" Text="{x:Static res:Strings.PromptMarkdownHint}" TextWrapping="Wrap" Margin="0,8,0,6" />
+            <WrapPanel ItemSpacing="6" LineSpacing="6">
+              <Button Classes="variable" Content="{}{{selection}}" Tag="{}{{selection}}" ToolTip.Tip="{x:Static res:Strings.VarSelectionTip}" Click="OnInsertVariable" />
+              <Button Classes="variable" Content="{}{{app}}" Tag="{}{{app}}" ToolTip.Tip="{x:Static res:Strings.VarAppTip}" Click="OnInsertVariable" />
+              <Button Classes="variable" Content="{}{{clipboard}}" Tag="{}{{clipboard}}" ToolTip.Tip="{x:Static res:Strings.VarClipboardTip}" Click="OnInsertVariable" />
+            </WrapPanel>
+            <TextBlock Classes="caption muted" Text="{x:Static res:Strings.PromptSelectionNote}" TextWrapping="Wrap" Margin="0,6,0,0" />          </StackPanel>
 
           <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
             <StackPanel>

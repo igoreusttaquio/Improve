@@ -9,11 +9,23 @@ namespace Improve.App.ViewModels;
 
 public sealed record ThemeOption(ThemePreference Value, string Label)
 {
-    public static IReadOnlyList<ThemeOption> All { get; } =
+    public static IReadOnlyList<ThemeOption> All =>
     [
         new(ThemePreference.System, Strings.ThemeSystem),
         new(ThemePreference.Dark, Strings.ThemeDark),
         new(ThemePreference.Light, Strings.ThemeLight),
+    ];
+}
+
+public sealed record LanguageOption(LanguagePreference Value, string Label)
+{
+    // Os idiomas aparecem no próprio nome nativo; só "seguir o sistema" é traduzido.
+    public static IReadOnlyList<LanguageOption> All =>
+    [
+        new(LanguagePreference.System, Strings.LanguageSystem),
+        new(LanguagePreference.PortugueseBrazil, "Português (Brasil)"),
+        new(LanguagePreference.English, "English"),
+        new(LanguagePreference.Spanish, "Español"),
     ];
 }
 
@@ -27,12 +39,14 @@ public sealed partial class GeneralPageViewModel : ObservableObject
         _config = config;
         _globalHotkey = config.Settings.GlobalHotkey;
         _theme = ThemeOption.All.First(t => t.Value == config.Settings.Theme);
+        _language = LanguageOption.All.First(l => l.Value == config.Settings.Language);
         _startWithSystem = config.Settings.StartWithSystem;
     }
 
     [ObservableProperty] private string? _globalHotkey;
     [ObservableProperty] private string? _hotkeyError;
     [ObservableProperty] private ThemeOption _theme;
+    [ObservableProperty] private LanguageOption _language;
     [ObservableProperty] private bool _startWithSystem;
 
     partial void OnGlobalHotkeyChanged(string? value)
@@ -43,6 +57,8 @@ public sealed partial class GeneralPageViewModel : ObservableObject
     }
 
     partial void OnThemeChanged(ThemeOption value) => _ = _config.UpdateSettingsAsync(s => s with { Theme = value.Value });
+
+    partial void OnLanguageChanged(LanguageOption value) => _ = _config.UpdateSettingsAsync(s => s with { Language = value.Value });
 
     partial void OnStartWithSystemChanged(bool value) => _ = _config.UpdateSettingsAsync(s => s with { StartWithSystem = value });
 

@@ -1,5 +1,6 @@
 using Improve.App.ViewModels;
 using Improve.Core.Execution;
+using Improve.Core.Models;
 using Improve.Core.Providers;
 using Improve.Core.Storage;
 using Improve.Platform;
@@ -15,7 +16,9 @@ public static class AppServices
     public static async Task<ServiceProvider> BuildAsync(CancellationToken ct = default)
     {
         var configDirectory = AppPaths.ConfigDirectory();
-        var config = new ConfigState(new SettingsStore(configDirectory));
+        var store = new SettingsStore(configDirectory);
+        Localization.Apply((await store.LoadSettingsAsync(ct).ConfigureAwait(false)).Language);
+        var config = new ConfigState(store);
         await config.LoadAsync(ct).ConfigureAwait(false);
         var secrets = await SecretStoreFactory.CreateAsync(configDirectory, ct).ConfigureAwait(false);
 

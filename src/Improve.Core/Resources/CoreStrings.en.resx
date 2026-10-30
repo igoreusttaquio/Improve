@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SettingsNewerVersion" xml:space="preserve">
+    <value>{0} was created by a newer version of improve. Update the app to continue.</value>
+  </data>
+  <data name="ErrorInvalidKey" xml:space="preserve">
+    <value>Invalid API key for {0}. Open Settings &gt; Providers.</value>
+  </data>
+  <data name="ErrorMissingKey" xml:space="preserve">
+    <value>No API key set for {0}. Open Settings &gt; Providers.</value>
+  </data>
+  <data name="ErrorRateLimited" xml:space="preserve">
+    <value>Usage limit reached on {0}. Try again in a moment.</value>
+  </data>
+  <data name="ErrorUnavailable" xml:space="preserve">
+    <value>{0} is unavailable right now. Try again in a moment.</value>
+  </data>
+  <data name="ErrorNoNetwork" xml:space="preserve">
+    <value>Can't reach {0}. Check your internet and the provider address.</value>
+  </data>
+  <data name="ErrorBadRequest" xml:space="preserve">
+    <value>{0} rejected the request: {1}</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Unexpected error on {0}. Try again.</value>
+  </data>
+  <data name="ErrorNoProvider" xml:space="preserve">
+    <value>The "{0}" extension has no provider. Open Settings &gt; Extensions.</value>
+  </data>
+  <data name="ErrorNoModel" xml:space="preserve">
+    <value>Choose a model for the "{0}" extension in Settings &gt; Extensions.</value>
+  </data>
+  <data name="GlobalHotkeyOwner" xml:space="preserve">
+    <value>global shortcut</value>
+  </data>
+  <data name="ImportInvalidFile" xml:space="preserve">
+    <value>This file is not an improve extensions export.</value>
+  </data>
+  <data name="ExampleImproveName" xml:space="preserve">
+    <value>Improve message</value>
+  </data>
+  <data name="ExampleImprovePrompt" xml:space="preserve">
+    <value>Rewrite the message to be clear, friendly and error-free, keeping its language and tone.</value>
+  </data>
+  <data name="ExampleFormalName" xml:space="preserve">
+    <value>Make formal</value>
+  </data>
+  <data name="ExampleFormalPrompt" xml:space="preserve">
+    <value>Rewrite the text in a formal, professional tone, keeping its meaning and language.</value>
+  </data>
+  <data name="ExampleTranslateName" xml:space="preserve">
+    <value>Translate to Spanish</value>
+  </data>
+  <data name="ExampleTranslatePrompt" xml:space="preserve">
+    <value>Translate the text into Spanish, keeping its tone and formatting.</value>
+  </data>
+  <data name="ExampleRefactorName" xml:space="preserve">
+    <value>Refactor code</value>
+  </data>
+  <data name="ExampleRefactorPrompt" xml:space="preserve">
+    <value>Refactor the code to be more readable and idiomatic without changing its behavior. Keep the language and indentation style.</value>
+  </data>
+</root>

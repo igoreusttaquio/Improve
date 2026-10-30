@@ -39,13 +39,37 @@
   <data name="ErrorNoProvider" xml:space="preserve">
     <value>A extensão "{0}" não tem provedor configurado. Abra Configurações &gt; Extensões.</value>
   </data>
+  <data name="ErrorNoModel" xml:space="preserve">
+    <value>Escolha um modelo para a extensão "{0}" em Configurações &gt; Extensões.</value>
+  </data>
   <data name="GlobalHotkeyOwner" xml:space="preserve">
     <value>atalho global</value>
   </data>
   <data name="ImportInvalidFile" xml:space="preserve">
     <value>O arquivo não é uma exportação de extensões do improve.</value>
   </data>
-  <data name="ErrorNoModel" xml:space="preserve">
-    <value>Escolha um modelo para a extensão "{0}" em Configurações &gt; Extensões.</value>
+  <data name="ExampleImproveName" xml:space="preserve">
+    <value>Melhorar mensagem</value>
+  </data>
+  <data name="ExampleImprovePrompt" xml:space="preserve">
+    <value>Reescreva a mensagem para ficar clara, cordial e sem erros, mantendo o idioma e o tom.</value>
+  </data>
+  <data name="ExampleFormalName" xml:space="preserve">
+    <value>Deixar formal</value>
+  </data>
+  <data name="ExampleFormalPrompt" xml:space="preserve">
+    <value>Reescreva o texto em tom formal e profissional, mantendo o sentido e o idioma.</value>
+  </data>
+  <data name="ExampleTranslateName" xml:space="preserve">
+    <value>Traduzir para inglês</value>
+  </data>
+  <data name="ExampleTranslatePrompt" xml:space="preserve">
+    <value>Traduza o texto para o inglês, mantendo o tom e a formatação.</value>
+  </data>
+  <data name="ExampleRefactorName" xml:space="preserve">
+    <value>Refatorar código</value>
+  </data>
+  <data name="ExampleRefactorPrompt" xml:space="preserve">
+    <value>Refatore o código para ficar mais legível e idiomático, sem mudar o comportamento. Mantenha a linguagem e o estilo de indentação.</value>
   </data>
 </root>

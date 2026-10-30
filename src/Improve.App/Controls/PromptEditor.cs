@@ -59,6 +59,16 @@ public sealed partial class PromptEditor : UserControl
             _editor.Document.Text = Text ?? "";
     }
 
+    /// <summary>Insere no cursor (ou no lugar da seleção) e devolve o foco ao editor.</summary>
+    public void Insert(string text)
+    {
+        if (_editor.SelectionLength > 0)
+            _editor.SelectedText = text;
+        else
+            _editor.Document.Insert(_editor.CaretOffset, text);
+        _editor.TextArea.Focus();
+    }
+
     internal IBrush? Brush(string key) =>
         this.TryFindResource(key, ActualThemeVariant, out var value) ? value as IBrush : null;
 

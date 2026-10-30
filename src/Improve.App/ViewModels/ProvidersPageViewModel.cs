@@ -19,7 +19,7 @@ public sealed record ProviderCardViewModel(ProviderConfig Config, string Meta, b
 
 public sealed record KindOption(ProviderKind Kind, string Label, string DefaultUrl)
 {
-    public static IReadOnlyList<KindOption> All { get; } =
+    public static IReadOnlyList<KindOption> All =>
     [
         new(ProviderKind.Anthropic, Strings.KindAnthropic, "https://api.anthropic.com"),
         new(ProviderKind.OpenAi, Strings.KindOpenAi, "https://api.openai.com/v1"),

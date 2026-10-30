@@ -20,6 +20,7 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
 {
     private SettingsWindow? _settings;
     private FlowController? _flow;
+    private LanguagePreference _language;
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
@@ -27,6 +28,7 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
     {
         var config = services.GetRequiredService<ConfigState>();
         var autostart = services.GetService<IAutostartService>();
+        _language = config.Settings.Language; // já aplicado em AppServices, antes de carregar as extensões
         ApplySettings(config, autostart);
         config.Changed += (_, _) => Dispatcher.UIThread.Post(() => ApplySettings(config, autostart));
 
@@ -51,6 +53,34 @@ public partial class App(IServiceProvider services, SingleInstance instance) : A
         };
         if (autostart is not null && autostart.IsEnabled() != config.Settings.StartWithSystem)
             autostart.SetEnabled(config.Settings.StartWithSystem);
+        if (config.Settings.Language != _language)
+            ApplyLanguage(config.Settings.Language);
+    }
+
+    // As strings vêm de x:Static, lidas ao criar cada tela: troca a cultura, refaz o menu da bandeja e
+    // reabre a janela de configurações na mesma página.
+    private void ApplyLanguage(LanguagePreference language)
+    {
+        _language = language;
+        Localization.Apply(language);
+        UpdateTrayMenu();
+        if (_settings is not { DataContext: SettingsViewModel old } window)
+            return;
+        var page = old.Pages.ToList().IndexOf(old.SelectedPage);
+        window.Close();
+        OnOpenSettings(null, EventArgs.Empty);
+        var current = (SettingsViewModel)_settings!.DataContext!;
+        current.SelectedPage = current.Pages[Math.Max(0, page)];
+    }
+
+    private void UpdateTrayMenu()
+    {
+        if (TrayIcon.GetIcons(this) is not [{ Menu: { } menu }, ..])
+            return;
+        var items = menu.Items.OfType<NativeMenuItem>().ToList();
+        items[0].Header = Strings.TrayOpenSettings;
+        items[1].Header = _flow?.IsPaused == true ? Strings.TrayResume : Strings.TrayPause;
+        items[2].Header = Strings.TrayQuit;
     }
 
     // "improve --trigger" executa o atalho global; abrir o app de novo mostra as configurações.

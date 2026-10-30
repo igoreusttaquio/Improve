@@ -83,6 +83,21 @@
     <Setter Property="FontSize" Value="13" />
   </Style>
 
+  <!-- Chips clicáveis das variáveis do prompt. -->
+  <Style Selector="Button.variable">
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusPill}" />
+    <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource InkBrush}" />
+    <Setter Property="FontFamily" Value="{StaticResource FontMono}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Normal" />
+  </Style>
+  <Style Selector="Button.variable:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentInkBrush}" />
+  </Style>
+
   <!-- Combos. -->
   <Style Selector="ComboBox">
     <Setter Property="Foreground" Value="{DynamicResource InkBrush}" />

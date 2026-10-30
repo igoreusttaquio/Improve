@@ -117,8 +117,20 @@
   <data name="FieldPrompt" xml:space="preserve">
     <value>Prompt</value>
   </data>
-  <data name="PromptHint" xml:space="preserve">
-    <value>Variáveis: {{selection}} (texto selecionado), {{app}} (app de origem), {{clipboard}} (área de transferência anterior). Sem {{selection}}, o texto vai à parte.</value>
+  <data name="PromptMarkdownHint" xml:space="preserve">
+    <value>Aceita Markdown. As variáveis ficam destacadas; clique para inserir no cursor:</value>
+  </data>
+  <data name="PromptSelectionNote" xml:space="preserve">
+    <value>Sem {{selection}} no prompt, o texto selecionado é enviado à parte.</value>
+  </data>
+  <data name="VarSelectionTip" xml:space="preserve">
+    <value>Texto selecionado</value>
+  </data>
+  <data name="VarAppTip" xml:space="preserve">
+    <value>Nome do app de origem</value>
+  </data>
+  <data name="VarClipboardTip" xml:space="preserve">
+    <value>O que estava na área de transferência</value>
   </data>
   <data name="FieldProvider" xml:space="preserve">
     <value>Provedor</value>
@@ -228,6 +240,12 @@
   <data name="ProviderInUse" xml:space="preserve">
     <value>usado por {0} extensões</value>
   </data>
+  <data name="ProviderKeySaved" xml:space="preserve">
+    <value>Chave salva</value>
+  </data>
+  <data name="ProviderKeyMissing" xml:space="preserve">
+    <value>Sem chave</value>
+  </data>
   <data name="FieldGlobalHotkey" xml:space="preserve">
     <value>Atalho global</value>
   </data>
@@ -246,6 +264,12 @@
   <data name="ThemeLight" xml:space="preserve">
     <value>Claro</value>
   </data>
+  <data name="FieldLanguage" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Seguir o sistema</value>
+  </data>
   <data name="StartWithSystem" xml:space="preserve">
     <value>Iniciar com o sistema</value>
   </data>
@@ -257,11 +281,5 @@
   </data>
   <data name="AboutPrivacy" xml:space="preserve">
     <value>Sem telemetria. O texto selecionado só sai da máquina para o provedor que você configurou.</value>
-  </data>
-  <data name="ProviderKeySaved" xml:space="preserve">
-    <value>Chave salva</value>
-  </data>
-  <data name="ProviderKeyMissing" xml:space="preserve">
-    <value>Sem chave</value>
   </data>
 </root>

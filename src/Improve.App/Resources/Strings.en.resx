@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Select. Choose. Improve.</value>
+  </data>
+  <data name="TrayOpenSettings" xml:space="preserve">
+    <value>Open settings</value>
+  </data>
+  <data name="TrayPause" xml:space="preserve">
+    <value>Pause improve</value>
+  </data>
+  <data name="TrayResume" xml:space="preserve">
+    <value>Resume improve</value>
+  </data>
+  <data name="TrayQuit" xml:space="preserve">
+    <value>Quit</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>improve settings</value>
+  </data>
+  <data name="NavExtensions" xml:space="preserve">
+    <value>Extensions</value>
+  </data>
+  <data name="NavProviders" xml:space="preserve">
+    <value>Providers</value>
+  </data>
+  <data name="NavGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="NavAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="ModeReplace" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Suggest</value>
+  </data>
+  <data name="ModeCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ExtensionsNew" xml:space="preserve">
+    <value>New extension</value>
+  </data>
+  <data name="ExtensionsImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ExtensionsExport" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ExtensionsEmpty" xml:space="preserve">
+    <value>No extensions yet.</value>
+  </data>
+  <data name="ExtensionsEmptyAction" xml:space="preserve">
+    <value>Create first extension</value>
+  </data>
+  <data name="ExtensionsHint" xml:space="preserve">
+    <value>Drag to reorder. This is the popup order; the first 9 active ones get shortcuts 1 to 9.</value>
+  </data>
+  <data name="CardPopupKey" xml:space="preserve">
+    <value>shortcut {0}</value>
+  </data>
+  <data name="CardNoProvider" xml:space="preserve">
+    <value>No provider</value>
+  </data>
+  <data name="ImportPending" xml:space="preserve">
+    <value>{0} extensions ready to import. Choose the provider:</value>
+  </data>
+  <data name="ImportConfirm" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ExportFileName" xml:space="preserve">
+    <value>improve-extensions.json</value>
+  </data>
+  <data name="JsonFileType" xml:space="preserve">
+    <value>improve extensions (JSON)</value>
+  </data>
+  <data name="EditorNewTitle" xml:space="preserve">
+    <value>New extension</value>
+  </data>
+  <data name="EditorEditTitle" xml:space="preserve">
+    <value>Edit extension</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FieldIcon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="FieldPrompt" xml:space="preserve">
+    <value>Prompt</value>
+  </data>
+  <data name="PromptMarkdownHint" xml:space="preserve">
+    <value>Markdown supported. Variables are highlighted; click to insert at the cursor:</value>
+  </data>
+  <data name="PromptSelectionNote" xml:space="preserve">
+    <value>Without {{selection}} in the prompt, the selected text is sent separately.</value>
+  </data>
+  <data name="VarSelectionTip" xml:space="preserve">
+    <value>Selected text</value>
+  </data>
+  <data name="VarAppTip" xml:space="preserve">
+    <value>Name of the source app</value>
+  </data>
+  <data name="VarClipboardTip" xml:space="preserve">
+    <value>What was on the clipboard</value>
+  </data>
+  <data name="FieldProvider" xml:space="preserve">
+    <value>Provider</value>
+  </data>
+  <data name="FieldModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="ModelPlaceholder" xml:space="preserve">
+    <value>Model ID</value>
+  </data>
+  <data name="LoadModels" xml:space="preserve">
+    <value>Load models</value>
+  </data>
+  <data name="ModelsLoaded" xml:space="preserve">
+    <value>{0} models available.</value>
+  </data>
+  <data name="FieldMode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="FieldHotkey" xml:space="preserve">
+    <value>Own shortcut (optional)</value>
+  </data>
+  <data name="HotkeyPlaceholder" xml:space="preserve">
+    <value>Click and press the shortcut</value>
+  </data>
+  <data name="HotkeyClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="HotkeyConflict" xml:space="preserve">
+    <value>In use: {0}.</value>
+  </data>
+  <data name="HotkeyInvalid" xml:space="preserve">
+    <value>Use at least one modifier (Ctrl, Alt, Shift) or an F key.</value>
+  </data>
+  <data name="TestTitle" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="TestSample" xml:space="preserve">
+    <value>Sample text</value>
+  </data>
+  <data name="TestRun" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="TestStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="TestSampleDefault" xml:space="preserve">
+    <value>hey all, just wanted to say tmrw's meeting will start like 15 min late bc im fixing a problem here</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Give the extension a name.</value>
+  </data>
+  <data name="PromptRequired" xml:space="preserve">
+    <value>Write the prompt.</value>
+  </data>
+  <data name="IconSearch" xml:space="preserve">
+    <value>Search icon</value>
+  </data>
+  <data name="IconMore" xml:space="preserve">
+    <value>Showing {0} of {1}. Refine the search.</value>
+  </data>
+  <data name="ProvidersAdd" xml:space="preserve">
+    <value>Add provider</value>
+  </data>
+  <data name="ProviderNew" xml:space="preserve">
+    <value>New provider</value>
+  </data>
+  <data name="FieldKind" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="KindAnthropic" xml:space="preserve">
+    <value>Anthropic</value>
+  </data>
+  <data name="KindOpenAi" xml:space="preserve">
+    <value>OpenAI compatible (OpenAI, DeepSeek, Ollama)</value>
+  </data>
+  <data name="FieldBaseUrl" xml:space="preserve">
+    <value>Base URL</value>
+  </data>
+  <data name="FieldApiKey" xml:space="preserve">
+    <value>API key</value>
+  </data>
+  <data name="ApiKeyPlaceholder" xml:space="preserve">
+    <value>Paste the key</value>
+  </data>
+  <data name="ApiKeyStored" xml:space="preserve">
+    <value>Key saved. Leave blank to keep it.</value>
+  </data>
+  <data name="ApiKeyMissing" xml:space="preserve">
+    <value>No key saved.</value>
+  </data>
+  <data name="TestConnection" xml:space="preserve">
+    <value>Test connection</value>
+  </data>
+  <data name="TestConnectionOk" xml:space="preserve">
+    <value>Connection OK ({0} ms).</value>
+  </data>
+  <data name="ProviderNameRequired" xml:space="preserve">
+    <value>Give the provider a name.</value>
+  </data>
+  <data name="ProviderUrlInvalid" xml:space="preserve">
+    <value>Enter a URL starting with http:// or https://.</value>
+  </data>
+  <data name="KeyStorageInsecure" xml:space="preserve">
+    <value>This system has no secret service: keys are stored in an unencrypted file readable only by your user.</value>
+  </data>
+  <data name="ProviderInUse" xml:space="preserve">
+    <value>used by {0} extensions</value>
+  </data>
+  <data name="ProviderKeySaved" xml:space="preserve">
+    <value>Key saved</value>
+  </data>
+  <data name="ProviderKeyMissing" xml:space="preserve">
+    <value>No key</value>
+  </data>
+  <data name="FieldGlobalHotkey" xml:space="preserve">
+    <value>Global shortcut</value>
+  </data>
+  <data name="GlobalHotkeyHint" xml:space="preserve">
+    <value>Opens the extensions popup over the selected text.</value>
+  </data>
+  <data name="FieldTheme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Follow the system</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="FieldLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Follow the system</value>
+  </data>
+  <data name="StartWithSystem" xml:space="preserve">
+    <value>Start with the system</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="AboutLicenses" xml:space="preserve">
+    <value>Third-party licenses</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>No telemetry. Selected text only leaves your machine to the provider you configured.</value>
+  </data>
+</root>

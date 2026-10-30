@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Selecciona. Elige. Mejora.</value>
+  </data>
+  <data name="TrayOpenSettings" xml:space="preserve">
+    <value>Abrir configuración</value>
+  </data>
+  <data name="TrayPause" xml:space="preserve">
+    <value>Pausar improve</value>
+  </data>
+  <data name="TrayResume" xml:space="preserve">
+    <value>Reanudar improve</value>
+  </data>
+  <data name="TrayQuit" xml:space="preserve">
+    <value>Salir</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Configuración de improve</value>
+  </data>
+  <data name="NavExtensions" xml:space="preserve">
+    <value>Extensiones</value>
+  </data>
+  <data name="NavProviders" xml:space="preserve">
+    <value>Proveedores</value>
+  </data>
+  <data name="NavGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="NavAbout" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Volver</value>
+  </data>
+  <data name="ModeReplace" xml:space="preserve">
+    <value>Reemplazar</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Sugerir</value>
+  </data>
+  <data name="ModeCopy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="ExtensionsNew" xml:space="preserve">
+    <value>Nueva extensión</value>
+  </data>
+  <data name="ExtensionsImport" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ExtensionsExport" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="ExtensionsEmpty" xml:space="preserve">
+    <value>Todavía no hay extensiones.</value>
+  </data>
+  <data name="ExtensionsEmptyAction" xml:space="preserve">
+    <value>Crear la primera extensión</value>
+  </data>
+  <data name="ExtensionsHint" xml:space="preserve">
+    <value>Arrastra para reordenar. Es el orden del popup; las 9 primeras activas tienen atajo del 1 al 9.</value>
+  </data>
+  <data name="CardPopupKey" xml:space="preserve">
+    <value>atajo {0}</value>
+  </data>
+  <data name="CardNoProvider" xml:space="preserve">
+    <value>Sin proveedor</value>
+  </data>
+  <data name="ImportPending" xml:space="preserve">
+    <value>{0} extensiones listas para importar. Elige el proveedor:</value>
+  </data>
+  <data name="ImportConfirm" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ExportFileName" xml:space="preserve">
+    <value>extensiones-improve.json</value>
+  </data>
+  <data name="JsonFileType" xml:space="preserve">
+    <value>Extensiones de improve (JSON)</value>
+  </data>
+  <data name="EditorNewTitle" xml:space="preserve">
+    <value>Nueva extensión</value>
+  </data>
+  <data name="EditorEditTitle" xml:space="preserve">
+    <value>Editar extensión</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="FieldIcon" xml:space="preserve">
+    <value>Icono</value>
+  </data>
+  <data name="FieldPrompt" xml:space="preserve">
+    <value>Prompt</value>
+  </data>
+  <data name="PromptMarkdownHint" xml:space="preserve">
+    <value>Admite Markdown. Las variables se resaltan; haz clic para insertarlas en el cursor:</value>
+  </data>
+  <data name="PromptSelectionNote" xml:space="preserve">
+    <value>Sin {{selection}} en el prompt, el texto seleccionado se envía aparte.</value>
+  </data>
+  <data name="VarSelectionTip" xml:space="preserve">
+    <value>Texto seleccionado</value>
+  </data>
+  <data name="VarAppTip" xml:space="preserve">
+    <value>Nombre de la app de origen</value>
+  </data>
+  <data name="VarClipboardTip" xml:space="preserve">
+    <value>Lo que había en el portapapeles</value>
+  </data>
+  <data name="FieldProvider" xml:space="preserve">
+    <value>Proveedor</value>
+  </data>
+  <data name="FieldModel" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="ModelPlaceholder" xml:space="preserve">
+    <value>ID del modelo</value>
+  </data>
+  <data name="LoadModels" xml:space="preserve">
+    <value>Cargar modelos</value>
+  </data>
+  <data name="ModelsLoaded" xml:space="preserve">
+    <value>{0} modelos disponibles.</value>
+  </data>
+  <data name="FieldMode" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="FieldHotkey" xml:space="preserve">
+    <value>Atajo propio (opcional)</value>
+  </data>
+  <data name="HotkeyPlaceholder" xml:space="preserve">
+    <value>Haz clic y pulsa el atajo</value>
+  </data>
+  <data name="HotkeyClear" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="HotkeyConflict" xml:space="preserve">
+    <value>En uso: {0}.</value>
+  </data>
+  <data name="HotkeyInvalid" xml:space="preserve">
+    <value>Usa al menos un modificador (Ctrl, Alt, Shift) o una tecla F.</value>
+  </data>
+  <data name="TestTitle" xml:space="preserve">
+    <value>Probar</value>
+  </data>
+  <data name="TestSample" xml:space="preserve">
+    <value>Texto de ejemplo</value>
+  </data>
+  <data name="TestRun" xml:space="preserve">
+    <value>Probar</value>
+  </data>
+  <data name="TestStop" xml:space="preserve">
+    <value>Detener</value>
+  </data>
+  <data name="TestSampleDefault" xml:space="preserve">
+    <value>hola a todos, queria avisar q la reunion de mañana va a empezar como 15 min tarde xq estoy arreglando un problema</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Ponle un nombre a la extensión.</value>
+  </data>
+  <data name="PromptRequired" xml:space="preserve">
+    <value>Escribe el prompt.</value>
+  </data>
+  <data name="IconSearch" xml:space="preserve">
+    <value>Buscar icono</value>
+  </data>
+  <data name="IconMore" xml:space="preserve">
+    <value>Mostrando {0} de {1}. Afina la búsqueda.</value>
+  </data>
+  <data name="ProvidersAdd" xml:space="preserve">
+    <value>Añadir proveedor</value>
+  </data>
+  <data name="ProviderNew" xml:space="preserve">
+    <value>Nuevo proveedor</value>
+  </data>
+  <data name="FieldKind" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="KindAnthropic" xml:space="preserve">
+    <value>Anthropic</value>
+  </data>
+  <data name="KindOpenAi" xml:space="preserve">
+    <value>Compatible con OpenAI (OpenAI, DeepSeek, Ollama)</value>
+  </data>
+  <data name="FieldBaseUrl" xml:space="preserve">
+    <value>URL base</value>
+  </data>
+  <data name="FieldApiKey" xml:space="preserve">
+    <value>Clave de API</value>
+  </data>
+  <data name="ApiKeyPlaceholder" xml:space="preserve">
+    <value>Pega la clave</value>
+  </data>
+  <data name="ApiKeyStored" xml:space="preserve">
+    <value>Clave guardada. Déjalo en blanco para mantenerla.</value>
+  </data>
+  <data name="ApiKeyMissing" xml:space="preserve">
+    <value>No hay clave guardada.</value>
+  </data>
+  <data name="TestConnection" xml:space="preserve">
+    <value>Probar conexión</value>
+  </data>
+  <data name="TestConnectionOk" xml:space="preserve">
+    <value>Conexión correcta ({0} ms).</value>
+  </data>
+  <data name="ProviderNameRequired" xml:space="preserve">
+    <value>Ponle un nombre al proveedor.</value>
+  </data>
+  <data name="ProviderUrlInvalid" xml:space="preserve">
+    <value>Introduce una URL que empiece por http:// o https://.</value>
+  </data>
+  <data name="KeyStorageInsecure" xml:space="preserve">
+    <value>Este sistema no tiene servicio de secretos: las claves se guardan en un archivo sin cifrar, legible solo por tu usuario.</value>
+  </data>
+  <data name="ProviderInUse" xml:space="preserve">
+    <value>usado por {0} extensiones</value>
+  </data>
+  <data name="ProviderKeySaved" xml:space="preserve">
+    <value>Clave guardada</value>
+  </data>
+  <data name="ProviderKeyMissing" xml:space="preserve">
+    <value>Sin clave</value>
+  </data>
+  <data name="FieldGlobalHotkey" xml:space="preserve">
+    <value>Atajo global</value>
+  </data>
+  <data name="GlobalHotkeyHint" xml:space="preserve">
+    <value>Abre el popup de extensiones sobre el texto seleccionado.</value>
+  </data>
+  <data name="FieldTheme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Seguir el sistema</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="FieldLanguage" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Seguir el sistema</value>
+  </data>
+  <data name="StartWithSystem" xml:space="preserve">
+    <value>Iniciar con el sistema</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Versión {0}</value>
+  </data>
+  <data name="AboutLicenses" xml:space="preserve">
+    <value>Licencias de terceros</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Sin telemetría. El texto seleccionado solo sale de tu equipo hacia el proveedor que configuraste.</value>
+  </data>
+</root>

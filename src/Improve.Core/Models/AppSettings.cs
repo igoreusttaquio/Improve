@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Improve.Core.Resources;
 
 namespace Improve.Core.Models;
 
@@ -20,6 +21,7 @@ public sealed record AppSettings
     public int Version { get; init; } = CurrentVersion;
     public string GlobalHotkey { get; init; } = "Ctrl+Shift+Space";
     public ThemePreference Theme { get; init; } = ThemePreference.System;
+    public LanguagePreference Language { get; init; } = LanguagePreference.System;
     public bool StartWithSystem { get; init; } = true;
     public IReadOnlyList<ProviderConfig> Providers { get; init; } = [];
 
@@ -43,30 +45,30 @@ public sealed record ExtensionsDocument
     public int Version { get; init; } = CurrentVersion;
     public IReadOnlyList<Extension> Extensions { get; init; } = [];
 
-    /// <summary>As 4 extensões de exemplo da primeira execução. O modelo fica vazio: não fixamos IDs de modelo.</summary>
+    /// <summary>As 4 extensões de exemplo da primeira execução, no idioma da interface. O modelo fica vazio: não fixamos IDs de modelo.</summary>
     public static ExtensionsDocument CreateDefault(string? providerId) => new()
     {
         Extensions =
         [
             new()
             {
-                Name = "Melhorar mensagem", Icon = "wand-sparkles", Mode = OutputMode.Suggest, Order = 0, ProviderId = providerId,
-                Prompt = "Reescreva a mensagem para ficar clara, cordial e sem erros, mantendo o idioma e o tom.",
+                Name = CoreStrings.ExampleImproveName, Icon = "wand-sparkles", Mode = OutputMode.Suggest, Order = 0, ProviderId = providerId,
+                Prompt = CoreStrings.ExampleImprovePrompt,
             },
             new()
             {
-                Name = "Deixar formal", Icon = "briefcase", Mode = OutputMode.Suggest, Order = 1, ProviderId = providerId,
-                Prompt = "Reescreva o texto em tom formal e profissional, mantendo o sentido e o idioma.",
+                Name = CoreStrings.ExampleFormalName, Icon = "briefcase", Mode = OutputMode.Suggest, Order = 1, ProviderId = providerId,
+                Prompt = CoreStrings.ExampleFormalPrompt,
             },
             new()
             {
-                Name = "Traduzir para inglês", Icon = "languages", Mode = OutputMode.Replace, Order = 2, ProviderId = providerId,
-                Prompt = "Traduza o texto para o inglês, mantendo o tom e a formatação.",
+                Name = CoreStrings.ExampleTranslateName, Icon = "languages", Mode = OutputMode.Replace, Order = 2, ProviderId = providerId,
+                Prompt = CoreStrings.ExampleTranslatePrompt,
             },
             new()
             {
-                Name = "Refatorar código", Icon = "code", Mode = OutputMode.Suggest, Order = 3, ProviderId = providerId,
-                Prompt = "Refatore o código para ficar mais legível e idiomático, sem mudar o comportamento. Mantenha a linguagem e o estilo de indentação.",
+                Name = CoreStrings.ExampleRefactorName, Icon = "code", Mode = OutputMode.Suggest, Order = 3, ProviderId = providerId,
+                Prompt = CoreStrings.ExampleRefactorPrompt,
             },
         ],
     };
