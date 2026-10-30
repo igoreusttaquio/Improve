@@ -48,6 +48,16 @@
           <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding StartWithSystem}" />
           <TextBlock Classes="body" Text="{x:Static res:Strings.StartWithSystem}" VerticalAlignment="Center" />
         </StackPanel>
+
+        <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding CanRunAsAdmin}">
+          <ToggleButton Theme="{StaticResource Switch}" IsChecked="{Binding RunAsAdmin}" VerticalAlignment="Top" Margin="0,0,12,0" />
+          <StackPanel Grid.Column="1" Spacing="4">
+            <TextBlock Classes="body" Text="{x:Static res:Strings.RunAsAdmin}" />
+            <TextBlock Classes="caption muted" Text="{x:Static res:Strings.RunAsAdminHint}" TextWrapping="Wrap" />
+            <TextBlock Classes="caption" Text="{Binding RunAsAdminStatus}" TextWrapping="Wrap"
+                       IsVisible="{Binding RunAsAdminStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Grid>
       </StackPanel>
     </Grid>
   </ScrollViewer>

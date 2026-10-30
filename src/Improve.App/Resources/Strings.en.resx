@@ -303,6 +303,21 @@
   <data name="AboutLicenses" xml:space="preserve">
     <value>Third-party licenses</value>
   </data>
+  <data name="RunAsAdmin" xml:space="preserve">
+    <value>Run as administrator</value>
+  </data>
+  <data name="RunAsAdminHint" xml:space="preserve">
+    <value>Needed to use improve in apps running as administrator, such as Visual Studio, VS Code or SSMS. Windows doesn't let a regular app receive the shortcut or copy the selection from an administrator app. When you turn it on, Windows asks for confirmation once; after that improve opens as administrator without asking.</value>
+  </data>
+  <data name="RunAsAdminCancelled" xml:space="preserve">
+    <value>Windows didn't authorize the change. Nothing was changed.</value>
+  </data>
+  <data name="RunAsAdminInactive" xml:space="preserve">
+    <value>improve isn't running as administrator right now. Close it and open it again.</value>
+  </data>
+  <data name="RunAsAdminRestart" xml:space="preserve">
+    <value>Takes effect the next time improve opens.</value>
+  </data>
   <data name="UpdateCheck" xml:space="preserve">
     <value>Check for updates</value>
   </data>

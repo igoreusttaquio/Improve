@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Reflection;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Improve.App.Services;
@@ -7,6 +9,7 @@ using Improve.App.Resources;
 using Improve.Core.Models;
 using Improve.Core.Storage;
 using Improve.Core.Updates;
+using Improve.Platform;
 
 namespace Improve.App.ViewModels;
 
@@ -36,10 +39,16 @@ public sealed record LanguageOption(LanguagePreference Value, string Label)
 public sealed partial class GeneralPageViewModel : ObservableObject
 {
     private readonly ConfigState _config;
+    private readonly IElevationService? _elevation;
+    private bool _reverting;
 
-    public GeneralPageViewModel(ConfigState config)
+    public GeneralPageViewModel(ConfigState config, IElevationService? elevation = null)
     {
         _config = config;
+        _elevation = elevation;
+        _runAsAdmin = config.Settings.RunAsAdmin;
+        if (_runAsAdmin && elevation is { IsElevated: false })
+            _runAsAdminStatus = Strings.RunAsAdminInactive;
         _globalHotkey = config.Settings.GlobalHotkey;
         _theme = ThemeOption.All.First(t => t.Value == config.Settings.Theme);
         _language = LanguageOption.All.First(l => l.Value == config.Settings.Language);
@@ -51,6 +60,11 @@ public sealed partial class GeneralPageViewModel : ObservableObject
     [ObservableProperty] private ThemeOption _theme;
     [ObservableProperty] private LanguageOption _language;
     [ObservableProperty] private bool _startWithSystem;
+    [ObservableProperty] private bool _runAsAdmin;
+    [ObservableProperty] private string? _runAsAdminStatus;
+
+    /// <summary>O modo administrador só existe no Windows.</summary>
+    public bool CanRunAsAdmin => _elevation is not null;
 
 
     partial void OnGlobalHotkeyChanged(string? value)
@@ -64,7 +78,49 @@ public sealed partial class GeneralPageViewModel : ObservableObject
 
     partial void OnLanguageChanged(LanguageOption value) => _ = _config.UpdateSettingsAsync(s => s with { Language = value.Value });
 
-    partial void OnStartWithSystemChanged(bool value) => _ = _config.UpdateSettingsAsync(s => s with { StartWithSystem = value });
+    partial void OnStartWithSystemChanged(bool value)
+    {
+        _ = _config.UpdateSettingsAsync(s => s with { StartWithSystem = value });
+        // No modo administrador, o início com o sistema é o gatilho da tarefa agendada.
+        if (RunAsAdmin && _elevation is not null)
+            _ = _elevation.RegisterAsync(value);
+    }
+
+    partial void OnRunAsAdminChanged(bool value)
+    {
+        if (!_reverting)
+            _ = ApplyRunAsAdminAsync(value);
+    }
+
+    private async Task ApplyRunAsAdminAsync(bool enable)
+    {
+        if (_elevation is null)
+            return;
+        var ok = enable ? await _elevation.RegisterAsync(StartWithSystem) : await _elevation.UnregisterAsync();
+        if (!ok)
+        {
+            _reverting = true;
+            RunAsAdmin = !enable;
+            _reverting = false;
+            RunAsAdminStatus = Strings.RunAsAdminCancelled;
+            return;
+        }
+        await _config.UpdateSettingsAsync(s => s with { RunAsAdmin = enable });
+
+        if (enable && !_elevation.IsElevated)
+        {
+            // Reabre já elevado: a instância nova espera esta fechar e volta com as configurações abertas.
+            ElevatedHandoff.Write(AppPaths.ConfigDirectory(), []);
+            if (_elevation.TryStartElevated() && Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.Shutdown();
+            else
+                RunAsAdminStatus = Strings.RunAsAdminInactive;
+        }
+        else
+        {
+            RunAsAdminStatus = enable == _elevation.IsElevated ? null : Strings.RunAsAdminRestart;
+        }
+    }
 
     private string? Validate(string? text, out Hotkey? hotkey)
     {

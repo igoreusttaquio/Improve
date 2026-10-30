@@ -41,3 +41,20 @@ public interface IAutostartService
     bool IsEnabled();
     void SetEnabled(bool enabled);
 }
+
+/// <summary>
+/// Modo administrador. Um app comum não recebe teclas nem envia Ctrl+C para janelas elevadas (UIPI do Windows);
+/// rodando elevado, o improve funciona também nelas.
+/// </summary>
+public interface IElevationService
+{
+    bool IsElevated { get; }
+
+    /// <summary>Abre a instância elevada sem pedir confirmação; <c>false</c> se o modo não estiver registrado.</summary>
+    bool TryStartElevated();
+
+    /// <summary>Registra (ou atualiza) o modo; pede confirmação do SO se o improve não estiver elevado.</summary>
+    Task<bool> RegisterAsync(bool startWithSystem);
+
+    Task<bool> UnregisterAsync();
+}

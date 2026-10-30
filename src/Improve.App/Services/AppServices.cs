@@ -53,6 +53,7 @@ public static class AppServices
         services.AddSingleton<ICursorService, WindowsCursorService>();
         services.AddSingleton<IWindowActivator, WindowsWindowActivator>();
         services.AddSingleton<IAutostartService, WindowsAutostart>();
+        services.AddSingleton<IElevationService, WindowsElevation>();
         services.AddSingleton<ISelectionService>(sp =>
             new ClipboardSelectionService(sp.GetRequiredService<IClipboard>(), sp.GetRequiredService<IKeyboard>()));
         services.AddSingleton<ExtensionRunner>();

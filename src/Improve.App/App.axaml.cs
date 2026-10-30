@@ -24,6 +24,7 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
     private SettingsWindow? _settings;
     private FlowController? _flow;
     private LanguagePreference _language;
+    private FileSystemWatcher? _handoff;
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
@@ -44,8 +45,19 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
         }
         instance.Listen(args => Dispatcher.UIThread.Post(() => OnSecondInstance(args)));
 
+        // Elevada, a instância também recebe os pedidos de processos comuns, que não alcançam o pipe (ver ElevatedHandoff).
+        var startArgs = args;
+        if (services.GetService<IElevationService>() is { IsElevated: true })
+        {
+            var configDirectory = AppPaths.ConfigDirectory();
+            startArgs = ElevatedHandoff.TakePending(configDirectory) ?? args;
+            _handoff = ElevatedHandoff.Watch(configDirectory, a => Dispatcher.UIThread.Post(() => OnSecondInstance(a)));
+        }
+
         // Aberto pelo usuário: mostra as configurações (senão parece que nada abriu). Pelo autostart: só a bandeja.
-        if (!args.Contains(BackgroundArgument))
+        if (startArgs.Contains("--trigger"))
+            OnSecondInstance(startArgs);
+        else if (!startArgs.Contains(BackgroundArgument))
             OpenSettings(createExtension: false);
 
         UpdateTrayGlyph();
@@ -62,8 +74,10 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
             ThemePreference.Light => ThemeVariant.Light,
             _ => ThemeVariant.Default,
         };
-        if (autostart is not null && autostart.IsEnabled() != config.Settings.StartWithSystem)
-            autostart.SetEnabled(config.Settings.StartWithSystem);
+        // No modo administrador, quem inicia com o sistema é a tarefa agendada, não a chave Run.
+        var runKey = config.Settings.StartWithSystem && !config.Settings.RunAsAdmin;
+        if (autostart is not null && autostart.IsEnabled() != runKey)
+            autostart.SetEnabled(runKey);
         if (config.Settings.Language != _language)
             ApplyLanguage(config.Settings.Language);
     }
@@ -158,6 +172,7 @@ public partial class App(IServiceProvider services, SingleInstance instance, str
 
     private void OnQuit(object? sender, EventArgs e)
     {
+        _handoff?.Dispose();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.Shutdown();
     }

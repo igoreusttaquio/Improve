@@ -3,6 +3,13 @@ using System.Text;
 
 namespace Improve.App.Services;
 
+public enum InstanceState
+{
+    NotRunning,
+    RunningAccessible,
+    RunningElevated,
+}
+
 /// <summary>
 /// Instância única: o primeiro processo segura um mutex e escuta um named pipe (só do usuário atual);
 /// os seguintes enviam seus argumentos para ele e saem.
@@ -21,16 +28,47 @@ public sealed class SingleInstance : IDisposable
 
     /// <summary>
     /// <c>null</c> se já existe outra instância com a mesma pasta de configuração (uma pasta diferente, como a de
-    /// testes em <c>IMPROVE_CONFIG_DIR</c>, roda como instância separada).
+    /// testes em <c>IMPROVE_CONFIG_DIR</c>, roda como instância separada). Com <paramref name="waitForPrevious"/>,
+    /// espera alguns segundos a anterior fechar (a instância elevada assume no lugar da comum).
     /// </summary>
-    public static SingleInstance? TryAcquire(string configDirectory)
+    public static SingleInstance? TryAcquire(string configDirectory, bool waitForPrevious = false)
     {
         var id = IdFor(configDirectory);
-        var mutex = new Mutex(initiallyOwned: true, $@"Local\{id}", out var createdNew);
-        if (createdNew)
-            return new SingleInstance(mutex, id);
-        mutex.Dispose();
-        return null;
+        var deadline = DateTime.UtcNow.AddSeconds(waitForPrevious ? 10 : 0);
+        while (true)
+        {
+            try
+            {
+                var mutex = new Mutex(initiallyOwned: true, $@"Local\{id}", out var createdNew);
+                if (createdNew)
+                    return new SingleInstance(mutex, id);
+                mutex.Dispose();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Mutex de uma instância elevada: existe, mas um processo comum não pode abri-lo.
+            }
+            if (DateTime.UtcNow >= deadline)
+                return null;
+            Thread.Sleep(200);
+        }
+    }
+
+    public static InstanceState Probe(string configDirectory)
+    {
+        try
+        {
+            using var mutex = Mutex.OpenExisting($@"Local\{IdFor(configDirectory)}");
+            return InstanceState.RunningAccessible;
+        }
+        catch (WaitHandleCannotBeOpenedException)
+        {
+            return InstanceState.NotRunning;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return InstanceState.RunningElevated;
+        }
     }
 
     /// <summary>Envia os argumentos para a instância que já está rodando com a mesma pasta de configuração.</summary>

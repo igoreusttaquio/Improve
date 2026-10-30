@@ -303,6 +303,21 @@
   <data name="AboutLicenses" xml:space="preserve">
     <value>Licenças de terceiros</value>
   </data>
+  <data name="RunAsAdmin" xml:space="preserve">
+    <value>Executar como administrador</value>
+  </data>
+  <data name="RunAsAdminHint" xml:space="preserve">
+    <value>Necessário para usar o improve em apps abertos como administrador, como Visual Studio, VS Code ou SSMS. O Windows não deixa um app comum receber o atalho nem copiar a seleção de um app de administrador. Ao ativar, o Windows pede confirmação uma vez; depois o improve abre como administrador sem perguntar.</value>
+  </data>
+  <data name="RunAsAdminCancelled" xml:space="preserve">
+    <value>O Windows não autorizou a mudança. Nada foi alterado.</value>
+  </data>
+  <data name="RunAsAdminInactive" xml:space="preserve">
+    <value>O improve não está rodando como administrador agora. Feche e abra de novo.</value>
+  </data>
+  <data name="RunAsAdminRestart" xml:space="preserve">
+    <value>Vale a partir da próxima vez que o improve abrir.</value>
+  </data>
   <data name="UpdateCheck" xml:space="preserve">
     <value>Verificar atualizações</value>
   </data>

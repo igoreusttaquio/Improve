@@ -6,6 +6,7 @@ Estado do projeto para quem for continuar. Leia antes o `CLAUDE.md`, o `PLANO.md
 
 - **Fases 0 a 4 concluídas** (fundação, Core, configurações, integração Windows, popup e painel). O Windows é a plataforma completa.
 - **Fase 7 em parte:** por pedido do usuário, os instaladores são Inno Setup (Windows), `.deb` (Linux) e `.dmg` (macOS arm64 e x64), sem Velopack. A página Sobre já tem versão e licenças.
+- **Modo administrador** (Geral → Executar como administrador): tarefa agendada `improve-admin`; ver `docs/decisoes.md`. **Ainda não testado na prática** (criar a tarefa precisa de autorização do usuário).
 - **Atualização pelo app** (Sobre → Verificar atualizações), desde a `v0.2.0`; ver `docs/decisoes.md`.
 - **Release `v0.1.0` publicada** pelo workflow `.github/workflows/release.yml` (dispara com tag `v*`). CI em `ci.yml`.
 - **Landing page** em `docs/index.html` (GitHub Pages a partir de `/docs`); README com prints em `docs/assets/screenshots/`.

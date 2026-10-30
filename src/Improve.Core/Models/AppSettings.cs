@@ -24,6 +24,9 @@ public sealed record AppSettings
     public LanguagePreference Language { get; init; } = LanguagePreference.System;
     public bool StartWithSystem { get; init; } = true;
 
+    /// <summary>Roda elevado, para funcionar em apps abertos como administrador (só Windows).</summary>
+    public bool RunAsAdmin { get; init; }
+
     public IReadOnlyList<ProviderConfig> Providers { get; init; } = [];
 
     public static AppSettings CreateDefault() => new()
