@@ -61,3 +61,11 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 
 [Run]
 Filename: "{app}\improve.exe"; Description: "{cm:LaunchProgram,improve}"; Flags: nowait postinstall skipifsilent
+; Atualização pelo app: o improve fecha, roda o instalador em silêncio com /RELAUNCH=1 e é aberto de novo no fim.
+Filename: "{app}\improve.exe"; Flags: nowait; Check: ShouldRelaunch
+
+[Code]
+function ShouldRelaunch: Boolean;
+begin
+  Result := WizardSilent and (ExpandConstant('{param:RELAUNCH|0}') = '1');
+end;

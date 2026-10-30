@@ -34,6 +34,7 @@ public static class AppServices
         services.AddSingleton(_ => ProviderFactory.CreateHttpClient());
         services.AddSingleton<IProviderFactory>(sp => new ProviderFactory(sp.GetRequiredService<HttpClient>()));
         services.AddSingleton<ExtensionGenerator>();
+        services.AddSingleton<AppUpdater>();
         services.AddTransient<SettingsViewModel>();
         AddPlatform(services);
         return services.BuildServiceProvider();

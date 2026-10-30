@@ -303,6 +303,36 @@
   <data name="AboutLicenses" xml:space="preserve">
     <value>Third-party licenses</value>
   </data>
+  <data name="UpdateCheck" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="UpdateChecking" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="UpdateUpToDate" xml:space="preserve">
+    <value>You have the latest version.</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Version {0} is available.</value>
+  </data>
+  <data name="UpdateInstall" xml:space="preserve">
+    <value>Download and update</value>
+  </data>
+  <data name="UpdateClosesApp" xml:space="preserve">
+    <value>improve closes so the installer can update its files.</value>
+  </data>
+  <data name="UpdateDownloading" xml:space="preserve">
+    <value>Downloading version {0}…</value>
+  </data>
+  <data name="UpdateClosing" xml:space="preserve">
+    <value>Closing improve to update…</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Couldn't update. Check your connection and try again.</value>
+  </data>
+  <data name="UpdateUnsupported" xml:space="preserve">
+    <value>There's no installer for this platform.</value>
+  </data>
   <data name="PopupSearch" xml:space="preserve">
     <value>Search extension…</value>
   </data>

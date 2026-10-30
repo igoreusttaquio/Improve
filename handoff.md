@@ -5,7 +5,8 @@ Estado do projeto para quem for continuar. Leia antes o `CLAUDE.md`, o `PLANO.md
 ## Onde estamos
 
 - **Fases 0 a 4 concluídas** (fundação, Core, configurações, integração Windows, popup e painel). O Windows é a plataforma completa.
-- **Fase 7 em parte:** por pedido do usuário, os instaladores são Inno Setup (Windows), `.deb` (Linux) e `.dmg` (macOS arm64 e x64), sem Velopack e sem atualização automática. A página Sobre já tem versão e licenças.
+- **Fase 7 em parte:** por pedido do usuário, os instaladores são Inno Setup (Windows), `.deb` (Linux) e `.dmg` (macOS arm64 e x64), sem Velopack. A página Sobre já tem versão e licenças.
+- **Atualização pelo app** (Sobre → Verificar atualizações), desde a `v0.2.0`; ver `docs/decisoes.md`.
 - **Release `v0.1.0` publicada** pelo workflow `.github/workflows/release.yml` (dispara com tag `v*`). CI em `ci.yml`.
 - **Landing page** em `docs/index.html` (GitHub Pages a partir de `/docs`); README com prints em `docs/assets/screenshots/`.
 
@@ -14,7 +15,7 @@ Estado do projeto para quem for continuar. Leia antes o `CLAUDE.md`, o `PLANO.md
 1. **Logo:** o usuário não gostou do ícone atual (`docs/assets/improve-app-icon.svg`, gerado por `tools/gen-icons/gen-app-icon.cs`). Foram propostas 4 opções (A–D) numa página privada no claude.ai, mas ele não entendeu a diferença entre elas. Próximo passo: mostrar as opções já aplicadas no app/bandeja, lado a lado, e deixar ele escolher.
 2. **Fase 5 (macOS):** permissão de Acessibilidade, foco com `NSRunningApplication`, início com o sistema. O `.dmg` já é gerado, mas as implementações de plataforma do macOS não estão completas. Pergunte ao usuário antes de começar.
 3. **Fase 6 (Linux):** X11 com paridade; Wayland em modo reduzido (`improve --trigger`). Pergunte antes.
-4. **Fase 7 restante:** atualização automática, assinatura de código (Windows) e notarização (macOS).
+4. **Fase 7 restante:** verificação de atualização automática em segundo plano, assinatura de código (Windows) e notarização (macOS).
 
 ## Como o usuário trabalha
 

@@ -303,6 +303,36 @@
   <data name="AboutLicenses" xml:space="preserve">
     <value>Licenças de terceiros</value>
   </data>
+  <data name="UpdateCheck" xml:space="preserve">
+    <value>Verificar atualizações</value>
+  </data>
+  <data name="UpdateChecking" xml:space="preserve">
+    <value>Procurando atualizações…</value>
+  </data>
+  <data name="UpdateUpToDate" xml:space="preserve">
+    <value>Você já tem a versão mais recente.</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>A versão {0} está disponível.</value>
+  </data>
+  <data name="UpdateInstall" xml:space="preserve">
+    <value>Baixar e atualizar</value>
+  </data>
+  <data name="UpdateClosesApp" xml:space="preserve">
+    <value>O improve fecha para o instalador atualizar os arquivos.</value>
+  </data>
+  <data name="UpdateDownloading" xml:space="preserve">
+    <value>Baixando a versão {0}…</value>
+  </data>
+  <data name="UpdateClosing" xml:space="preserve">
+    <value>Fechando o improve para atualizar…</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Não foi possível atualizar. Confira a conexão e tente de novo.</value>
+  </data>
+  <data name="UpdateUnsupported" xml:space="preserve">
+    <value>Não há instalador para esta plataforma.</value>
+  </data>
   <data name="PopupSearch" xml:space="preserve">
     <value>Buscar extensão…</value>
   </data>
