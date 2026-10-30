@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Improve.App.Resources;
 using Improve.Core.Models;
 
 namespace Improve.App.ViewModels;
@@ -15,14 +17,17 @@ public enum PopupState
 }
 
 /// <summary>Linha do ActionPopup.</summary>
-public sealed partial class PopupItem(Extension extension, int number) : ObservableObject
+public sealed partial class PopupItem(Extension extension, int number, string? label = null) : ObservableObject
 {
     public Extension Extension { get; } = extension;
-    public string Name => Extension.Name;
+    public string Name => label ?? Extension.Name;
+
+    /// <summary>Prompt livre digitado na busca, e não uma extensão salva.</summary>
+    public bool IsFreePrompt => label is not null;
     public string Icon => Extension.Icon;
 
     /// <summary>Atalho de 1 a 9 pela posição na lista completa; vazio a partir da 10ª.</summary>
-    public string Number { get; } = number <= 9 ? number.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
+    public string Number { get; } = number is >= 1 and <= 9 ? number.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
 
     [ObservableProperty]
     private bool _isSelected;
@@ -35,6 +40,9 @@ public sealed partial class PopupItem(Extension extension, int number) : Observa
 public sealed partial class PopupViewModel : ObservableObject
 {
     private IReadOnlyList<PopupItem> _all = [];
+
+    /// <summary>De onde o prompt livre herda provedor e modelo (ver <c>FlowController.FreePromptBase</c>).</summary>
+    private Extension? _freePromptBase;
 
     public PopupViewModel(PopupActions actions) => Actions = actions;
 
@@ -52,7 +60,11 @@ public sealed partial class PopupViewModel : ObservableObject
     // ActionPopup.
     public ObservableCollection<PopupItem> Items { get; } = [];
     public bool HasExtensions => _all.Count > 0;
-    public bool HasNoMatches => _all.Count > 0 && Items.Count == 0;
+    /// <summary>A lista aparece com extensões ou, sem nenhuma, quando há um prompt livre para oferecer.</summary>
+    public bool HasItems => Items.Count > 0;
+
+    /// <summary>Estado vazio (nenhuma extensão) só enquanto nada foi digitado.</summary>
+    public bool ShowsEmptyState => !HasExtensions && Search.Trim().Length == 0;
 
     [ObservableProperty]
     private string _search = "";
@@ -127,12 +139,15 @@ public sealed partial class PopupViewModel : ObservableObject
 
     public PopupItem? Selected => Items.FirstOrDefault(i => i.IsSelected);
 
-    public void ShowActions(IReadOnlyList<Extension> extensions)
+    /// <param name="freePromptBase">Extensão cujo provedor e modelo o prompt livre usa; <c>null</c> se nenhuma tem modelo.</param>
+    public void ShowActions(IReadOnlyList<Extension> extensions, Extension? freePromptBase = null)
     {
+        _freePromptBase = freePromptBase;
         _all = [.. extensions.Select((e, i) => new PopupItem(e, i + 1))];
         Search = "";
         Filter();
         OnPropertyChanged(nameof(HasExtensions));
+        OnPropertyChanged(nameof(ShowsEmptyState));
         State = PopupState.Actions;
     }
 
@@ -225,10 +240,26 @@ public sealed partial class PopupViewModel : ObservableObject
         Items.Clear();
         foreach (var item in _all.Where(i => terms.Length == 0 || i.Name.Contains(terms, StringComparison.CurrentCultureIgnoreCase)))
             Items.Add(item);
+        // O texto digitado também vira um pedido avulso, para quando nenhuma extensão serve.
+        if (terms.Length > 0)
+            Items.Add(new PopupItem(FreePrompt(terms), number: 0, string.Format(CultureInfo.CurrentCulture, Strings.PopupFreePrompt, terms)));
         if (Items.Count > 0)
             Select(Items[0]);
-        OnPropertyChanged(nameof(HasNoMatches));
+        OnPropertyChanged(nameof(HasItems));
+        OnPropertyChanged(nameof(ShowsEmptyState));
     }
+
+    // Prompt avulso: sempre sugere (nada é colado sem o usuário ver o resultado).
+    private Extension FreePrompt(string prompt) => new()
+    {
+        Name = prompt,
+        Icon = "sparkles",
+        Prompt = prompt,
+        ProviderId = _freePromptBase?.ProviderId,
+        Model = _freePromptBase?.Model ?? "",
+        Temperature = _freePromptBase?.Temperature,
+        Mode = OutputMode.Suggest,
+    };
 }
 
 /// <summary>O que o popup pede para fazer; implementado pelo <c>FlowController</c>.</summary>

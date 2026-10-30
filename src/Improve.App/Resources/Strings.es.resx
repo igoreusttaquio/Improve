@@ -349,7 +349,10 @@
     <value>No hay instalador para esta plataforma.</value>
   </data>
   <data name="PopupSearch" xml:space="preserve">
-    <value>Buscar extensión…</value>
+    <value>Buscar extensión o pedir a la IA…</value>
+  </data>
+  <data name="PopupFreePrompt" xml:space="preserve">
+    <value>Pedir a la IA: “{0}”</value>
   </data>
   <data name="PopupRun" xml:space="preserve">
     <value>ejecutar</value>
@@ -359,9 +362,6 @@
   </data>
   <data name="PopupClose" xml:space="preserve">
     <value>cerrar</value>
-  </data>
-  <data name="PopupNoMatches" xml:space="preserve">
-    <value>No se encontró ninguna extensión.</value>
   </data>
   <data name="PopupProcessing" xml:space="preserve">
     <value>Procesando…</value>

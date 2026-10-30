@@ -200,7 +200,8 @@ public partial class PopupWindow : Window
                     vm.RunCommand.Execute(null);
                     e.Handled = true;
                     break;
-                case >= Key.D1 and <= Key.D9 or >= Key.NumPad1 and <= Key.NumPad9 when e.KeyModifiers == KeyModifiers.None:
+                // Com algo digitado na busca, os números são texto (podem fazer parte do prompt livre).
+                case >= Key.D1 and <= Key.D9 or >= Key.NumPad1 and <= Key.NumPad9 when e.KeyModifiers == KeyModifiers.None && vm.Search.Length == 0:
                     var number = e.Key >= Key.NumPad1 ? e.Key - Key.NumPad1 + 1 : e.Key - Key.D1 + 1;
                     if (vm.ByNumber(number) is { } item)
                         vm.RunCommand.Execute(item);

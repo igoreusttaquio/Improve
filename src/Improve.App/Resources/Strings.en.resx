@@ -349,7 +349,10 @@
     <value>There's no installer for this platform.</value>
   </data>
   <data name="PopupSearch" xml:space="preserve">
-    <value>Search extension…</value>
+    <value>Search extensions or ask AI…</value>
+  </data>
+  <data name="PopupFreePrompt" xml:space="preserve">
+    <value>Ask AI: “{0}”</value>
   </data>
   <data name="PopupRun" xml:space="preserve">
     <value>run</value>
@@ -359,9 +362,6 @@
   </data>
   <data name="PopupClose" xml:space="preserve">
     <value>close</value>
-  </data>
-  <data name="PopupNoMatches" xml:space="preserve">
-    <value>No extension found.</value>
   </data>
   <data name="PopupProcessing" xml:space="preserve">
     <value>Processing…</value>

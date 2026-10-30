@@ -74,7 +74,7 @@ public sealed partial class FlowController : IDisposable
         _window = new PopupWindow(_popup);
         _window.FocusLost += (_, _) => OnFocusLost();
         // Aquece com a lista real, para os itens e fontes já estarem prontos no primeiro atalho.
-        _popup.ShowActions(_config.EnabledExtensions);
+        _popup.ShowActions(_config.EnabledExtensions, FreePromptBase());
         _window.WarmUp(() => _popup.State = PopupState.Hidden);
 
         _hotkeys.Pressed += (_, e) => Dispatcher.UIThread.Post(() => _ = OnHotkeyAsync(e.Id));
@@ -131,7 +131,7 @@ public sealed partial class FlowController : IDisposable
             _fromActions = false;
             if (id == GlobalHotkeyId)
             {
-                _popup.ShowActions(_config.EnabledExtensions);
+                _popup.ShowActions(_config.EnabledExtensions, FreePromptBase());
                 Show(activate: true);
                 LogPopupShown(watch.ElapsedMilliseconds);
             }
@@ -150,6 +150,11 @@ public sealed partial class FlowController : IDisposable
             _capturing = false;
         }
     }
+
+    // O prompt livre usa o provedor e o modelo da primeira extensão (na ordem do popup) que já tem modelo escolhido.
+    private Extension? FreePromptBase() =>
+        _config.EnabledExtensions.Concat(_config.Extensions.Extensions.OrderBy(e => e.Order))
+            .FirstOrDefault(e => e.Model.Length > 0 && _config.Settings.Providers.Any(p => p.Id == e.ProviderId));
 
     // Escolhida no popup: o painel ganha o botão de voltar para a lista.
     private Task RunFromListAsync(Extension extension)
@@ -320,7 +325,7 @@ public sealed partial class FlowController : IDisposable
         _generation?.Cancel();
         _generationId++;
         _session = null;
-        _popup.ShowActions(_config.EnabledExtensions);
+        _popup.ShowActions(_config.EnabledExtensions, FreePromptBase());
         Show(activate: true);
     }
 

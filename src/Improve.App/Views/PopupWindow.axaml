@@ -30,7 +30,7 @@
           </Grid>
         </Border>
 
-        <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding HasExtensions}">
+        <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding HasItems}">
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="vm:PopupItem">
               <Border Classes="row" Classes.selected="{Binding IsSelected}" PointerPressed="OnRowPressed">
@@ -47,10 +47,8 @@
           </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <TextBlock Classes="caption muted" Margin="12,8" Text="{x:Static res:Strings.PopupNoMatches}" IsVisible="{Binding HasNoMatches}" />
-
         <!-- Estado vazio: nenhuma extensão ativa. -->
-        <StackPanel Margin="12,12,12,8" Spacing="10" IsVisible="{Binding !HasExtensions}">
+        <StackPanel Margin="12,12,12,8" Spacing="10" IsVisible="{Binding ShowsEmptyState}">
           <TextBlock Classes="body muted" Text="{x:Static res:Strings.ExtensionsEmpty}" />
           <Button Classes="primary" HorizontalAlignment="Left" Command="{Binding CreateExtensionCommand}">
             <StackPanel Classes="button-content">
