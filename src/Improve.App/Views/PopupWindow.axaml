@@ -83,7 +83,13 @@
       </StackPanel>
 
       <!-- SuggestionPanel -->
-      <DockPanel Width="420" IsVisible="{Binding IsSuggestion}">
+      <DockPanel Name="SuggestionPanel" Width="420" IsVisible="{Binding IsSuggestion}">
+        <!-- No código, a largura acompanha o conteúdo (ver PopupWindow.FitToCode). -->
+        <DockPanel.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Width" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+          </Transitions>
+        </DockPanel.Transitions>
         <Border DockPanel.Dock="Top" Classes="panel-head">
           <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
             <Button Classes="ghost icon" Width="28" Height="28" MinHeight="28" Margin="-6,0,0,0" IsVisible="{Binding CanGoBack}"
@@ -149,8 +155,14 @@
           <TextBlock Classes="caption warning" Text="{x:Static res:Strings.WindowChanged}" TextWrapping="Wrap" />
         </StackPanel>
 
-        <c:CodeView Classes="panel-code" IsVisible="{Binding ShowsCode}" Text="{Binding Output}" Language="{Binding CodeLanguage}"
-                    CodeFontFamily="{Binding CodeFontFamily}" CodeFontSize="{Binding CodeFontSize}" />
+        <c:CodeView Name="CodeBody" Classes="panel-code" IsVisible="{Binding ShowsCode}" Text="{Binding Output}" Language="{Binding CodeLanguage}"
+                    CodeFontFamily="{Binding CodeFontFamily}" CodeFontSize="{Binding CodeFontSize}" MaxColumns="120">
+          <c:CodeView.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Height" Duration="{StaticResource MotionFast}" Easing="{StaticResource MotionEase}" />
+            </Transitions>
+          </c:CodeView.Transitions>
+        </c:CodeView>
 
         <ScrollViewer Name="BodyScroll" MaxHeight="240" Padding="16" IsVisible="{Binding !ShowsCode}">
           <Panel>

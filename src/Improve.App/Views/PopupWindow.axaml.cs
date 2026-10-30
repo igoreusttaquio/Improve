@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Improve.App.Controls;
 using Improve.App.ViewModels;
 
 namespace Improve.App.Views;
@@ -14,6 +15,15 @@ namespace Improve.App.Views;
 public partial class PopupWindow : Window
 {
     private const double CursorOffset = 12;
+
+    /// <summary>Largura do painel de texto, e a mínima do painel de código.</summary>
+    private const double PanelWidth = 420;
+
+    // Margens do CodeView dentro do painel (estilo panel-code).
+    private const double CodeMargin = 24;
+
+    private double _maxPanelWidth = 1200;
+    private double _maxCodeHeight = 400;
 
     private PixelPoint _anchor;
 
@@ -35,7 +45,15 @@ public partial class PopupWindow : Window
         PropertyChanged += (_, e) =>
         {
             if (e.Property == IsVisibleProperty && !IsVisible)
+            {
                 _movedByUser = false;
+                ResetSize();
+            }
+        };
+        CodeBody.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == CodeView.PreferredSizeProperty || e.Property == IsVisibleProperty)
+                FitToCode();
         };
     }
 
@@ -49,6 +67,14 @@ public partial class PopupWindow : Window
     public void ShowAt(PixelPoint anchor, bool activate)
     {
         _anchor = anchor;
+        // O código cresce até 120 colunas, mas sem passar do monitor.
+        if ((Screens.ScreenFromPoint(anchor) ?? Screens.Primary) is { } screen)
+        {
+            var margin = Card.Margin;
+            _maxPanelWidth = Math.Max(PanelWidth, screen.WorkingArea.Width / screen.Scaling - margin.Left - margin.Right - 2 * CursorOffset);
+            _maxCodeHeight = Math.Max(160, screen.WorkingArea.Height / screen.Scaling * 0.5);
+        }
+        FitToCode();
         Card.Measure(Size.Infinity);
         Place();
         ShowActivated = activate;
@@ -86,6 +112,34 @@ public partial class PopupWindow : Window
             SearchBox.Focus();
         else
             Card.Focus();
+    }
+
+    // O painel de código acompanha o conteúdo, para mais ou para menos, com transição (a janela segue
+    // pelo SizeToContent e Place mantém a ancoragem). Texto comum continua com a largura fixa.
+    private void FitToCode()
+    {
+        if (!CodeBody.IsVisible)
+        {
+            SuggestionPanel.Width = PanelWidth;
+            return;
+        }
+        var preferred = CodeBody.PreferredSize;
+        SuggestionPanel.Width = Math.Clamp(preferred.Width + CodeMargin, PanelWidth, _maxPanelWidth);
+        CodeBody.Height = Math.Min(preferred.Height, _maxCodeHeight);
+        CodeBody.ScrollsVertically = preferred.Height > _maxCodeHeight;
+    }
+
+    // Oculta, volta ao tamanho inicial sem animar: a próxima exibição não começa encolhendo.
+    private void ResetSize()
+    {
+        var panelTransitions = SuggestionPanel.Transitions;
+        var codeTransitions = CodeBody.Transitions;
+        SuggestionPanel.Transitions = null;
+        CodeBody.Transitions = null;
+        SuggestionPanel.Width = PanelWidth;
+        CodeBody.Height = double.NaN;
+        SuggestionPanel.Transitions = panelTransitions;
+        CodeBody.Transitions = codeTransitions;
     }
 
     private void Place()

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Styling;
 using AvaloniaEdit;
 using AvaloniaEdit.TextMate;
@@ -30,7 +31,20 @@ public sealed class CodeView : UserControl
     public static readonly StyledProperty<double> CodeFontSizeProperty =
         AvaloniaProperty.Register<CodeView, double>(nameof(CodeFontSize), 12);
 
+    /// <summary>Colunas consideradas no tamanho preferido (<see cref="PreferredSize"/>); linhas maiores rolam na horizontal.</summary>
+    public static readonly StyledProperty<int> MaxColumnsProperty =
+        AvaloniaProperty.Register<CodeView, int>(nameof(MaxColumns), 120);
+
+    public static readonly DirectProperty<CodeView, Size> PreferredSizeProperty =
+        AvaloniaProperty.RegisterDirect<CodeView, Size>(nameof(PreferredSize), o => o.PreferredSize);
+
+    // Folga para as margens internas do editor e a barra de rolagem.
+    private const double WidthSlack = 24;
+    private const double HeightSlack = 10;
+    private const double ScrollBarSpace = 12;
+
     private readonly TextEditor _editor;
+    private Size _preferredSize;
     private readonly RegistryOptions _registry;
     private readonly TextMate.Installation _textMate;
 
@@ -62,6 +76,26 @@ public sealed class CodeView : UserControl
         ApplyFont();
     }
 
+    public int MaxColumns
+    {
+        get => GetValue(MaxColumnsProperty);
+        set => SetValue(MaxColumnsProperty, value);
+    }
+
+    /// <summary>Tamanho que mostra o código inteiro sem rolar, até <see cref="MaxColumns"/> colunas.</summary>
+    public Size PreferredSize
+    {
+        get => _preferredSize;
+        private set => SetAndRaise(PreferredSizeProperty, ref _preferredSize, value);
+    }
+
+    /// <summary>Rolagem vertical; desligada quando o código cabe inteiro (a barra apareceria à toa).</summary>
+    public bool ScrollsVertically
+    {
+        get => _editor.VerticalScrollBarVisibility != ScrollBarVisibility.Disabled;
+        set => _editor.VerticalScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+    }
+
     public string? Text
     {
         get => GetValue(TextProperty);
@@ -90,7 +124,12 @@ public sealed class CodeView : UserControl
     {
         base.OnPropertyChanged(change);
         if (change.Property == TextProperty)
+        {
             UpdateText(Text ?? "");
+            UpdatePreferredSize();
+        }
+        else if (change.Property == MaxColumnsProperty)
+            UpdatePreferredSize();
         else if (change.Property == LanguageProperty)
             _textMate.SetGrammar(Language is { } id ? _registry.GetScopeByLanguageId(id) : null);
         else if (change.Property == CodeFontFamilyProperty || change.Property == CodeFontSizeProperty)
@@ -123,6 +162,23 @@ public sealed class CodeView : UserControl
         _editor.FontFamily = CodeFontFamily is { Length: > 0 } family
             ? new FontFamily(family)
             : this.TryFindResource("FontMono", out var mono) && mono is FontFamily embedded ? embedded : FontFamily.Default;
+        UpdatePreferredSize();
+    }
+
+    private void UpdatePreferredSize()
+    {
+        var lines = (Text ?? "").Split('\n');
+        // Tabulação vale 4 colunas, como no editor.
+        var columns = lines.Max(line => line.TrimEnd('\r').Replace("\t", "    ", StringComparison.Ordinal).Length);
+
+        var sample = new TextLayout("0000000000", new Typeface(_editor.FontFamily), _editor.FontSize, null);
+        var cellWidth = sample.Width / 10;
+        var lineHeight = Math.Max(sample.Height, _editor.TextArea.TextView.DefaultLineHeight);
+
+        _editor.HorizontalScrollBarVisibility = columns > MaxColumns ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+        PreferredSize = new Size(
+            Math.Min(columns, MaxColumns) * cellWidth + WidthSlack,
+            lines.Length * lineHeight + HeightSlack + (columns > MaxColumns ? ScrollBarSpace : 0));
     }
 
     private static ThemeName ThemeFor(ThemeVariant variant) => variant == ThemeVariant.Light ? ThemeName.LightPlus : ThemeName.DarkPlus;
