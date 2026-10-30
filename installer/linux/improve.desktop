@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=improve
+GenericName=AI text assistant
+GenericName[pt_BR]=Assistente de texto com IA
+GenericName[es]=Asistente de texto con IA
+Comment=Apply AI prompts to the selected text in any app
+Comment[pt_BR]=Aplique prompts de IA ao texto selecionado em qualquer app
+Comment[es]=Aplica prompts de IA al texto seleccionado en cualquier app
+Exec=improve
+Icon=improve
+Terminal=false
+Categories=Utility;TextTools;
+StartupNotify=false

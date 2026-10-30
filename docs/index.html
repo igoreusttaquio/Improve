@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>improve — melhore qualquer texto selecionado com IA</title>
+<meta name="description" content="Selecione um texto em qualquer app, aperte um atalho e aplique seus prompts de IA. Para Windows, macOS e Linux.">
+<link rel="icon" href="assets/improve-app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Tokens do design system do improve (design/tokens.json). Tema escuro padrão; claro segue o sistema.
+   Layout: coluna central de 1120px; hero em duas colunas (texto | réplica do popup), depois seções empilhadas. */
+:root {
+  --surface-100: #111110; --surface-200: #1A1A18; --surface-300: #242422;
+  --border-subtle: #33332F; --border-strong: #6E6E67;
+  --ink: #F2F2EC; --ink-muted: #A3A39A;
+  --accent: #C5F03C; --on-accent: #161614; --accent-ink: #D2F566; --accent-soft: rgba(197, 240, 60, 0.16);
+  --shadow-popup: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --font-sans: "Inter", "Segoe UI Variable", "SF Pro Text", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "SF Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --surface-100: #F7F7F4; --surface-200: #FFFFFF; --surface-300: #EEEEE9;
+    --border-subtle: #DEDED7; --border-strong: #8C8C84;
+    --ink: #161614; --ink-muted: #5C5C55; --accent-ink: #4A6B00; --accent-soft: rgba(197, 240, 60, 0.38);
+    --shadow-popup: 0 16px 40px rgba(22, 22, 20, 0.16), 0 2px 6px rgba(22, 22, 20, 0.08);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --surface-100: #F7F7F4; --surface-200: #FFFFFF; --surface-300: #EEEEE9;
+  --border-subtle: #DEDED7; --border-strong: #8C8C84;
+  --ink: #161614; --ink-muted: #5C5C55; --accent-ink: #4A6B00; --accent-soft: rgba(197, 240, 60, 0.38);
+  --shadow-popup: 0 16px 40px rgba(22, 22, 20, 0.16), 0 2px 6px rgba(22, 22, 20, 0.08);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--surface-100); color: var(--ink); font: 400 16px/26px var(--font-sans); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent-ink); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+svg.lucide { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.75; fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* Navegação */
+nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 650; font-size: 20px; letter-spacing: -0.02em; }
+.brand img { width: 32px; height: 32px; }
+nav ul { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
+nav ul a { color: var(--ink-muted); text-decoration: none; }
+nav ul a:hover { color: var(--ink); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; padding: 56px 0 72px; }
+.hero h1 { margin: 0 0 18px; font-size: clamp(40px, 6vw, 64px); line-height: 1.02; font-weight: 650; letter-spacing: -0.035em; text-wrap: balance; }
+.hero h1 em { font-style: normal; background: var(--accent); color: var(--on-accent); padding: 0 0.14em; border-radius: 0.12em; }
+.hero p.lead { margin: 0 0 28px; max-width: 34rem; color: var(--ink-muted); font-size: 18px; line-height: 28px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 10px; font: 500 15px/1 var(--font-sans); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { filter: brightness(0.95); }
+.btn.secondary { background: var(--surface-300); color: var(--ink); }
+.btn.secondary:hover { border-color: var(--border-subtle); }
+.hint { margin-top: 14px; font-size: 13px; color: var(--ink-muted); }
+kbd { font: 500 12px/1 var(--font-sans); padding: 3px 7px; border-radius: 6px; background: var(--surface-300); color: var(--ink); border: 1px solid var(--border-subtle); }
+
+/* Réplica do app (referencia-componentes.css) */
+.demo { position: relative; min-height: 360px; }
+.doc { font-size: 15px; line-height: 24px; color: var(--ink-muted); max-width: 320px; }
+.doc mark { background: var(--accent-soft); color: var(--ink); border-radius: 3px; padding: 1px 0; }
+.popup { position: absolute; top: 82px; right: 0; width: 280px; padding: 8px; background: var(--surface-200); border: 1px solid var(--border-subtle); border-radius: 16px; box-shadow: var(--shadow-popup); font-size: 13px; line-height: 18px; }
+.popup .search { display: flex; align-items: center; gap: 8px; padding: 6px 12px 10px; color: var(--ink-muted); border-bottom: 1px solid var(--border-subtle); margin-bottom: 4px; }
+.row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 10px; font-weight: 500; }
+.row .ico { color: var(--accent-ink); display: inline-flex; }
+.row.sel { background: var(--accent); color: var(--on-accent); }
+.row.sel .ico { color: var(--on-accent); }
+.k { margin-left: auto; font: 500 11px/16px var(--font-sans); min-width: 18px; text-align: center; padding: 0 5px; border-radius: 6px; background: var(--surface-300); color: var(--ink-muted); }
+.row.sel .k { background: rgba(22, 22, 20, 0.12); color: var(--on-accent); }
+.popup .foot { display: flex; gap: 12px; padding: 8px 12px 4px; font-size: 12px; line-height: 16px; color: var(--ink-muted); border-top: 1px solid var(--border-subtle); margin-top: 4px; }
+
+/* Seções */
+section { padding: 72px 0; border-top: 1px solid var(--border-subtle); }
+section h2 { margin: 0 0 10px; font-size: 32px; line-height: 38px; font-weight: 650; letter-spacing: -0.02em; text-wrap: balance; }
+section > .wrap > p.sub { margin: 0 0 36px; max-width: 40rem; color: var(--ink-muted); }
+
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.step { background: var(--surface-200); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 22px; }
+.step .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-soft); color: var(--ink); font-weight: 600; font-size: 14px; margin-bottom: 14px; }
+.step h3 { margin: 0 0 6px; font-size: 17px; line-height: 24px; font-weight: 600; }
+.step p { margin: 0; color: var(--ink-muted); font-size: 15px; line-height: 24px; }
+.modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: 999px; font-size: 12px; line-height: 20px; font-weight: 500; background: var(--surface-300); color: var(--ink-muted); }
+.chip.accent { background: var(--accent-soft); color: var(--ink); }
+
+.split { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center; }
+.panel { width: 100%; max-width: 440px; background: var(--surface-200); border: 1px solid var(--border-subtle); border-radius: 16px; box-shadow: var(--shadow-popup); overflow: hidden; font-size: 14px; line-height: 20px; }
+.panel .head { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; font-weight: 600; }
+.panel .head .ico { color: var(--accent-ink); display: inline-flex; }
+.panel .head .chip { margin-left: auto; }
+.panel .body { padding: 16px; }
+.caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -2px; background: var(--accent-ink); margin-left: 1px; }
+.panel .refine { margin: 0 16px 12px; display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--border-strong); border-radius: 10px; color: var(--ink-muted); font-size: 13px; }
+.panel .refine span:last-child { margin-left: auto; color: var(--ink); font-weight: 500; display: inline-flex; gap: 6px; align-items: center; }
+.panel .foot { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border-subtle); }
+.panel .foot .btn { height: 32px; padding: 0 12px; font-size: 13px; }
+.panel .foot .btn.ghost { margin-left: auto; background: none; color: var(--ink); }
+.panel .foot .k { margin-left: 2px; }
+.panel .foot .primary .k { background: rgba(22, 22, 20, 0.12); color: var(--on-accent); }
+.code { font: 400 12.5px/20px var(--font-mono); white-space: pre; overflow-x: auto; }
+.code .kw { color: #569CD6; } .code .ty { color: #4EC9B0; } .code .str { color: #CE9178; } .code .cm { color: #6A9955; } .code .fn { color: #DCDCAA; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .code .kw { color: #0000FF; } :root:not([data-theme="dark"]) .code .ty { color: #267F99; } :root:not([data-theme="dark"]) .code .str { color: #A31515; } :root:not([data-theme="dark"]) .code .cm { color: #008000; } :root:not([data-theme="dark"]) .code .fn { color: #795E26; } }
+:root[data-theme="light"] .code .kw { color: #0000FF; } :root[data-theme="light"] .code .ty { color: #267F99; } :root[data-theme="light"] .code .str { color: #A31515; } :root[data-theme="light"] .code .cm { color: #008000; } :root[data-theme="light"] .code .fn { color: #795E26; }
+.stack { display: grid; gap: 16px; }
+
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feature { background: var(--surface-200); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; }
+.feature .ico { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--ink); margin-bottom: 12px; }
+.feature .ico svg.lucide { width: 18px; height: 18px; }
+.feature h3 { margin: 0 0 4px; font-size: 16px; line-height: 22px; font-weight: 600; }
+.feature p { margin: 0; color: var(--ink-muted); font-size: 14px; line-height: 22px; }
+
+.downloads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.dl { display: flex; flex-direction: column; gap: 10px; background: var(--surface-200); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; }
+.dl.current { border-color: var(--accent-ink); }
+.dl h3 { margin: 0; font-size: 17px; line-height: 24px; font-weight: 600; }
+.dl .meta { font-size: 13px; line-height: 18px; color: var(--ink-muted); }
+.dl .btn { justify-content: center; margin-top: auto; }
+.status { align-self: flex-start; margin-bottom: 4px; }
+.note { margin-top: 24px; max-width: 46rem; font-size: 14px; line-height: 22px; color: var(--ink-muted); }
+.note code { font: 13px var(--font-mono); background: var(--surface-300); padding: 1px 6px; border-radius: 6px; color: var(--ink); }
+
+footer { border-top: 1px solid var(--border-subtle); padding: 32px 0 48px; font-size: 13px; color: var(--ink-muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+
+@media (max-width: 900px) {
+  .hero, .split { grid-template-columns: 1fr; }
+  .steps, .features { grid-template-columns: 1fr 1fr; }
+  .downloads { grid-template-columns: 1fr 1fr; }
+  .demo { min-height: 380px; }
+  nav ul { display: none; }
+}
+@media (max-width: 560px) {
+  .steps, .features, .downloads { grid-template-columns: 1fr; }
+  .popup { position: relative; top: 16px; right: auto; }
+}
+</style>
+</head>
+<body>
+<!-- Ícones Lucide (ISC) usados na página. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+  <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01"/><path d="M12 12h.01"/><path d="M14 8h.01"/><path d="M16 12h.01"/><path d="M18 8h.01"/><path d="M6 8h.01"/><path d="M7 16h10"/><path d="M8 12h.01"/><rect width="20" height="16" x="2" y="4" rx="2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+</svg>
+
+<header class="wrap">
+  <nav aria-label="Principal">
+    <a class="brand" href="#"><img src="assets/improve-app-icon.svg" alt="" width="32" height="32">improve</a>
+    <ul>
+      <li><a href="#como-funciona">Como funciona</a></li>
+      <li><a href="#recursos">Recursos</a></li>
+      <li><a href="#baixar">Baixar</a></li>
+      <li><a id="repo-link" href="#baixar">Código-fonte</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <h1>Selecione. Escolha. <em>Melhore.</em></h1>
+      <p class="lead">Selecione um texto em qualquer app, aperte um atalho e aplique seus prompts de IA. O resultado substitui a seleção ou aparece como sugestão para você revisar antes.</p>
+      <div class="cta">
+        <a class="btn primary" id="primary-download" href="#baixar"><svg class="lucide"><use href="#i-download"/></svg><span>Baixar o improve</span></a>
+        <a class="btn secondary" href="#baixar">Outras plataformas</a>
+      </div>
+      <p class="hint">Atalho padrão: <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Espaço</kbd> · Gratuito · Use sua própria chave de API</p>
+    </div>
+
+    <div class="demo" aria-label="Exemplo: texto selecionado e o popup de extensões">
+      <p class="doc">Oi pessoal, <mark>queria avisar q a reunião de amanha vai atrasar uns 15 min pq to resolvendo um problema aqui</mark></p>
+      <div class="popup" role="img" aria-label="Popup do improve com quatro extensões">
+        <div class="search"><svg class="lucide"><use href="#i-search"/></svg>Buscar extensão…</div>
+        <div class="row sel"><span class="ico"><svg class="lucide"><use href="#i-wand"/></svg></span>Melhorar mensagem<span class="k">1</span></div>
+        <div class="row"><span class="ico"><svg class="lucide"><use href="#i-briefcase"/></svg></span>Deixar formal<span class="k">2</span></div>
+        <div class="row"><span class="ico"><svg class="lucide"><use href="#i-languages"/></svg></span>Traduzir para inglês<span class="k">3</span></div>
+        <div class="row"><span class="ico"><svg class="lucide"><use href="#i-code"/></svg></span>Refatorar código<span class="k">4</span></div>
+        <div class="foot"><span>↵ executar</span><span>1–9 atalho</span><span>Esc fechar</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="como-funciona">
+    <div class="wrap">
+      <h2>Três passos, sem sair do que você está fazendo</h2>
+      <p class="sub">Funciona no navegador, no e-mail, no editor de código, no chat da empresa: em qualquer lugar onde dá para selecionar texto.</p>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><h3>Selecione</h3><p>Marque o trecho que quer melhorar, em qualquer aplicativo.</p></div>
+        <div class="step"><span class="n">2</span><h3>Aperte o atalho</h3><p>O popup abre junto do cursor, com as suas extensões. Teclado ou mouse, como preferir.</p></div>
+        <div class="step"><span class="n">3</span><h3>Escolha a extensão</h3><p>Cada extensão tem o próprio modo de entregar o resultado.</p>
+          <div class="modes"><span class="chip accent">Substituir</span><span class="chip accent">Sugerir</span><span class="chip accent">Copiar</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div>
+        <h2>Veja antes de aplicar</h2>
+        <p class="sub">No modo Sugerir, o resultado chega em tempo real num painel ao lado do texto. Peça um ajuste em “Refinar” (mais curto, mais formal) e só aplique quando estiver bom. Para código, o resultado aparece colorido como num editor.</p>
+      </div>
+      <div class="stack">
+        <div class="panel" role="img" aria-label="Painel de sugestão com o texto melhorado">
+          <div class="head"><span class="ico"><svg class="lucide"><use href="#i-wand"/></svg></span>Melhorar mensagem<span class="chip">Anthropic</span></div>
+          <div class="body">Oi, pessoal! Só um aviso: a reunião de amanhã vai começar com cerca de 15 minutos de atraso, porque estou resolvendo um problema por aqui. Obrigado pela compreensão<span class="caret"></span></div>
+          <div class="refine"><svg class="lucide"><use href="#i-sparkles"/></svg><span>Refinar: mais curto, mais formal…</span><span><svg class="lucide"><use href="#i-wand"/></svg>Refinar</span></div>
+          <div class="foot">
+            <span class="btn primary"><svg class="lucide"><use href="#i-check"/></svg>Aplicar<span class="k">↵</span></span>
+            <span class="btn secondary"><svg class="lucide"><use href="#i-copy"/></svg>Copiar</span>
+            <span class="btn ghost"><svg class="lucide"><use href="#i-refresh"/></svg>Tentar de novo</span>
+          </div>
+        </div>
+        <div class="panel" role="img" aria-label="Painel com código colorido">
+          <div class="head"><span class="ico"><svg class="lucide"><use href="#i-code"/></svg></span>Refatorar código<span class="chip">DeepSeek</span></div>
+          <div class="body code"><span class="kw">public sealed class</span> <span class="ty">Pedido</span>
+{
+    <span class="cm">// Total com desconto aplicado.</span>
+    <span class="kw">public decimal</span> <span class="fn">Total</span>(<span class="kw">decimal</span> desconto) =>
+        Subtotal * (1 - desconto);
+}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="recursos">
+    <div class="wrap">
+      <h2>Feito para o seu jeito de escrever</h2>
+      <p class="sub">As extensões são seus próprios prompts. O improve vem com quatro de exemplo, e você cria quantas quiser.</p>
+      <div class="features">
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-blocks"/></svg></span><h3>Extensões suas</h3><p>Prompt com Markdown e variáveis como <code style="font-family:var(--font-mono);font-size:13px">{{selection}}</code>, ícone, modo e atalho próprio. Importe e exporte para compartilhar.</p></div>
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-plug"/></svg></span><h3>O provedor que você preferir</h3><p>Anthropic, OpenAI, DeepSeek ou um modelo local no Ollama. Escolha o modelo de cada extensão.</p></div>
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-shield"/></svg></span><h3>Privado por padrão</h3><p>Sem telemetria. O texto só sai do computador para o provedor que você configurou, e as chaves ficam cifradas no cofre do sistema.</p></div>
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-keyboard"/></svg></span><h3>Rápido como um atalho</h3><p>O popup abre na hora, junto do cursor, e funciona inteiro pelo teclado. A área de transferência volta como estava.</p></div>
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-code"/></svg></span><h3>Bom com código</h3><p>Marque uma extensão como código e o resultado aparece com realce de sintaxe, no tema claro ou escuro.</p></div>
+        <div class="feature"><span class="ico"><svg class="lucide"><use href="#i-globe"/></svg></span><h3>Em três idiomas</h3><p>Interface em português, inglês e espanhol. Tema escuro ou claro, seguindo o sistema.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="baixar">
+    <div class="wrap">
+      <h2>Baixar o improve</h2>
+      <p class="sub">Instaladores da versão mais recente. Depois de instalar, abra o improve, adicione a chave do seu provedor e escolha um modelo para as extensões.</p>
+      <div class="downloads">
+        <div class="dl" data-os="windows">
+          <h3>Windows</h3>
+          <span class="meta">Windows 10 e 11, 64 bits · instalador .exe</span>
+          <span class="chip accent status">Disponível</span>
+          <a class="btn primary" data-asset="improve-setup-x64.exe" href="#baixar"><svg class="lucide"><use href="#i-download"/></svg>Baixar</a>
+        </div>
+        <div class="dl" data-os="mac-arm">
+          <h3>macOS · Apple Silicon</h3>
+          <span class="meta">M1 ou mais recente · imagem .dmg</span>
+          <span class="chip status">Prévia</span>
+          <a class="btn secondary" data-asset="improve-macos-arm64.dmg" href="#baixar"><svg class="lucide"><use href="#i-download"/></svg>Baixar</a>
+        </div>
+        <div class="dl" data-os="mac-intel">
+          <h3>macOS · Intel</h3>
+          <span class="meta">Macs com processador Intel · imagem .dmg</span>
+          <span class="chip status">Prévia</span>
+          <a class="btn secondary" data-asset="improve-macos-x64.dmg" href="#baixar"><svg class="lucide"><use href="#i-download"/></svg>Baixar</a>
+        </div>
+        <div class="dl" data-os="linux">
+          <h3>Linux</h3>
+          <span class="meta">Ubuntu, Debian e derivados, 64 bits · pacote .deb</span>
+          <span class="chip status">Prévia</span>
+          <a class="btn secondary" data-asset="improve-linux-amd64.deb" href="#baixar"><svg class="lucide"><use href="#i-download"/></svg>Baixar</a>
+        </div>
+      </div>
+      <p class="note">No macOS e no Linux o improve ainda está em prévia: as configurações funcionam, e o atalho global com captura do texto chega nas próximas versões. No macOS, o app ainda não é notarizado pela Apple; na primeira vez, abra com o botão direito → <strong>Abrir</strong>. No Linux, instale com <code>sudo apt install ./improve-linux-amd64.deb</code>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>improve · sem telemetria · seu texto só vai para o provedor que você escolher</span>
+    <span>Ícones <a href="https://lucide.dev">Lucide</a> · fontes Inter e JetBrains Mono</span>
+  </div>
+</footer>
+
+<script>
+// Os links apontam para a última release do repositório. No GitHub Pages (dono.github.io/repo),
+// o endereço do repositório sai da própria URL; fora dele (prévia local), os botões levam a esta seção.
+(function () {
+  var host = location.hostname, parts = location.pathname.split("/").filter(Boolean);
+  var repo = host.endsWith(".github.io") && parts.length > 0
+    ? "https://github.com/" + host.replace(".github.io", "") + "/" + parts[0]
+    : null;
+  if (repo) {
+    document.querySelectorAll("[data-asset]").forEach(function (a) {
+      a.href = repo + "/releases/latest/download/" + a.getAttribute("data-asset");
+    });
+    document.getElementById("repo-link").href = repo;
+  }
+
+  // Destaca a plataforma de quem está visitando e aponta o botão principal para ela.
+  var ua = navigator.userAgent, platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  var os = /Win/i.test(platform) || /Windows/i.test(ua) ? "windows"
+    : /Mac/i.test(platform) || /Mac OS/i.test(ua) ? "mac-arm"
+    : /Linux/i.test(platform) && !/Android/i.test(ua) ? "linux" : null;
+  var labels = { "windows": "Baixar para Windows", "mac-arm": "Baixar para macOS", "linux": "Baixar para Linux" };
+  if (os) {
+    var card = document.querySelector('.dl[data-os="' + os + '"]');
+    card.classList.add("current");
+    var primary = document.getElementById("primary-download");
+    primary.querySelector("span").textContent = labels[os];
+    if (repo) primary.href = card.querySelector("[data-asset]").href;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+name: Release
+
+# Gera os instaladores: Windows (Inno Setup), Linux (.deb) e macOS (Apple Silicon e Intel).
+# Com uma tag "v*" (ex.: v0.2.0), publica tudo numa release do GitHub; manualmente, só deixa os artefatos.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.v.outputs.value }}
+      numeric: ${{ steps.v.outputs.numeric }}
+    steps:
+      - id: v
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            value="${GITHUB_REF#refs/tags/v}"
+          else
+            value="0.0.0-dev.${GITHUB_RUN_NUMBER}"
+          fi
+          # Windows (versão do arquivo) e macOS (CFBundleShortVersionString) aceitam só números.
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+          echo "numeric=${value%%-*}" >> "$GITHUB_OUTPUT"
+
+  windows:
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Testes
+        run: dotnet test --solution improve.sln -c Release
+      - name: Publicar
+        run: dotnet publish src/Improve.App -c Release -r win-x64 --self-contained -p:Version=${{ needs.version.outputs.value }} -o artifacts/publish/win-x64
+      - name: Instalar Inno Setup
+        run: choco install innosetup --no-progress -y
+      - name: Gerar instalador
+        shell: pwsh
+        run: |
+          iscc "/DAppVersion=${{ needs.version.outputs.value }}" `
+               "/DFileVersion=${{ needs.version.outputs.numeric }}" `
+               "/DSourceDir=$PWD\artifacts\publish\win-x64" `
+               "/DOutputDir=$PWD\artifacts\installers" `
+               installer\windows\improve.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: improve-windows
+          path: artifacts/installers/improve-setup-x64.exe
+
+  linux:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Testes
+        run: dotnet test --solution improve.sln -c Release
+      - name: Publicar
+        run: dotnet publish src/Improve.App -c Release -r linux-x64 --self-contained -p:Version=${{ needs.version.outputs.value }} -o artifacts/publish/linux-x64
+      - name: Gerar .deb
+        run: bash installer/linux/build-deb.sh "${{ needs.version.outputs.value }}" artifacts/publish/linux-x64 artifacts/installers
+      - uses: actions/upload-artifact@v4
+        with:
+          name: improve-linux
+          path: artifacts/installers/improve-linux-amd64.deb
+
+  macos:
+    needs: version
+    # Os dois saem do runner Apple Silicon: o .NET publica osx-x64 nele e o codesign assina ambos.
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Testes
+        if: matrix.arch == 'arm64'
+        run: dotnet test --solution improve.sln -c Release
+      - name: Publicar
+        run: dotnet publish src/Improve.App -c Release -r osx-${{ matrix.arch }} --self-contained -p:Version=${{ needs.version.outputs.value }} -o artifacts/publish/osx-${{ matrix.arch }}
+      - name: Gerar .dmg
+        env:
+          # Opcional: com uma identidade Developer ID nos segredos, assina com ela; sem ela, assinatura ad-hoc.
+          MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+        run: bash installer/macos/build-dmg.sh "${{ needs.version.outputs.numeric }}" artifacts/publish/osx-${{ matrix.arch }} ${{ matrix.arch }} artifacts/installers
+      - uses: actions/upload-artifact@v4
+        with:
+          name: improve-macos-${{ matrix.arch }}
+          path: artifacts/installers/improve-macos-${{ matrix.arch }}.dmg
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [version, windows, linux, macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: improve ${{ needs.version.outputs.value }}
+          generate_release_notes: true
+          files: installers/*

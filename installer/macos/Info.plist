@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>improve</string>
+  <key>CFBundleDisplayName</key>
+  <string>improve</string>
+  <key>CFBundleIdentifier</key>
+  <string>app.improve.desktop</string>
+  <key>CFBundleExecutable</key>
+  <string>improve</string>
+  <key>CFBundleIconFile</key>
+  <string>improve.icns</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleVersion</key>
+  <string>__VERSION__</string>
+  <key>CFBundleShortVersionString</key>
+  <string>__VERSION__</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>12.0</string>
+  <!-- Só na barra de menus, sem ícone no Dock (fase 5). -->
+  <key>LSUIElement</key>
+  <true/>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+  <!-- Mostrado no pedido de permissão de Acessibilidade (simular Cmd+C/Cmd+V). -->
+  <key>NSAppleEventsUsageDescription</key>
+  <string>O improve precisa copiar e colar o texto selecionado no app em uso.</string>
+</dict>
+</plist>

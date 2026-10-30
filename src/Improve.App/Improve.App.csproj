@@ -35,6 +35,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
+  <!-- Os instaladores não levam símbolos de depuração (os nativos do SkiaSharp somam ~100 MB). -->
+  <Target Name="RemoveDebugSymbolsFromPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <PublishedSymbols Include="$(PublishDir)**\*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(PublishedSymbols)" />
+  </Target>
+
   <ItemGroup>
     <ProjectReference Include="..\Improve.Core\Improve.Core.csproj" />
     <ProjectReference Include="..\Improve.Platform\Improve.Platform.csproj" />
