@@ -261,6 +261,9 @@
   <data name="ProviderInUse" xml:space="preserve">
     <value>usado por {0} extensões</value>
   </data>
+  <data name="ProviderInUseOne" xml:space="preserve">
+    <value>usado por 1 extensão</value>
+  </data>
   <data name="ProviderKeySaved" xml:space="preserve">
     <value>Chave salva</value>
   </data>

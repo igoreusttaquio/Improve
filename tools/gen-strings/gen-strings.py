@@ -126,6 +126,7 @@ APP = {
                            "This system has no secret service: keys are stored in an unencrypted file readable only by your user.",
                            "Este sistema no tiene servicio de secretos: las claves se guardan en un archivo sin cifrar, legible solo por tu usuario."),
     "ProviderInUse": ("usado por {0} extensões", "used by {0} extensions", "usado por {0} extensiones"),
+    "ProviderInUseOne": ("usado por 1 extensão", "used by 1 extension", "usado por 1 extensión"),
     "ProviderKeySaved": ("Chave salva", "Key saved", "Clave guardada"),
     "ProviderKeyMissing": ("Sem chave", "No key", "Sin clave"),
     "FieldGlobalHotkey": ("Atalho global", "Global shortcut", "Atajo global"),

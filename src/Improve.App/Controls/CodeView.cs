@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Styling;
 using AvaloniaEdit;
@@ -52,6 +53,12 @@ public sealed class CodeView : UserControl
         ActualThemeVariantChanged += (_, _) => ApplyTheme();
         Content = _editor;
         ApplyTheme();
+    }
+
+    // A fonte padrão (JetBrains Mono) vem dos recursos do app, que só ficam acessíveis com o controle na árvore.
+    protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToLogicalTree(e);
         ApplyFont();
     }
 

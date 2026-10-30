@@ -63,7 +63,8 @@ public sealed partial class ProvidersPageViewModel : ObservableObject
         foreach (var provider in _config.Settings.Providers)
         {
             var usage = _config.Extensions.Extensions.Count(e => e.ProviderId == provider.Id);
-            var meta = $"{provider.BaseUrl} · {string.Format(CultureInfo.CurrentCulture, Strings.ProviderInUse, usage)}";
+            var inUse = usage == 1 ? Strings.ProviderInUseOne : string.Format(CultureInfo.CurrentCulture, Strings.ProviderInUse, usage);
+            var meta = $"{provider.BaseUrl} · {inUse}";
             cards.Add(new ProviderCardViewModel(provider, meta, await _secrets.GetAsync(provider.Id) is not null));
         }
         Cards.Clear();
